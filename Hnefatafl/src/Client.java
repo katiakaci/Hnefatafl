@@ -67,7 +67,7 @@ class Client {
 					ArrayList<Move> moves = board.findPossibleMoves();
 					String possiblesMoves= "";
 					for(int i=0;i< moves.size();i++) {
-						possiblesMoves+=moves.get(i).printMove()+" / ";
+						possiblesMoves+=board.printMove(moves.get(i))+" / ";
 					}
 					System.out.println("Coups possibles : "+possiblesMoves);
 					

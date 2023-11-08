@@ -7,18 +7,12 @@ class Move
 	private int colStart;
 	private int rowTarget;
 	private int colTarget;
-	
-	private Map<Integer, String> boardConversionRow = new HashMap<>();
-	private char[] rows = "ABCDEFGHIJKLM".toCharArray();
 
 	public Move(){
 		rowStart = -1;
 		colStart = -1;
 		rowTarget = -1;
 		colTarget = -1;
-		for(int i=0; i<rows.length;i++) {
-			boardConversionRow.put(i, String.valueOf(rows[i]));
-		}
 	}
 
 	public Move(int rS, int cS, int rT, int cT){
@@ -58,9 +52,5 @@ class Move
 
 	public void setColTarget(int colTarget) {
 		this.colTarget = colTarget;
-	}
-
-	public String printMove() {
-		return boardConversionRow.get(rowStart)+""+colStart+" - "+boardConversionRow.get(rowTarget)+""+colTarget;
 	}
 }

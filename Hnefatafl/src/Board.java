@@ -6,6 +6,10 @@ class Board
 {
 	private int[][] board;
 
+	private Map<Integer, String> boardConversionRow = new HashMap<>();
+
+	private char[] rows = "ABCDEFGHIJKLM".toCharArray();
+	
 	public int[][] getBoard() {
 		return board;
 	}
@@ -31,10 +35,9 @@ class Board
 				y++;
 			}
 		}
-		board[0][0] = 1;
-		board[0][12] = 1;
-		board[12][0] = 1;
-		board[12][12] = 1;
+		for(int i=0; i<rows.length;i++) {
+			boardConversionRow.put(i, String.valueOf(rows[i]));
+		}
 	}
 
 
@@ -80,4 +83,7 @@ class Board
 		return possibleMoves;
 	}
 
+	public String printMove(Move m) {
+		return boardConversionRow.get(m.getRowStart())+""+m.getColStart()+" - "+boardConversionRow.get(m.getRowTarget())+""+m.getColTarget();
+	}
 }
