@@ -1,5 +1,3 @@
-import java.util.HashMap;
-import java.util.Map;
 
 class Move
 {
@@ -7,13 +5,6 @@ class Move
 	private int colStart;
 	private int rowTarget;
 	private int colTarget;
-
-	public Move(){
-		rowStart = -1;
-		colStart = -1;
-		rowTarget = -1;
-		colTarget = -1;
-	}
 
 	public Move(int rS, int cS, int rT, int cT){
 		rowStart = rS;

@@ -1,26 +1,37 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 class Board
 {
 	private int[][] board;
-
+	private int posKingX;
+	private int posKingY;
 	private Map<Integer, String> boardConversionRow = new HashMap<>();
-
-	private char[] rows = "ABCDEFGHIJKLM".toCharArray();
+	private final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5;
 	
+	private char[] rows = "ABCDEFGHIJKLM".toCharArray();
+
 	public int[][] getBoard() {
 		return board;
 	}
 
+	public int getPosKingX() {
+		return posKingX;
+	}
+
+	public void setPosKingX(int posKingX) {
+		this.posKingX = posKingX;
+	}
+
+	public int getPosKingY() {
+		return posKingY;
+	}
+
+	public void setPosKingY(int posKingY) {
+		this.posKingY = posKingY;
+	}
+	
 	/**
 	 * Initialise le plateau de la console
-	 * 0 = vide
-	 * 1 = coin
-	 * 2 = noir
-	 * 4 = rouge
-	 * 5 = roi
 	 * @param sBoard
 	 */
 	public Board(String s) {
@@ -29,6 +40,10 @@ class Board
 		int x=0,y=0;
 		for(int i=0; i<boardValues.length;i++){
 			board[x][y] = Integer.parseInt(boardValues[i]);
+			if(Integer.parseInt(boardValues[i])==5) {
+				this.posKingX = x;
+				this.posKingY = y;
+			}
 			x++;
 			if(x == 13){
 				x = 0;
@@ -38,8 +53,12 @@ class Board
 		for(int i=0; i<rows.length;i++) {
 			boardConversionRow.put(i, String.valueOf(rows[i]));
 		}
+		// Les quatres coins du board
+		this.board[0][0] = CORNER;
+		this.board[0][12] = CORNER;
+		this.board[12][0] = CORNER;
+		this.board[12][12] = CORNER;
 	}
-
 
 	/**
 	 * Générer les coups possibles
@@ -49,41 +68,77 @@ class Board
 		ArrayList<Move> possibleMoves = new ArrayList<>();
 		for(int i=0;i<board.length;i++) {
 			for(int j=0; j<board[i].length;j++) {
-				if(board[i][j] == 4) {
-
+				if(board[i][j] == RED) {
 					// vérifier en bas du pion
-					for(int row=i; row<13;row++) {
+					for(int row=i+1; row<13;row++) {
 						// si on rencontre un pion
-						if(board[row][j] == 4 || board[row][j] == 5) break;
-						// si on rencontre une case vide
-						//(row, column)= start case (i,j) = target case
-						else if(board[row][j] == 0) possibleMoves.add(new Move(row,j,i,j));
+						if(board[row][j] == EMPTY) possibleMoves.add(new Move(i,j,row,j));
+						else break;
 					}
 
 					// vérifier en haut du pion
-					for(int row=i; row==0;row--) {
-						if(board[row][j] == 4 || board[row][j] == 5) break;
-						else if(board[row][j] == 0) possibleMoves.add(new Move(row,j,i,j));
+					for(int row=i-1; row>=0;row--) {
+						if(board[row][j] == EMPTY) possibleMoves.add(new Move(i,j,row,j));
+						else break;
 					}
 
 					// vérifier à droite du pion
-					for(int column=i; column<13;column++) {
-						if(board[i][column] == 4 || board[i][column] == 5) break;
-						else if(board[i][column] == 0) possibleMoves.add(new Move(i,column,i,j));
+					for(int column=i+1; column<13;column++) {
+						if(board[i][column] == EMPTY) possibleMoves.add(new Move(i,j,i,column));
+						else break;
 					}
 
 					// vérifier à gauche du pion
-					for(int column=i; column==0;column--) {
-						if(board[i][column] == 4 || board[i][column] == 5) break;
-						else if(board[i][column] == 0) possibleMoves.add(new Move(i,column,i,j));
+					for(int column=i-1; column>=0;column--) {
+						if(board[i][column] == EMPTY) possibleMoves.add(new Move(i,j,i,column));
+						else break;
 					}
 				}
 			}
 		}
 		return possibleMoves;
 	}
-
+		
 	public String printMove(Move m) {
 		return boardConversionRow.get(m.getRowStart())+""+m.getColStart()+" - "+boardConversionRow.get(m.getRowTarget())+""+m.getColTarget();
 	}
+
+	public int[][]  eliminerJetonAdverse(int couleurJoueur, int couleurAdverse, int colonneFin, int rangeeFin) {
+        int king = 5;
+        //change la couleur du king pour rouge si c est le joueur rouge qui a fait un movement pour manger
+        // afin qu un joueur rouge ne puisse pas manger un noir a laide du king.
+        if(couleurJoueur == 4) {
+            king = 4;
+        }
+        if (colonneFin < 11) {
+            if (this.board[colonneFin + 1][rangeeFin] == couleurAdverse) {
+                if (this.board[colonneFin + 2][rangeeFin] == couleurJoueur || this.board[colonneFin + 2][rangeeFin] == 1 || this.board[colonneFin + 2][rangeeFin] == king || (colonneFin + 2 == 6 && rangeeFin == 6)) {
+                    this.board[colonneFin + 1][rangeeFin] = 0;
+                }
+            }
+        }
+        if (rangeeFin < 11) {
+            if (this.board[colonneFin][rangeeFin + 1] == couleurAdverse) {
+                if (this.board[colonneFin][rangeeFin + 2] == couleurJoueur || this.board[colonneFin][rangeeFin + 2] == 1 || this.board[colonneFin][rangeeFin + 2] == king || (colonneFin == 6 && rangeeFin + 2 == 6)) {
+                    this.board[colonneFin][rangeeFin + 1] = 0;
+                }
+            }
+        }
+        if (colonneFin > 1) {
+            if (this.board[colonneFin - 1][rangeeFin] == couleurAdverse) {
+                if (this.board[colonneFin - 2][rangeeFin] == couleurJoueur || this.board[colonneFin - 2][rangeeFin] == 1 || this.board[colonneFin - 2][rangeeFin] == king || (colonneFin - 2 == 6 && rangeeFin == 6)) {
+                    this.board[colonneFin - 1][rangeeFin] = 0;
+                }
+            }
+        }
+        if (rangeeFin > 1) {
+            if (this.board[colonneFin][rangeeFin - 1] == couleurAdverse) {
+                if (this.board[colonneFin][rangeeFin - 2] == couleurJoueur || this.board[colonneFin][rangeeFin - 2] == 1 || this.board[colonneFin][rangeeFin - 2] == king || (colonneFin == 6 && rangeeFin - 2 == 6)) {
+                    this.board[colonneFin][rangeeFin - 1] = 0;
+                }
+            }
+        }
+        return this.board;
+    }
+
 }
