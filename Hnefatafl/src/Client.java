@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 class Client {
 
@@ -9,8 +8,7 @@ class Client {
 	static BufferedOutputStream output;
 	static BufferedReader console;
 	static Socket MyClient;
-	static int aiPlayer;
-
+	static int aiPlayer, opponent;
 	static final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5;
 
 	public static void main(String[] args) {
@@ -27,7 +25,7 @@ class Client {
 				if(cmd == '3') nextMove();
 				if(cmd == '4')invalidMove();
 				if(cmd == '5')endGame();
-				System.out.println("\nle ai est: "+aiPlayer);
+				board.printBoard();
 			}
 		}
 		catch (IOException e) {
@@ -41,14 +39,14 @@ class Client {
 		//System.out.println("size " + size);
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer).trim();
-		// System.out.println("chaine du plateau: "+s);
 		board = new Board(s);
 		aiPlayer = RED;
-		showBoard();
+		opponent = BLACK;
 
 		System.out.print("Nouvelle partie! Vous jouer rouge, entrez votre premier coup : ");
-		String move = null;
-		move = console.readLine();
+		String move = console.readLine();
+		board.updateBoard(move, aiPlayer);
+
 		output.write(move.getBytes(),0,move.length());
 		output.flush();
 	}
@@ -60,43 +58,32 @@ class Client {
 		// System.out.println("size " + size);
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer).trim();
-		// System.out.println(s);
 		board = new Board(s);
 		aiPlayer = BLACK;
+		opponent = RED;
 	}
 
 	private static void nextMove() throws IOException {
-		// Le serveur demande le prochain coup
-		// Le message contient aussi le dernier coup joue.
 		byte[] aBuffer = new byte[16];
 		int size = input.available();
-		//		System.out.println("size :" + size);
+		// System.out.println("size :" + size);
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer);
 		System.out.println("Dernier coup :"+ s);
+		board.updateBoard(s, opponent);
 
-
-		// A ENLEVER : !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		ArrayList<Move> moves = board.findPossibleMoves(aiPlayer);
-		String possiblesMoves= "";
-		for(int i=0;i< moves.size();i++) {
-			possiblesMoves+=board.printMove(moves.get(i))+" / ";
-		}
-		System.out.println("Coups possibles pour "+aiPlayer+": "+possiblesMoves);
-		// A ENLEVER : !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
+		// board.printPossibleMoves(aiPlayer);
 		System.out.print("Entrez votre coup : ");
-		String move = null;
-		move = console.readLine();
+		String move = console.readLine();
+		board.updateBoard(move, aiPlayer);
+
 		output.write(move.getBytes(),0,move.length());
 		output.flush();
 	}
 
 	private static void invalidMove() throws IOException {
 		System.out.print("Coup invalide, entrez un nouveau coup : ");
-		String move = null;
-		move = console.readLine();
+		String move = console.readLine();
 		output.write(move.getBytes(),0,move.length());
 		output.flush();
 	}
@@ -107,25 +94,9 @@ class Client {
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer);
 		System.out.println("Partie Terminé. Le dernier coup joué est: "+s);
-		String move = null;
-		move = console.readLine();
+		String move = console.readLine();
 		output.write(move.getBytes(),0,move.length());
 		output.flush();
 	}
 
-	/**
-	 * Imprime le tableau dans la console
-	 */
-	private static void showBoard() {
-		System.out.println();
-		for (int x = 0; x < 13; x++) {
-			System.out.print(String.format("%3d", 13 - x) + " |");
-			for (int y = 0; y < 13; y++) {
-				System.out.print("  " + board.getBoard()[y][x]);
-			}
-			System.out.println();
-		}
-		System.out.println("_____________________________________________");
-		System.out.println("       A  B  C  D  E  F  G  H  I  J  K  L  M\n");
-	}
 }
