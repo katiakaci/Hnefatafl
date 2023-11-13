@@ -2,9 +2,10 @@ import java.util.*;
 
 class Board
 {
-	private final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5;
+	private final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5, THRONE = 6;
 	private int[][] board;
-	private int posKingX, posKingY;
+	private int rowKing, colKing;
+	private int player, opponent;
 	private Map<Integer, String> conversionNumberToLetterRow = new HashMap<>();
 	private Map<String, Integer> conversionLetterToNumberRow = new HashMap<>();
 
@@ -18,9 +19,9 @@ class Board
 		int x=0,y=0;
 		for(int i=0; i<boardValues.length;i++){
 			board[x][y] = Integer.parseInt(boardValues[i]);
-			if(Integer.parseInt(boardValues[i])==5) {
-				this.posKingX = x;
-				this.posKingY = y;
+			if(Integer.parseInt(boardValues[i]) == KING) {
+				this.rowKing = x;
+				this.colKing = y;
 			}
 			x++;
 			if(x == 13){
@@ -42,8 +43,8 @@ class Board
 	}
 
 	/**
-	 * Générer les coups possibles
-	 * @param aiPlayer ROUGE ou NOIR
+	 * Générer les coups possibles pour le joueur recu
+	 * @param player ROUGE ou NOIR
 	 * @return la liste de coups possibles
 	 */
 	public ArrayList<Move> findPossibleMoves(int player) {
@@ -78,12 +79,58 @@ class Board
 		return possibleMoves;
 	}
 
+	private boolean isValidMove(int oldRow, int oldColumn, int newRow, int newColumn){
+		// il n'y a pas de pion sur la case de départ
+		if(board[oldRow][oldColumn] == EMPTY || board[oldRow][oldColumn] == CORNER || board[oldRow][oldColumn] == THRONE) return false;
+
+		// il y a déjà un pion sur la case d'arrivée
+		if(board[newRow][newColumn] == RED || board[newRow][newColumn] == BLACK || board[newRow][newColumn] == KING) return false;
+
+		// il n'y a pas de changement de case
+		if(oldColumn == newColumn && oldRow == newRow) return  false;
+
+		// le mouvement n'est pas vertical ou horizontal
+		if(oldColumn != newColumn && oldRow != newRow) return  false;
+
+		// un pion, qui n'est pas le roi, essaie d'aller sur un coin ou le throne
+		if((board[newRow][newColumn] == CORNER || board[newRow][newColumn] == THRONE) && board[oldRow][oldColumn] != KING) return false;
+
+		// Verifie qu'il n'y a pas d'autres pieces entre la position initiale et finale pour un mouvement VERTICAL
+		if (oldRow == newRow && oldColumn != newColumn) {
+			if (newColumn > oldColumn) {
+				for (int i = oldColumn + 1; i <= newColumn; i++) {
+					if (board[oldRow][i] > 1 && board[oldRow][i] < 6) return false;
+				}
+			} else {
+				for (int i = newColumn; i < oldColumn; i++) {
+					if (board[oldRow][i] > 1 && board[oldRow][i] < 6) return false;
+				}
+			}
+		}
+
+		// Verifie qu'il n'y a pas d'autres pieces entre la position initiale et finale pour un mouvement HORIZONTAL
+		if (oldColumn == newColumn && oldRow != newRow) {
+			if (newRow > oldRow) {
+				for (int i = oldRow + 1; i <= newRow; i++) {
+					if (board[i][oldColumn] > 1) return false;
+				}
+			} else {
+				for (int i = newRow; i < oldRow; i++) {
+					if (board[i][oldColumn] > 1) return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * Déplace le pion dans le board à la position recue
-	 * @param move (ex H7 - H9)
+	 * @param move
 	 * @param mark
 	 */
-	public void updateBoard(String move, int mark) {
+	public void updateBoard(String move, int player, int opponent) {
+		this.player = player;
+		this.opponent = opponent;
 		move = move.trim().toUpperCase();
 		String start, end;
 
@@ -106,46 +153,143 @@ class Board
 		int newRow = conversionLetterToNumberRow.get(end.substring(0, 1));
 		int newColumn = Integer. parseInt(end.substring(1))-1;
 
-		this.board[oldRow][oldColumn] = EMPTY;
-		this.board[newRow][newColumn] = mark;
+		if(isValidMove(oldRow, oldColumn, newRow, newColumn)) {
+			// Si c'est le roi qui a bougé
+			if(this.board[oldRow][oldColumn] == KING) {
+				this.board[oldRow][oldColumn] = EMPTY;
+				this.board[6][6] = THRONE;
+				this.board[newRow][newColumn] = KING;
+				this.rowKing = newRow;
+				this.colKing = newColumn;
+			}
+			else {
+				this.board[oldRow][oldColumn] = EMPTY;
+				this.board[newRow][newColumn] = player;
+			}		
+			checkIfPawnEliminated(newRow, newColumn);
+			printBoard();
+		}
+		else System.out.println("Coup invalide");
 	}
 
-	public int[][]  eliminerJetonAdverse(int couleurJoueur, int couleurAdverse, int colonneFin, int rangeeFin) {
-		int king = 5;
-		//change la couleur du king pour rouge si c est le joueur rouge qui a fait un movement pour manger
-		// afin qu un joueur rouge ne puisse pas manger un noir a laide du king.
-		if(couleurJoueur == 4) {
-			king = 4;
+	private boolean isKingTrapped() {
+		// Il y a un mur à un des quatre côtés
+		if(rowKing == 0) {
+			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
+				return true;
 		}
-		if (colonneFin < 11) {
-			if (this.board[colonneFin + 1][rangeeFin] == couleurAdverse) {
-				if (this.board[colonneFin + 2][rangeeFin] == couleurJoueur || this.board[colonneFin + 2][rangeeFin] == 1 || this.board[colonneFin + 2][rangeeFin] == king || (colonneFin + 2 == 6 && rangeeFin == 6)) {
-					this.board[colonneFin + 1][rangeeFin] = 0;
-				}
+		if(rowKing == 12) {
+			if((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
+				return true;
+		}
+		if(colKing == 0) {
+			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
+				return true;
+		}
+		if(colKing == 12) {
+			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
+				return true;
+		}
+		// Encadré des 4 côtés
+		if(rowKing>0 && rowKing<12 && colKing>0 && colKing<12) {	
+			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
+				return true;
+		}
+		return false;
+	}
+
+	private boolean isKingInCorner() {
+		return (board[0][0] == KING || board[0][12] == KING || board[12][0] == KING || board[12][12] == KING);
+	}
+
+	public int evaluate(int player) {
+		int victory = 100;
+		int defeat = -100;
+		int draw = 0;
+
+		if(player == RED) {
+			if(isKingTrapped()) return victory;
+			else if(isKingInCorner()) return defeat;
+		}
+		else if(player == BLACK) {
+			if(isKingTrapped()) return defeat;
+			else if(isKingInCorner()) return victory;
+		}
+		return draw;
+	}
+
+	public void cancelMove(String move) {
+		// TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	}
+
+	/**
+	 * Élimine le pion adverse si le mouvement effectué par le joueur permet de l'encadrer
+	 * @param player
+	 * @param opponent
+	 * @param newRow
+	 * @param newColumn
+	 */
+	private void  checkIfPawnEliminated(int newRow, int newColumn) {
+		// CENTRE
+		if(newRow < 11 && newColumn < 11 && newRow > 1 && newColumn > 1) checkRowAndColumn(true, true, true, true, newRow, newColumn);	
+		// RANGÉE 0 et 1
+		else if(newRow < 2 && newColumn < 11 && newColumn > 1) checkRowAndColumn(false, true, true, true, newRow, newColumn);	
+		// RANGÉE 11 et 12
+		else if(newRow > 10 && newColumn < 11 && newColumn > 1) checkRowAndColumn(true, false, true, true, newRow, newColumn);
+		// COLONNE 0 et 1
+		else if(newRow < 11 && newRow > 1 && newColumn < 2) checkRowAndColumn(true, true, true, false, newRow, newColumn);	
+		// COLONNE 11 et 12
+		else if(newRow < 11 && newRow > 1 && newColumn > 10) checkRowAndColumn(true, true, false, true, newRow, newColumn);
+		// TROIS CASES DANS LE COIN EN HAUT À GAUCHE
+		else if(newRow < 2 && newColumn < 2) checkRowAndColumn(false, true, true, false, newRow, newColumn);	
+		// TROIS CASES DANS LE COIN EN HAUT À DROITE
+		else if(newRow < 2 && newColumn > 10) checkRowAndColumn(false, true, false, true, newRow, newColumn);
+		// TROIS CASES DANS LE COIN EN BAS À GAUCHE
+		else if(newRow > 10 && newColumn < 2) checkRowAndColumn(true, false, true, false, newRow, newColumn);	
+		// TROIS CASES DANS LE COIN EN BAS À DROITE
+		else if(newRow > 10 && newColumn > 10) checkRowAndColumn(true, false, false, true, newRow, newColumn);
+	}
+
+	private void checkRowAndColumn(boolean up, boolean down, boolean right, boolean left, int newRow, int newColumn) {
+		if(up) {
+			if(board[newRow-1][newColumn] == opponent && 
+					(board[newRow-2][newColumn] == player || board[newRow-2][newColumn] == CORNER || (newRow-2==THRONE && newColumn==THRONE) )) {
+				board[newRow-1][newColumn] = EMPTY;
+				System.out.println("Pion "+opponent+" éliminé à la position: ["+(newRow-1)+", "+newColumn+"]");
 			}
 		}
-		if (rangeeFin < 11) {
-			if (this.board[colonneFin][rangeeFin + 1] == couleurAdverse) {
-				if (this.board[colonneFin][rangeeFin + 2] == couleurJoueur || this.board[colonneFin][rangeeFin + 2] == 1 || this.board[colonneFin][rangeeFin + 2] == king || (colonneFin == 6 && rangeeFin + 2 == 6)) {
-					this.board[colonneFin][rangeeFin + 1] = 0;
-				}
+		if(down) {
+			if(board[newRow+1][newColumn] == opponent && 
+					(board[newRow+2][newColumn] == player || board[newRow+2][newColumn] == CORNER || (newRow+2==THRONE && newColumn==THRONE) )) {
+				board[newRow+1][newColumn] = EMPTY;
+				System.out.println("Pion "+opponent+" éliminé à la position: ["+(newRow+1)+", "+newColumn+"]");
 			}
 		}
-		if (colonneFin > 1) {
-			if (this.board[colonneFin - 1][rangeeFin] == couleurAdverse) {
-				if (this.board[colonneFin - 2][rangeeFin] == couleurJoueur || this.board[colonneFin - 2][rangeeFin] == 1 || this.board[colonneFin - 2][rangeeFin] == king || (colonneFin - 2 == 6 && rangeeFin == 6)) {
-					this.board[colonneFin - 1][rangeeFin] = 0;
-				}
+		if(right) {
+			if(board[newRow][newColumn+1] == opponent && 
+					(board[newRow][newColumn+2] == player || board[newRow][newColumn+2] == CORNER || (newRow==THRONE && newColumn+2==THRONE) )) {
+				board[newRow][newColumn+1] = EMPTY;
+				System.out.println("Pion "+opponent+" éliminé à la position: ["+newRow+", "+(newColumn+1)+"]");
 			}
 		}
-		if (rangeeFin > 1) {
-			if (this.board[colonneFin][rangeeFin - 1] == couleurAdverse) {
-				if (this.board[colonneFin][rangeeFin - 2] == couleurJoueur || this.board[colonneFin][rangeeFin - 2] == 1 || this.board[colonneFin][rangeeFin - 2] == king || (colonneFin == 6 && rangeeFin - 2 == 6)) {
-					this.board[colonneFin][rangeeFin - 1] = 0;
-				}
+		if(left) {
+			if(board[newRow][newColumn-1] == opponent && 
+					(board[newRow][newColumn-2] == player || board[newRow][newColumn-2] == CORNER || (newRow==THRONE && newColumn-2==THRONE) )) {
+				board[newRow][newColumn-1] = EMPTY;
+				System.out.println("Pion "+opponent+" éliminé à la position: ["+newRow+", "+(newColumn-1)+"]");
 			}
 		}
-		return this.board;
 	}
 
 	public void printPossibleMoves(int player) {
@@ -173,19 +317,4 @@ class Board
 		return board;
 	}
 
-	public int getPosKingX() {
-		return posKingX;
-	}
-
-	public void setPosKingX(int posKingX) {
-		this.posKingX = posKingX;
-	}
-
-	public int getPosKingY() {
-		return posKingY;
-	}
-
-	public void setPosKingY(int posKingY) {
-		this.posKingY = posKingY;
-	}
 }

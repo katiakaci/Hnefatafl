@@ -6,48 +6,6 @@
 //	private static final int ROUGE = 4;
 //	private static final int NOIR = 2;
 //
-//	private boolean MouvementValide(int[][] tableau, int colInitiale, int ligneInitiale, int colFinal, int ligneFinal){
-//
-//		// verifie si c'est le roi qui se déplace vers les coins ou si l'on veut
-//		// se déplacer dans une case autre que celle actuelle.
-//		if(ligneInitiale == ligneFinal && colInitiale == colFinal){ return  false; }
-//		if(tableau[colFinal][ligneFinal] == 1 && tableau[colInitiale][ligneInitiale] != 5){return false;}
-//
-//
-//		//lors d'un mouvement est  vertical, verifie qu'il n'y a pas d'autre piece entre la position initial et finale
-//		if (colInitiale == colFinal && ligneInitiale != ligneFinal) {
-//			if (ligneFinal > ligneInitiale) {
-//				for (int i = ligneInitiale + 1; i <= ligneFinal; i++) {
-//					if (tableau[colInitiale][i] > 1) {
-//						return false;
-//					}
-//				}
-//			} else {
-//				for (int i = ligneFinal; i < ligneInitiale; i++) {
-//					if (tableau[colInitiale][i] > 1) {
-//						return false;
-//					}
-//				}
-//			}
-//		}
-//		//lors d'un mouvement est a la horizontal, verifie qu'il n'y a pas d'autre piece entre la position initial et finale
-//		if (ligneInitiale == ligneFinal && colInitiale != colFinal) {
-//			if (colFinal > colInitiale) {
-//				for (int i = colInitiale + 1; i <= colFinal; i++) {
-//					if (tableau[i][ligneInitiale] > 1) {
-//						return false;
-//					}
-//				}
-//			} else {
-//				for (int i = colFinal; i < colInitiale; i++) {
-//					if (tableau[i][ligneInitiale] > 1) {
-//						return false;
-//					}
-//				}
-//			}
-//		}
-//		return true;
-//	}
 //
 //	private ArrayList<Board> genererMouvement(Board board, int player){
 //
@@ -184,5 +142,44 @@
 //		//        }
 //		return boardArray;
 //	}
+//	
+//	private void  eliminerJetonAdverse(int couleurJoueur, int couleurAdverse, int colonneFin, int rangeeFin) {
+//		int king = 5;
+//		//change la couleur du king pour rouge si c est le joueur rouge qui a fait un movement pour manger
+//		// afin qu un joueur rouge ne puisse pas manger un noir a laide du king.
+//		if(couleurJoueur == 4) {
+//			king = 4;
+//		}
+//
+//		if (colonneFin < 11) {
+//			if (this.board[colonneFin + 1][rangeeFin] == couleurAdverse) {
+//				if (this.board[colonneFin + 2][rangeeFin] == couleurJoueur || this.board[colonneFin + 2][rangeeFin] == 1 || this.board[colonneFin + 2][rangeeFin] == king || (colonneFin + 2 == 6 && rangeeFin == 6)) {
+//					this.board[colonneFin + 1][rangeeFin] = 0;
+//				}
+//			}
+//		}
+//		if (rangeeFin < 11) {
+//			if (this.board[colonneFin][rangeeFin + 1] == couleurAdverse) {
+//				if (this.board[colonneFin][rangeeFin + 2] == couleurJoueur || this.board[colonneFin][rangeeFin + 2] == 1 || this.board[colonneFin][rangeeFin + 2] == king || (colonneFin == 6 && rangeeFin + 2 == 6)) {
+//					this.board[colonneFin][rangeeFin + 1] = 0;
+//				}
+//			}
+//		}
+//		if (colonneFin > 1) {
+//			if (this.board[colonneFin - 1][rangeeFin] == couleurAdverse) {
+//				if (this.board[colonneFin - 2][rangeeFin] == couleurJoueur || this.board[colonneFin - 2][rangeeFin] == 1 || this.board[colonneFin - 2][rangeeFin] == king || (colonneFin - 2 == 6 && rangeeFin == 6)) {
+//					this.board[colonneFin - 1][rangeeFin] = 0;
+//				}
+//			}
+//		}
+//		if (rangeeFin > 1) {
+//			if (this.board[colonneFin][rangeeFin - 1] == couleurAdverse) {
+//				if (this.board[colonneFin][rangeeFin - 2] == couleurJoueur || this.board[colonneFin][rangeeFin - 2] == 1 || this.board[colonneFin][rangeeFin - 2] == king || (colonneFin == 6 && rangeeFin - 2 == 6)) {
+//					this.board[colonneFin][rangeeFin - 1] = 0;
+//				}
+//			}
+//		}
+//	}
+//
 //
 //}
