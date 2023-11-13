@@ -32,17 +32,10 @@ public class CPUPlayer {
 		ArrayList<Move> bestMoves = new ArrayList<>();
 		int bestScore = Integer.MIN_VALUE;
 
-		ArrayList<Move> possibleMoves = board.findPossibleMoves(RED);
-		ArrayList<Move> possibleMovesBLACK = board.findPossibleMoves(BLACK);
-		possibleMoves.addAll(possibleMovesBLACK);
-
-		for (Move nextMove : possibleMoves) {
-			//			board.play(nextMove, cpu);
-			String nextMoveString = nextMove.toString(); // vérifier si ca fait un bon string!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-			board.updateBoard(nextMoveString, cpu, min); // play=update
-
+		for (Move nextMove : board.findPossibleMoves()) {
+			board.play(nextMove.toString(), cpu);
 			int score = miniMax(min);
-			board.cancelMove(nextMoveString); 
+			board.cancelMove(nextMove); 
 
 			if(score > bestScore) {
 				bestMoves.clear(); 
@@ -69,17 +62,10 @@ public class CPUPlayer {
 		int alpha = Integer.MIN_VALUE;
 		int beta = Integer.MAX_VALUE;
 
-		ArrayList<Move> possibleMoves = board.findPossibleMoves(RED);
-		ArrayList<Move> possibleMovesBLACK = board.findPossibleMoves(BLACK);
-		possibleMoves.addAll(possibleMovesBLACK);
-		
-		for (Move nextMove : possibleMoves) {
-//			board.play(nextMove, cpu);
-			String nextMoveString = nextMove.toString(); // vérifier si ca fait un bon string!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-			board.updateBoard(nextMoveString, cpu, min); // play=update
+		for (Move nextMove : board.findPossibleMoves()) {
+			board.play(nextMove.toString(), cpu);
 			int score = miniMaxAlphaBeta(min, alpha, beta);
-			
-			board.cancelMove(nextMoveString);
+			board.cancelMove(nextMove);
 
 			if(score > bestScore) {
 				bestMoves.clear(); 
@@ -100,33 +86,32 @@ public class CPUPlayer {
 	 * @return
 	 */
 	private int miniMax(int player) {
-//		numExploredNodes++;
-//
-//		// Si positionActuelle est finale (victoire ou board plein)
-//		if (board.evaluate(player) != 0 || board.boardIsFull()) return board.evaluate(cpu);
-//
-//		else if (player == max) {
-//			int maxScore = Integer.MIN_VALUE;
-//			for(Move nextMove : board.findPossibleMoves()) {
-//				board.play(nextMove, player);
-//				int score = miniMax(min);
-//				maxScore = Math.max(maxScore, score);
-//				board.cancelMove(nextMove);
-//			}
-//			return maxScore;
-//		}
-//
-//		else {
-//			int minScore = Integer.MAX_VALUE;;
-//			for(Move nextMove : board.findPossibleMoves()) {
-//				board.play(nextMove, player);
-//				int score = miniMax(max);
-//				minScore = Math.min(minScore, score);
-//				board.cancelMove(nextMove);
-//			}
-//			return minScore;
-//		}
-	return 0; //!! a enlever!!!!!!!!!!!!!!!!!!!!!11
+		numExploredNodes++;
+
+		// Si positionActuelle est finale (victoire ou board plein)
+		if (board.evaluate(player) != 0 || board.boardIsFull()) return board.evaluate(cpu);
+
+		else if (player == max) {
+			int maxScore = Integer.MIN_VALUE;
+			for(Move nextMove : board.findPossibleMoves()) {
+				board.play(nextMove.toString(), player);
+				int score = miniMax(min);
+				maxScore = Math.max(maxScore, score);
+				board.cancelMove(nextMove);
+			}
+			return maxScore;
+		}
+
+		else {
+			int minScore = Integer.MAX_VALUE;;
+			for(Move nextMove : board.findPossibleMoves()) {
+				board.play(nextMove.toString(), player);
+				int score = miniMax(max);
+				minScore = Math.min(minScore, score);
+				board.cancelMove(nextMove);
+			}
+			return minScore;
+		}
 	}
 
 	/**
@@ -137,38 +122,37 @@ public class CPUPlayer {
 	 * @return
 	 */
 	private int miniMaxAlphaBeta(int player, int alpha, int beta) {
-//		numExploredNodes++;
-//
-//		// Si positionActuelle est finale (victoire ou board plein)
-//		if (board.evaluate(player) != 0 || board.boardIsFull()) return board.evaluate(cpu);
-//
-//		else if (player == max) {
-//			int val = Integer.MIN_VALUE;
-//
-//			for(Move nextMove : board.findPossibleMoves()) {
-//				board.play(nextMove, player);
-//				int score = miniMaxAlphaBeta(min, Math.max(alpha, val), beta);
-//				board.cancelMove(nextMove);
-//				val = Math.max(val, score);
-//				if(val>=beta) return val;
-//			}
-//			return val;
-//		}
-//
-//		// si joueur == Min
-//		else {
-//			int val = Integer.MAX_VALUE;		
-//
-//			for(Move nextMove : board.findPossibleMoves()) {
-//				board.play(nextMove, player);
-//				int score = miniMaxAlphaBeta(max, alpha, Math.min(beta, val));
-//				board.cancelMove(nextMove);
-//				val = Math.min(val, score);
-//				if(val<=alpha) return val;
-//			}
-//			return val;			
-//		}
-		return 0; // a enleber !!!!!!!!!!!!!!!!!!!
+		numExploredNodes++;
+
+		// Si positionActuelle est finale (victoire ou board plein)
+		if (board.evaluate(player) != 0 || board.boardIsFull()) return board.evaluate(cpu);
+
+		else if (player == max) {
+			int val = Integer.MIN_VALUE;
+
+			for(Move nextMove : board.findPossibleMoves()) {
+				board.play(nextMove.toString(), player);
+				int score = miniMaxAlphaBeta(min, Math.max(alpha, val), beta);
+				board.cancelMove(nextMove);
+				val = Math.max(val, score);
+				if(val>=beta) return val;
+			}
+			return val;
+		}
+
+		// si joueur == Min
+		else {
+			int val = Integer.MAX_VALUE;		
+
+			for(Move nextMove : board.findPossibleMoves()) {
+				board.play(nextMove.toString(), player);
+				int score = miniMaxAlphaBeta(max, alpha, Math.min(beta, val));
+				board.cancelMove(nextMove);
+				val = Math.min(val, score);
+				if(val<=alpha) return val;
+			}
+			return val;			
+		}
 	}
 
 }

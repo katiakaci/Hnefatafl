@@ -1,3 +1,4 @@
+import java.util.*;
 
 class Move
 {
@@ -11,6 +12,15 @@ class Move
 		colStart = cS;
 		rowTarget = rT;
 		colTarget = cT;
+	}
+
+	public String toString() {
+		Map<Integer, String> conversionNumberToLetterRow = new HashMap<>();
+		char[] rows = "ABCDEFGHIJKLM".toCharArray();
+		for(int i=0; i<rows.length;i++) {
+			conversionNumberToLetterRow.put(i, String.valueOf(rows[i]));
+		}
+		return conversionNumberToLetterRow.get(colStart)+""+rowStart+"-"+conversionNumberToLetterRow.get(colTarget)+""+rowTarget;
 	}
 
 	public int getRowStart(){

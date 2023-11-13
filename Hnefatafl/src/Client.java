@@ -44,7 +44,8 @@ class Client {
 
 		System.out.print("Nouvelle partie! Vous jouer rouge, entrez votre premier coup : ");
 		String move = console.readLine();
-		board.updateBoard(move, aiPlayer, opponent);
+		board.play(move, aiPlayer);
+		board.printBoard();
 
 		output.write(move.getBytes(),0,move.length());
 		output.flush();
@@ -69,12 +70,14 @@ class Client {
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer);
 		System.out.println("Dernier coup :"+ s);
-		board.updateBoard(s, opponent, aiPlayer);
+		board.play(s, opponent);
+		board.printBoard();
 
 		// board.printPossibleMoves(aiPlayer);
 		System.out.print("Entrez votre coup : ");
 		String move = console.readLine();
-		board.updateBoard(move, aiPlayer, opponent);
+		board.play(move, aiPlayer);
+		board.printBoard();
 
 		output.write(move.getBytes(),0,move.length());
 		output.flush();
@@ -83,7 +86,8 @@ class Client {
 	private static void invalidMove() throws IOException {
 		System.out.print("Coup invalide, entrez un nouveau coup : ");
 		String move = console.readLine();
-		board.updateBoard(move, aiPlayer, opponent);
+		board.play(move, aiPlayer);
+		board.printBoard();
 		output.write(move.getBytes(),0,move.length());
 		output.flush();
 	}
