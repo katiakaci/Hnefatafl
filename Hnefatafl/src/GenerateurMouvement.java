@@ -142,44 +142,5 @@
 //		//        }
 //		return boardArray;
 //	}
-//	
-//	private void  eliminerJetonAdverse(int couleurJoueur, int couleurAdverse, int colonneFin, int rangeeFin) {
-//		int king = 5;
-//		//change la couleur du king pour rouge si c est le joueur rouge qui a fait un movement pour manger
-//		// afin qu un joueur rouge ne puisse pas manger un noir a laide du king.
-//		if(couleurJoueur == 4) {
-//			king = 4;
-//		}
-//
-//		if (colonneFin < 11) {
-//			if (this.board[colonneFin + 1][rangeeFin] == couleurAdverse) {
-//				if (this.board[colonneFin + 2][rangeeFin] == couleurJoueur || this.board[colonneFin + 2][rangeeFin] == 1 || this.board[colonneFin + 2][rangeeFin] == king || (colonneFin + 2 == 6 && rangeeFin == 6)) {
-//					this.board[colonneFin + 1][rangeeFin] = 0;
-//				}
-//			}
-//		}
-//		if (rangeeFin < 11) {
-//			if (this.board[colonneFin][rangeeFin + 1] == couleurAdverse) {
-//				if (this.board[colonneFin][rangeeFin + 2] == couleurJoueur || this.board[colonneFin][rangeeFin + 2] == 1 || this.board[colonneFin][rangeeFin + 2] == king || (colonneFin == 6 && rangeeFin + 2 == 6)) {
-//					this.board[colonneFin][rangeeFin + 1] = 0;
-//				}
-//			}
-//		}
-//		if (colonneFin > 1) {
-//			if (this.board[colonneFin - 1][rangeeFin] == couleurAdverse) {
-//				if (this.board[colonneFin - 2][rangeeFin] == couleurJoueur || this.board[colonneFin - 2][rangeeFin] == 1 || this.board[colonneFin - 2][rangeeFin] == king || (colonneFin - 2 == 6 && rangeeFin == 6)) {
-//					this.board[colonneFin - 1][rangeeFin] = 0;
-//				}
-//			}
-//		}
-//		if (rangeeFin > 1) {
-//			if (this.board[colonneFin][rangeeFin - 1] == couleurAdverse) {
-//				if (this.board[colonneFin][rangeeFin - 2] == couleurJoueur || this.board[colonneFin][rangeeFin - 2] == 1 || this.board[colonneFin][rangeeFin - 2] == king || (colonneFin == 6 && rangeeFin - 2 == 6)) {
-//					this.board[colonneFin][rangeeFin - 1] = 0;
-//				}
-//			}
-//		}
-//	}
-//
 //
 //}

@@ -4,6 +4,7 @@ import java.net.*;
 class Client {
 
 	static Board board;
+	static CPUPlayer cpu;
 	static BufferedInputStream input;
 	static BufferedOutputStream output;
 	static BufferedReader console;
@@ -41,13 +42,18 @@ class Client {
 		board = new Board(s);
 		aiPlayer = RED;
 		opponent = BLACK;
+		
+		cpu = new CPUPlayer(aiPlayer);
 
 		System.out.print("Nouvelle partie! Vous jouer rouge, entrez votre premier coup : ");
-		String move = console.readLine();
-		board.play(move, aiPlayer);
+//		String move = console.readLine();
+//		board.play(move, aiPlayer, true);
+		String move = cpu.getNextMoveMinMax(board, aiPlayer).get(0).toString();
 		board.printBoard();
 
 		output.write(move.getBytes(),0,move.length());
+
+//		output.write(move.getBytes(),0,move.length());
 		output.flush();
 	}
 
@@ -70,13 +76,13 @@ class Client {
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer);
 		System.out.println("Dernier coup :"+ s);
-		board.play(s, opponent);
+		board.play(s, opponent, true);
 		board.printBoard();
 
 		// board.printPossibleMoves(aiPlayer);
 		System.out.print("Entrez votre coup : ");
 		String move = console.readLine();
-		board.play(move, aiPlayer);
+		board.play(move, aiPlayer, true);
 		board.printBoard();
 
 		output.write(move.getBytes(),0,move.length());
@@ -86,7 +92,7 @@ class Client {
 	private static void invalidMove() throws IOException {
 		System.out.print("Coup invalide, entrez un nouveau coup : ");
 		String move = console.readLine();
-		board.play(move, aiPlayer);
+		board.play(move, aiPlayer, true);
 		board.printBoard();
 		output.write(move.getBytes(),0,move.length());
 		output.flush();
