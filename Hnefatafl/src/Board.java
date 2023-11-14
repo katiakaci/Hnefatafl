@@ -44,17 +44,15 @@ class Board
 
 	// TODO Vérifier cette methode!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
 	// Ajouter coin et trone si cest le roi ligne 60, 65 etc
-	
 	/**
 	 * Générer les coups possibles pour les noirs, les rouges et le roi
 	 * @return la liste de coups possibles
 	 */
-	public ArrayList<Move> findPossibleMoves(int ai) {
+	public ArrayList<Move> findPossibleMoves(int player) {
 		ArrayList<Move> possibleMoves = new ArrayList<>();
 		for(int i=0;i<board.length;i++) {
 			for(int j=0; j<board[i].length;j++) {
-				
-				if(ai == RED) {
+				if(player == RED) {
 					if(board[i][j] == RED) {
 						// vérifier en bas du pion
 						for(int row=i+1; row<13;row++) {
@@ -106,29 +104,6 @@ class Board
 					}
 					
 				}
-//				if(board[i][j] == RED || board[i][j] == BLACK || board[i][j] == KING) {
-//					// vérifier en bas du pion
-//					for(int row=i+1; row<13;row++) {
-//						// si on rencontre un pion
-//						if(board[row][j] == EMPTY) possibleMoves.add(new Move(i,j,row,j));
-//						else break;
-//					}
-//					// vérifier en haut du pion
-//					for(int row=i-1; row>=0;row--) {
-//						if(board[row][j] == EMPTY) possibleMoves.add(new Move(i,j,row,j));
-//						else break;
-//					}
-//					// vérifier à droite du pion
-//					for(int column=i+1; column<13;column++) {
-//						if(board[i][column] == EMPTY) possibleMoves.add(new Move(i,j,i,column));
-//						else break;
-//					}
-//					// vérifier à gauche du pion
-//					for(int column=i-1; column>=0;column--) {
-//						if(board[i][column] == EMPTY) possibleMoves.add(new Move(i,j,i,column));
-//						else break;
-//					}
-//				}
 			}
 		}
 		return possibleMoves;

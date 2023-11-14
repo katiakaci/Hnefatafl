@@ -29,11 +29,10 @@ public class CPUPlayer {
 	public ArrayList<Move> getNextMoveMinMax(Board board) {
 		this.numExploredNodes=0;
 		this.board=board;
-		ArrayList<Move> moves = board.findPossibleMoves(cpu);
 		ArrayList<Move> bestMoves = new ArrayList<>();
 		int bestScore = Integer.MIN_VALUE;
-//		for (Move nextMove : board.findPossibleMoves(cpu)) {
-		for (Move nextMove : moves) {
+		
+		for (Move nextMove : board.findPossibleMoves(cpu)) {
 			board.play(nextMove.toString(), cpu, false);
 			int score = miniMax(min);
 			board.cancelMove(nextMove); 
