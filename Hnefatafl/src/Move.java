@@ -23,12 +23,9 @@ class Move
 		return conversionNumberToLetterRow.get(colStart)+""+rowStart+"-"+conversionNumberToLetterRow.get(colTarget)+""+rowTarget;
 	}
 	
-	public void ajouterUn()
-	{
+	public void adjustRow() {
 		rowStart++;
-		colStart++;
 		rowTarget++;
-		colTarget++;
 	}
 
 	public int getRowStart(){

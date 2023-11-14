@@ -42,8 +42,7 @@ class Board
 		}
 	}
 
-	// TODO Vérifier cette methode!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
-	// Ajouter coin et trone si cest le roi ligne 60, 65 etc
+	// Ajouter coin et trone si cest le roi ligne 60, 65 etc !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	/**
 	 * Générer les coups possibles pour les noirs, les rouges et le roi
 	 * @return la liste de coups possibles
@@ -76,7 +75,7 @@ class Board
 							else break;
 						}
 					}
-					
+
 				}
 				else {
 					if(board[i][j] == BLACK || board[i][j] == KING) {
@@ -102,7 +101,7 @@ class Board
 							else break;
 						}
 					}
-					
+
 				}
 			}
 		}
@@ -176,52 +175,34 @@ class Board
 			end = move.substring(index).trim();
 		}
 
-		int oldRow = conversionLetterToNumberColumn.get(start.substring(0, 1));
-		int newRow = conversionLetterToNumberColumn.get(end.substring(0, 1));
-		int oldColumn, newColumn;
+		int oldColumn = conversionLetterToNumberColumn.get(start.substring(0, 1));
+		int newColumn = conversionLetterToNumberColumn.get(end.substring(0, 1));
+		int oldRow, newRow;
 		if(fromKeyboard) {
-			oldColumn = Integer. parseInt(start.substring(1))-1;
-			newColumn = Integer. parseInt(end.substring(1))-1;
+			oldRow = Integer. parseInt(start.substring(1))-1;
+			newRow = Integer. parseInt(end.substring(1))-1;
 		}
 		else {
-			oldColumn = Integer. parseInt(start.substring(1));
-			newColumn = Integer. parseInt(end.substring(1));
+			oldRow = Integer. parseInt(start.substring(1));
+			newRow = Integer. parseInt(end.substring(1));
 		}
 
-		//Les lignes et colonnes inverser.
-//		System.out.println(oldRow+" "+ oldColumn+" "+ newRow+" "+ newColumn);
-//		if(isValidMove(oldRow, oldColumn, newRow, newColumn))
-		if(isValidMove(oldColumn,oldRow,newColumn,newRow)) {
+		if(isValidMove(oldRow, oldColumn, newRow, newColumn)) {
 			// Si c'est le roi qui a bougé
-			
-			//clonne et ligne inversé
-//			if(this.board[oldRow][oldColumn] == KING) {
-//				this.board[oldRow][oldColumn] = EMPTY;
-//				this.board[6][6] = THRONE;
-//				this.board[newRow][newColumn] = KING;
-//				this.rowKing = newRow;
-//				this.colKing = newColumn;
-//			}
-			if(this.board[oldColumn][oldRow] == KING) {
-				this.board[oldColumn][oldRow] = EMPTY;
+			if(this.board[oldRow][oldColumn] == KING) {
+				this.board[oldRow][oldColumn] = EMPTY;
 				this.board[6][6] = THRONE;
-				this.board[newColumn][newRow] = KING;
-				this.rowKing = newColumn ;
-				this.colKing = newRow;
+				this.board[newRow][newColumn] = KING;
+				this.rowKing = newRow;
+				this.colKing = newColumn;
 			}
 			else {
-				// colonne et ligne inversé
-//				this.board[oldRow][oldColumn] = EMPTY;
-//				this.board[newRow][newColumn] = player;
-				
-				this.board[oldColumn][oldRow] = EMPTY;
-				this.board[newColumn][newRow] = player;
+				this.board[oldRow][oldColumn] = EMPTY;
+				this.board[newRow][newColumn] = player;
 			}		
 			checkIfPawnEliminated(newRow, newColumn, player);
 		}
 		else System.out.println("Coup invalide");
-		
-		printBoard();
 	}
 
 	public int evaluate(int player) {
@@ -286,7 +267,7 @@ class Board
 		int oldColumn = move.getColStart();
 		int newRow = move.getRowTarget();
 		int newColumn = move.getColTarget();
-		
+
 		int player = this.board[newRow][newColumn];
 
 		// Si c'est le roi qui a bougé
