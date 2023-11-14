@@ -31,7 +31,7 @@ public class CPUPlayer {
 		this.board=board;
 		ArrayList<Move> bestMoves = new ArrayList<>();
 		int bestScore = Integer.MIN_VALUE;
-		
+
 		for (Move nextMove : board.findPossibleMoves(cpu)) {
 			board.play(nextMove.toString(), cpu, false);
 			int score = miniMax(min);
@@ -88,12 +88,13 @@ public class CPUPlayer {
 	 */
 	private int miniMax(int player) {
 		numExploredNodes++;
+		ArrayList<Move> moves = board.findPossibleMoves(player);
+
 		// Si positionActuelle est finale (victoire ou plus de mouvement possible)
-		if (board.evaluate(player) != 0 || board.findPossibleMoves(player).size() == 0) return board.evaluate(cpu);
+		if (board.evaluate(player) != 0 || moves.size() == 0) return board.evaluate(cpu);
+
 		else if (player == max) {
 			int maxScore = Integer.MIN_VALUE;
-			ArrayList<Move> moves = board.findPossibleMoves(player);
-//			for(Move nextMove : board.findPossibleMoves(player)) {
 			for(Move nextMove : moves) {
 				board.play(nextMove.toString(), player, false);
 				int score = miniMax(min);
@@ -102,10 +103,9 @@ public class CPUPlayer {
 			}
 			return maxScore;
 		}
+
 		else {
 			int minScore = Integer.MAX_VALUE;;
-			ArrayList<Move> moves = board.findPossibleMoves(min);
-//			for(Move nextMove : board.findPossibleMoves(player)) {
 			for(Move nextMove : moves) {
 				board.play(nextMove.toString(), player, false);
 				int score = miniMax(max);
@@ -125,14 +125,14 @@ public class CPUPlayer {
 	 */
 	private int miniMaxAlphaBeta(int player, int alpha, int beta) {
 		numExploredNodes++;
+		ArrayList<Move> moves = board.findPossibleMoves(player);
 
 		// Si positionActuelle est finale (victoire ou board plein)
-		if (board.evaluate(player) != 0 || board.findPossibleMoves(player).size()==0) return board.evaluate(cpu);
+		if (board.evaluate(player) != 0 || moves.size()==0) return board.evaluate(cpu);
 
 		else if (player == max) {
 			int val = Integer.MIN_VALUE;
-
-			for(Move nextMove : board.findPossibleMoves(player)) {
+			for(Move nextMove : moves) {
 				board.play(nextMove.toString(), player, false);
 				int score = miniMaxAlphaBeta(min, Math.max(alpha, val), beta);
 				board.cancelMove(nextMove);
@@ -146,7 +146,7 @@ public class CPUPlayer {
 		else {
 			int val = Integer.MAX_VALUE;		
 
-			for(Move nextMove : board.findPossibleMoves(player)) {
+			for(Move nextMove : moves) {
 				board.play(nextMove.toString(), player, false);
 				int score = miniMaxAlphaBeta(max, alpha, Math.min(beta, val));
 				board.cancelMove(nextMove);
