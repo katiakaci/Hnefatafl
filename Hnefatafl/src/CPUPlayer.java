@@ -29,9 +29,11 @@ public class CPUPlayer {
 	public ArrayList<Move> getNextMoveMinMax(Board board) {
 		this.numExploredNodes=0;
 		this.board=board;
+		ArrayList<Move> moves = board.findPossibleMoves(cpu);
 		ArrayList<Move> bestMoves = new ArrayList<>();
 		int bestScore = Integer.MIN_VALUE;
-		for (Move nextMove : board.findPossibleMoves(cpu)) {
+//		for (Move nextMove : board.findPossibleMoves(cpu)) {
+		for (Move nextMove : moves) {
 			board.play(nextMove.toString(), cpu, false);
 			int score = miniMax(min);
 			board.cancelMove(nextMove); 
@@ -91,7 +93,9 @@ public class CPUPlayer {
 		if (board.evaluate(player) != 0 || board.findPossibleMoves(player).size() == 0) return board.evaluate(cpu);
 		else if (player == max) {
 			int maxScore = Integer.MIN_VALUE;
-			for(Move nextMove : board.findPossibleMoves(player)) {
+			ArrayList<Move> moves = board.findPossibleMoves(player);
+//			for(Move nextMove : board.findPossibleMoves(player)) {
+			for(Move nextMove : moves) {
 				board.play(nextMove.toString(), player, false);
 				int score = miniMax(min);
 				maxScore = Math.max(maxScore, score);
@@ -101,7 +105,9 @@ public class CPUPlayer {
 		}
 		else {
 			int minScore = Integer.MAX_VALUE;;
-			for(Move nextMove : board.findPossibleMoves(player)) {
+			ArrayList<Move> moves = board.findPossibleMoves(min);
+//			for(Move nextMove : board.findPossibleMoves(player)) {
+			for(Move nextMove : moves) {
 				board.play(nextMove.toString(), player, false);
 				int score = miniMax(max);
 				minScore = Math.min(minScore, score);
