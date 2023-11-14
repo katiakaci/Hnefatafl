@@ -9,7 +9,7 @@ class Client {
 	static BufferedOutputStream output;
 	static BufferedReader console;
 	static Socket MyClient;
-	static int aiPlayer, opponent;
+	static int aiPlayer, opponent; 
 	static final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5;
 
 	public static void main(String[] args) {
@@ -42,18 +42,15 @@ class Client {
 		board = new Board(s);
 		aiPlayer = RED;
 		opponent = BLACK;
-		
 		cpu = new CPUPlayer(aiPlayer);
 
 		System.out.print("Nouvelle partie! Vous jouer rouge, entrez votre premier coup : ");
-//		String move = console.readLine();
-//		board.play(move, aiPlayer, true);
-		String move = cpu.getNextMoveMinMax(board, aiPlayer).get(0).toString();
+		//		String move = console.readLine();
+		//		board.play(move, aiPlayer, true);
+		String move = cpu.getNextMoveMinMax(board).get(0).toString();
 		board.printBoard();
 
 		output.write(move.getBytes(),0,move.length());
-
-//		output.write(move.getBytes(),0,move.length());
 		output.flush();
 	}
 
@@ -67,6 +64,7 @@ class Client {
 		board = new Board(s);
 		aiPlayer = BLACK;
 		opponent = RED;
+		cpu = new CPUPlayer(aiPlayer);
 	}
 
 	private static void nextMove() throws IOException {

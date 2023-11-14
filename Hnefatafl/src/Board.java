@@ -247,12 +247,6 @@ class Board
 		return draw;
 	}
 
-	// TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	public boolean boardIsFull() {
-		
-		return false;
-	}
-
 	private boolean isKingTrapped() {
 		// Il y a un mur à un des quatre côtés
 		if(rowKing == 0) {
@@ -321,13 +315,6 @@ class Board
 		eliminatedPawns.clear();
 	}
 
-	/**
-	 * Élimine le pion adverse si le mouvement effectué par le joueur permet de l'encadrer
-	 * @param player
-	 * @param opponent
-	 * @param newRow
-	 * @param newColumn
-	 */
 	private void  checkIfPawnEliminated(int newRow, int newColumn, int player) {
 		// CENTRE
 		if(newRow < 11 && newColumn < 11 && newRow > 1 && newColumn > 1) checkRowAndColumn(true, true, true, true, newRow, newColumn, player);	
