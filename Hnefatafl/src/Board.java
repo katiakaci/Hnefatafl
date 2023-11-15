@@ -75,7 +75,6 @@ class Board
 							else break;
 						}
 					}
-
 				}
 				else {
 					if(board[i][j] == BLACK || board[i][j] == KING) {
@@ -157,7 +156,7 @@ class Board
 	 * @param move
 	 * @param mark
 	 */
-	public void play(String move, int player, boolean fromKeyboard) {
+	public void play(String move, int player) {
 		move = move.trim().toUpperCase();
 		String start, end;
 
@@ -177,15 +176,8 @@ class Board
 
 		int oldColumn = conversionLetterToNumberColumn.get(start.substring(0, 1));
 		int newColumn = conversionLetterToNumberColumn.get(end.substring(0, 1));
-		int oldRow, newRow;
-		if(fromKeyboard) {
-			oldRow = Integer. parseInt(start.substring(1))-1;
-			newRow = Integer. parseInt(end.substring(1))-1;
-		}
-		else {
-			oldRow = Integer. parseInt(start.substring(1));
-			newRow = Integer. parseInt(end.substring(1));
-		}
+		int oldRow = Integer. parseInt(start.substring(1))-1;
+		int newRow = Integer. parseInt(end.substring(1))-1;
 
 		if(isValidMove(oldRow, oldColumn, newRow, newColumn)) {
 			// Si c'est le roi qui a bougé
@@ -262,6 +254,7 @@ class Board
 		return (board[0][0] == KING || board[0][12] == KING || board[12][0] == KING || board[12][12] == KING);
 	}
 
+	// VÉRIFIERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	public void cancelMove(Move move) {	
 		int oldRow = move.getRowStart();
 		int oldColumn = move.getColStart();
@@ -282,6 +275,8 @@ class Board
 			this.board[oldRow][oldColumn] = player;
 			this.board[newRow][newColumn] = EMPTY;
 		}
+
+		// PAS BONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11!!
 		// Remettre les pions tués
 		for(String pawn: eliminatedPawns) {
 			this.board[Integer.parseInt(pawn.substring(1))][conversionLetterToNumberColumn.get(pawn.substring(0, 1))] = opponentOfPlayer(player);
