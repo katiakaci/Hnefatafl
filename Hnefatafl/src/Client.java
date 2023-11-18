@@ -50,7 +50,7 @@ class Client {
 		System.out.print("Nouvelle partie! Vous jouer rouge, votre premier coup est : "+move.toString());
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0,move.length());
-		
+
 		board.printBoard();
 		output.flush();
 	}
@@ -72,7 +72,7 @@ class Client {
 		byte[] aBuffer = new byte[16];
 		int size = input.available();
 		// System.out.println("size :" + size);
-		
+
 		// Ordinateur joue :
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer);
@@ -88,7 +88,7 @@ class Client {
 		board.play(move, aiPlayer);
 		board.printBoard();
 		output.write(move.getBytes(),0,move.length());
-		
+
 		board.printBoard();
 		output.flush();
 	}

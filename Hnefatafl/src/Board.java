@@ -184,7 +184,7 @@ class Board implements Cloneable
 			start = positions[0].trim();
 			end = positions[1].trim();
 		}
-		// Format D6D7
+		// Format D6D7 (TODO à enlever qd le ai sera fait pcq on recoit tjrs le 1e format)
 		else {
 			int indexOfSecondLetter = 1;
 			while (indexOfSecondLetter < move.length() && !Character.isLetter(move.charAt(indexOfSecondLetter))) {
@@ -216,7 +216,7 @@ class Board implements Cloneable
 
 			verifyPawnsElimination(newRow, newColumn, player);
 		}
-		else System.out.println("Coup invalide");
+		else System.out.println("Coup invalide: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
 	}
 
 	/**
@@ -225,15 +225,12 @@ class Board implements Cloneable
 	 * @return 100 si le joueur gagne, -100 s'il perd, et 0 s'il n'y a aucun gagnant
 	 */
 	public int evaluate(int player) {
-		int victory = 100;
-		int defeat = -100;
-		int draw = 0;
-
+		int victory = 100, defeat = -100, draw = 0;
 		if(player == RED) {
 			if(isKingTrapped()) return victory;
 			else if(isKingInCorner()) return defeat;
 		}
-		else if(player == BLACK) {
+		else {
 			if(isKingTrapped()) return defeat;
 			else if(isKingInCorner()) return victory;
 		}
@@ -357,7 +354,7 @@ class Board implements Cloneable
 	}
 
 	/**
-	 * Vérifie s'il y a un pion adverse en haut, en bas, à droite et/ou à gauche du pion joué et l'élimine si c'est le cas
+	 * Vérifie s'il y a un pion adverse en haut, en bas, à droite et/ou à gauche du pion joué et l'élimine si c'est le cas.
 	 * Le pion tué est ajouté à la liste des pions mangées
 	 * @param up
 	 * @param down

@@ -36,27 +36,12 @@ class Move
 		return colStart;
 	}
 
-	public void setRowStart(int r){
-		rowStart = r;
-	}
-
-	public void setColStart(int c){
-		colStart = c;
-	}
-
 	public int getRowTarget() {
 		return rowTarget;
-	}
-
-	public void setRowTarget(int rowTarget) {
-		this.rowTarget = rowTarget;
 	}
 
 	public int getColTarget() {
 		return colTarget;
 	}
 
-	public void setColTarget(int colTarget) {
-		this.colTarget = colTarget;
-	}
 }
