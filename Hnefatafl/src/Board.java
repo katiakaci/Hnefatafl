@@ -216,7 +216,7 @@ class Board implements Cloneable
 
 			verifyPawnsElimination(newRow, newColumn, player);
 		}
-		else System.out.println("Coup invalide: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
+//		else System.out.println("Coup invalide: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
 	}
 
 	/**
@@ -288,9 +288,9 @@ class Board implements Cloneable
 	 * @param move
 	 */
 	public void cancelMove(Move move) {	
-		int oldRow = move.getRowStart();
+		int oldRow = move.getRowStart()-1;
 		int oldColumn = move.getColStart();
-		int newRow = move.getRowTarget();
+		int newRow = move.getRowTarget()-1;
 		int newColumn = move.getColTarget();
 
 		int player = this.board[newRow][newColumn];

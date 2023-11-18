@@ -7,7 +7,7 @@ public class CPUPlayer {
 	//	private Board boardClone;
 	private int cpu, max, min;
 	private final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5, THRONE = 6;
-	private final int DEPTH = 4;
+	private final int DEPTH = 2;
 
 	public CPUPlayer(int cpu){
 		this.cpu = cpu;
@@ -34,12 +34,11 @@ public class CPUPlayer {
 		System.out.println("nb de possible moves pour les "+cpu+": "+possibleMoves.size());
 
 		for (Move nextMove : possibleMoves) {
-			System.out.println("move: "+nextMove.toString());
 			//			boardClone = (Board) board.clone(); // cloner à chaque itération
 			//			boardClone.play(nextMove.toString(), cpu);
-
 			board.play(nextMove.toString(), cpu);
 			int score = miniMax(min, DEPTH);
+			System.out.println(score);
 			//			this.depth=0;
 			board.cancelMove(nextMove); 
 
@@ -49,7 +48,6 @@ public class CPUPlayer {
 				bestScore = score;
 			}
 			else if(score == bestScore) bestMoves.add(nextMove);
-			//			i++;
 		}	
 		return bestMoves;
 	}
@@ -97,7 +95,7 @@ public class CPUPlayer {
 	private int miniMax(int player, int depth) {
 		numExploredNodes++;
 
-		System.out.println("depth: "+depth);
+//		System.out.println("depth: "+depth);
 		if(depth == 0) return board.evaluate(cpu);
 
 		ArrayList<Move> moves = board.findPossibleMoves(player);
@@ -113,6 +111,13 @@ public class CPUPlayer {
 				board.cancelMove(nextMove);
 				//				boardClone.cancelMove(nextMove);
 			}
+//			for(int i=0;i<moves.size();i++) {
+//				board.play(moves.get(i).toString(), player);
+//				int score = miniMax(min, depth - 1);
+//				maxScore = Math.max(maxScore, score);
+//				board.cancelMove(moves.get(i));
+//				//				boardClone.cancelMove(nextMove);
+//			}
 			return maxScore;
 		}
 
@@ -125,6 +130,13 @@ public class CPUPlayer {
 				board.cancelMove(nextMove);
 				//				boardClone.cancelMove(nextMove);
 			}
+//			for(int i=0;i<moves.size();i++) {
+//				board.play(moves.get(i).toString(), player);
+//				int score = miniMax(max, depth - 1);
+//				minScore = Math.min(minScore, score);
+//				board.cancelMove(moves.get(i));
+//				//				boardClone.cancelMove(nextMove);
+//			}
 			return minScore;
 		}
 	}
