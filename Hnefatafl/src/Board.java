@@ -215,6 +215,8 @@ class Board implements Cloneable
 			}	
 
 			verifyPawnsElimination(newRow, newColumn, player);
+			System.out.println("Coup joué: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
+			System.out.println("eliminatedPawns size : "+eliminatedPawns.size());
 		}
 //		else System.out.println("Coup invalide: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
 	}
