@@ -51,25 +51,25 @@ class Board implements Cloneable
 	public ArrayList<Move> findPossibleMoves(int player) {
 		ArrayList<Move> possibleMoves = new ArrayList<>();
 
-		for(int i=0; i<board.length; i++) {
-			for(int j=0; j<board[i].length; j++) {
+		for(int i = 0; i < board.length; i++) {
+			for(int j = 0; j < board[i].length; j++) {
 
 				// Si on a un player rouge, on cherche pour tous les pions rouges du board s'ils ont des cases vides aux alentours
 				if(player == RED && board[i][j] == RED) {
 					// vérifier en bas du pion
-					for(int row=i+1; row<13;row++) {
+					for(int row = i + 1; row < 13; row++) {
 						if(board[row][j] == EMPTY) possibleMoves.add(new Move(i,j,row,j));
 						else if(board[row][j] == THRONE) continue; // un pion peut sauter par desssus le throne
 						else break; // on quitte la boucle si un pion nous bloque le chemin
 					}
 					// vérifier en haut du pion
-					for(int row=i-1; row>=0;row--) {
+					for(int row = i - 1; row >= 0; row--) {
 						if(board[row][j] == EMPTY) possibleMoves.add(new Move(i,j,row,j));
 						else if(board[row][j] == THRONE) continue;
 						else break;
 					}
 					// vérifier à droite du pion
-					for(int column=j+1; column<13;column++) {
+					for(int column = j + 1; column < 13; column++) {
 						if(board[i][column] == EMPTY) possibleMoves.add(new Move(i,j,i,column));
 						else if(board[i][column] == THRONE) continue;
 						else break;
@@ -218,7 +218,7 @@ class Board implements Cloneable
 			System.out.println("Coup joué: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
 			System.out.println("eliminatedPawns size : "+eliminatedPawns.size());
 		}
-//		else System.out.println("Coup invalide: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
+		else System.out.println("Coup invalide: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
 	}
 
 	/**
@@ -402,12 +402,14 @@ class Board implements Cloneable
 		return player == RED ? BLACK : RED; 
 	}
 
-	public void printPossibleMoves(int player) {
+	private void printPossibleMoves(int player) {
+		String color = (player == BLACK? "NOIRS" : "ROUGES");
 		String possiblesMoves= "";
 		for(Move m : findPossibleMoves(player)) {
-			possiblesMoves+=conversionNumberToLetterColumn.get(m.getRowStart())+""+m.getColStart()+"-"+conversionNumberToLetterColumn.get(m.getRowTarget())+""+m.getColTarget()+" / ";
+			possiblesMoves+=m.toString()+" / ";
 		}
-		System.out.println("Coups possibles pour "+player+": "+possiblesMoves);
+		System.out.println("Coups possibles pour les "+color+": "+possiblesMoves);
+		System.out.println("Nombre de coups possibles pour les "+color+": "+findPossibleMoves(player).size());
 	}
 
 	public void printBoard() {
@@ -421,6 +423,8 @@ class Board implements Cloneable
 		}
 		System.out.println("_____________________________________________");
 		System.out.println("       A  B  C  D  E  F  G  H  I  J  K  L  M\n");
+		printPossibleMoves(RED);
+		printPossibleMoves(BLACK);
 	}
 
 	public int[][] getBoard() {

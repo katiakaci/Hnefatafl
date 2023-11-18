@@ -38,8 +38,9 @@ public class CPUPlayer {
 			//			boardClone.play(nextMove.toString(), cpu);
 			board.play(nextMove.toString(), cpu);
 			int score = miniMax(min, DEPTH);
-			System.out.println(score);
-			//			this.depth=0;
+
+			System.out.println("score: "+score);
+
 			board.cancelMove(nextMove); 
 
 			if(score > bestScore) {
@@ -59,8 +60,8 @@ public class CPUPlayer {
 	 * @return
 	 */
 	public ArrayList<Move> getNextMoveAB(Board board){
-		this.numExploredNodes=0;
-		this.board=board;
+		this.numExploredNodes = 0;
+		this.board = board;
 
 		ArrayList<Move> bestMoves = new ArrayList<>();
 		int bestScore = Integer.MIN_VALUE;
@@ -68,7 +69,6 @@ public class CPUPlayer {
 		int beta = Integer.MAX_VALUE;
 
 		ArrayList<Move> possibleMoves = board.findPossibleMoves(cpu);
-
 		for (Move nextMove : possibleMoves) {
 			board.play(nextMove.toString(), cpu);
 			int score = miniMaxAlphaBeta(min, alpha, beta, DEPTH);
@@ -95,11 +95,12 @@ public class CPUPlayer {
 	private int miniMax(int player, int depth) {
 		numExploredNodes++;
 
-//		System.out.println("depth: "+depth);
+		System.out.println("depth: "+depth);
 		if(depth == 0) return board.evaluate(cpu);
 
 		ArrayList<Move> moves = board.findPossibleMoves(player);
 		System.out.println("nb de possible moves pour les "+player+": "+moves.size());
+
 		// Si positionActuelle est finale (victoire ou plus de mouvement possible)
 		if (board.evaluate(player) != 0 || moves.size() == 0) return board.evaluate(cpu);
 
@@ -112,13 +113,6 @@ public class CPUPlayer {
 				board.cancelMove(nextMove);
 				//				boardClone.cancelMove(nextMove);
 			}
-//			for(int i=0;i<moves.size();i++) {
-//				board.play(moves.get(i).toString(), player);
-//				int score = miniMax(min, depth - 1);
-//				maxScore = Math.max(maxScore, score);
-//				board.cancelMove(moves.get(i));
-//				//				boardClone.cancelMove(nextMove);
-//			}
 			return maxScore;
 		}
 
@@ -131,13 +125,6 @@ public class CPUPlayer {
 				board.cancelMove(nextMove);
 				//				boardClone.cancelMove(nextMove);
 			}
-//			for(int i=0;i<moves.size();i++) {
-//				board.play(moves.get(i).toString(), player);
-//				int score = miniMax(max, depth - 1);
-//				minScore = Math.min(minScore, score);
-//				board.cancelMove(moves.get(i));
-//				//				boardClone.cancelMove(nextMove);
-//			}
 			return minScore;
 		}
 	}

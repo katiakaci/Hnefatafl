@@ -11,6 +11,7 @@ class Client {
 	static Socket MyClient;
 	static int aiPlayer, opponent; 
 	static final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5;
+	static String colorAI, colorOpponent;
 
 	public static void main(String[] args) {
 		try {
@@ -43,11 +44,14 @@ class Client {
 		aiPlayer = RED;
 		opponent = BLACK;
 		cpu = new CPUPlayer(aiPlayer);
+		colorAI = "ROUGES";
+		colorOpponent = "NOIRS";
 
-		//		System.out.print("Nouvelle partie! Vous jouer rouge, entrez votre premier coup : ");
-		//		String move = console.readLine();
-		String move = cpu.getNextMoveMinMax(board).get(0).toString();
-		System.out.print("Nouvelle partie! Vous jouer rouge, votre premier coup est : "+move.toString());
+		board.printBoard();
+		System.out.print("Nouvelle partie! Vous jouer rouge, entrez votre premier coup : ");
+		String move = console.readLine();
+		// String move = cpu.getNextMoveMinMax(board).get(0).toString();
+		// System.out.print("Nouvelle partie! Vous jouer rouge, votre premier coup est : "+move.toString());
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0,move.length());
 
@@ -65,6 +69,8 @@ class Client {
 		board = new Board(s);
 		aiPlayer = BLACK;
 		opponent = RED;
+		colorAI = "NOIRS";
+		colorOpponent = "ROUGES";
 		cpu = new CPUPlayer(aiPlayer);
 	}
 
@@ -76,20 +82,19 @@ class Client {
 		// Ordinateur joue :
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer);
-		System.out.println("Dernier coup :"+ s);
+		System.out.println("Dernier coup pour les "+colorOpponent+":"+ s);
 		board.play(s, opponent);
 		board.printBoard();
 
 		// AI (réseau) joue :
-		// System.out.print("Entrez votre coup : ");
+		// System.out.print("\n"+colorAI+" Entrez votre coup : ");
 		// String move = console.readLine();
 		String move = cpu.getNextMoveMinMax(board).get(0).toString();
-		System.out.print("Tour du ai, coup joué est : "+move.toString());
+		System.out.print("Tour du ai "+colorAI+", coup joué est : "+move);
 		board.play(move, aiPlayer);
-		board.printBoard();
 		output.write(move.getBytes(),0,move.length());
-
 		board.printBoard();
+
 		output.flush();
 	}
 
