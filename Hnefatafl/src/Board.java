@@ -7,6 +7,7 @@ class Board implements Cloneable
 	private int rowKing, colKing;
 	private Map<Integer, String> conversionNumberToLetterColumn = new HashMap<>();
 	private Map<String, Integer> conversionLetterToNumberColumn = new HashMap<>();
+	private Map<Integer, Integer> conversionLetterToNumberRow = new HashMap<>(), conversionNumberToLetterRow = new HashMap<>();
 	private ArrayList<String> eliminatedPawns = new ArrayList<>();
 
 	/**
@@ -37,9 +38,15 @@ class Board implements Cloneable
 
 		// Créer deux maps permettant de convertir une lettre en indice de tableau et vice-versa
 		char[] rows = "ABCDEFGHIJKLM".toCharArray();
-		for(int i=0; i<rows.length;i++) {
+		for(int i = 0; i < rows.length; i++) {
 			conversionNumberToLetterColumn.put(i, String.valueOf(rows[i]));
 			conversionLetterToNumberColumn.put(String.valueOf(rows[i]), i);
+		}
+		for(int i = 1; i <= 13; i++) {
+			conversionLetterToNumberRow.put(i, i-1);
+		}
+		for(int i = 0; i <= 12; i++) {
+			conversionNumberToLetterRow.put(i, i+1);
 		}
 	}
 
@@ -196,8 +203,8 @@ class Board implements Cloneable
 
 		int oldColumn = conversionLetterToNumberColumn.get(start.substring(0, 1));
 		int newColumn = conversionLetterToNumberColumn.get(end.substring(0, 1));
-		int oldRow = Integer.parseInt(start.substring(1))-1;
-		int newRow = Integer.parseInt(end.substring(1))-1;
+		int oldRow = conversionLetterToNumberRow.get(Integer.parseInt(start.substring(1)));
+		int newRow = conversionLetterToNumberRow.get(Integer.parseInt(end.substring(1)));
 
 		// TODO Condition isValidMove à enlever quand le ai sera terminé pcq ca sera tjrs valide normalement!!!!!!!!!
 		if(isValidMove(oldRow, oldColumn, newRow, newColumn)) {
@@ -216,7 +223,7 @@ class Board implements Cloneable
 
 			verifyPawnsElimination(newRow, newColumn, player);
 			System.out.println("Coup joué: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
-			System.out.println("eliminatedPawns size : "+eliminatedPawns.size());
+			//			System.out.println("eliminatedPawns size : "+eliminatedPawns.size());
 		}
 		else System.out.println("Coup invalide: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
 	}
@@ -290,9 +297,9 @@ class Board implements Cloneable
 	 * @param move
 	 */
 	public void cancelMove(Move move) {	
-		int oldRow = move.getRowStart()-1;
+		int oldRow = move.getRowStart();
 		int oldColumn = move.getColStart();
-		int newRow = move.getRowTarget()-1;
+		int newRow = move.getRowTarget();
 		int newColumn = move.getColTarget();
 
 		int player = this.board[newRow][newColumn];
@@ -312,8 +319,8 @@ class Board implements Cloneable
 
 		// TODO verifier ca!!!!!!!!!
 		// Remettre les pions tués
-		for(String pawn: eliminatedPawns) {
-			int rowOfPawn = Integer.parseInt(pawn.substring(1));
+		for(String pawn: eliminatedPawns) {			
+			int rowOfPawn = conversionLetterToNumberRow.get(Integer.parseInt(pawn.substring(1)));
 			int columnOfPawn = conversionLetterToNumberColumn.get(pawn.substring(0, 1));
 			this.board[rowOfPawn][columnOfPawn] = opponentOfPlayer(player);
 		}
@@ -371,29 +378,33 @@ class Board implements Cloneable
 		if(up) {
 			if(board[newRow-1][newColumn] == opponent && (board[newRow-2][newColumn] == player || board[newRow-2][newColumn] == CORNER || (newRow-2==THRONE && newColumn==THRONE) )) {
 				board[newRow-1][newColumn] = EMPTY;
-				eliminatedPawns.add(conversionNumberToLetterColumn.get(newColumn)+""+(newRow-1));
-				System.out.println("Pion "+opponent+" éliminé à la position: ["+(newRow-1)+", "+newColumn+"]");
+				String position = conversionNumberToLetterColumn.get(newColumn)+""+conversionNumberToLetterRow.get(newRow-1);
+				eliminatedPawns.add(position);
+				System.out.println("Pion "+opponent+" éliminé à la position "+position+" donc ["+(newRow-1)+", "+newColumn+"]");
 			}
 		}
 		if(down) {
 			if(board[newRow+1][newColumn] == opponent && (board[newRow+2][newColumn] == player || board[newRow+2][newColumn] == CORNER || (newRow+2==THRONE && newColumn==THRONE) )) {
 				board[newRow+1][newColumn] = EMPTY;
-				eliminatedPawns.add(conversionNumberToLetterColumn.get(newColumn)+""+(newRow+1));
-				System.out.println("Pion "+opponent+" éliminé à la position: ["+(newRow+1)+", "+newColumn+"]");
+				String position = conversionNumberToLetterColumn.get(newColumn)+""+conversionNumberToLetterRow.get(newRow+1);
+				eliminatedPawns.add(position);
+				System.out.println("Pion "+opponent+" éliminé à la position: "+position+" donc ["+(newRow+1)+", "+newColumn+"]");
 			}
 		}
 		if(right) {
 			if(board[newRow][newColumn+1] == opponent && (board[newRow][newColumn+2] == player || board[newRow][newColumn+2] == CORNER || (newRow==THRONE && newColumn+2==THRONE) )) {
 				board[newRow][newColumn+1] = EMPTY;
-				eliminatedPawns.add(conversionNumberToLetterColumn.get(newColumn+1)+""+newRow);
-				System.out.println("Pion "+opponent+" éliminé à la position: ["+newRow+", "+(newColumn+1)+"]");
+				String position = conversionNumberToLetterColumn.get(newColumn+1)+""+conversionNumberToLetterRow.get(newRow);
+				eliminatedPawns.add(position);
+				System.out.println("Pion "+opponent+" éliminé à la position: "+position+" donc ["+newRow+", "+(newColumn+1)+"]");
 			}
 		}
 		if(left) {
 			if(board[newRow][newColumn-1] == opponent && (board[newRow][newColumn-2] == player || board[newRow][newColumn-2] == CORNER || (newRow==THRONE && newColumn-2==THRONE) )) {
 				board[newRow][newColumn-1] = EMPTY;
-				eliminatedPawns.add(conversionNumberToLetterColumn.get(newColumn-1)+""+newRow);
-				System.out.println("Pion "+opponent+" éliminé à la position: ["+newRow+", "+(newColumn-1)+"]");
+				String position = conversionNumberToLetterColumn.get(newColumn-1)+""+conversionNumberToLetterRow.get(newRow);
+				eliminatedPawns.add(position);
+				System.out.println("Pion "+opponent+" éliminé à la position: "+position+" donc ["+newRow+", "+(newColumn-1)+"]");
 			}
 		}
 	}

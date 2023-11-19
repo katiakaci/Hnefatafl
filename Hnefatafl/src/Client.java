@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 class Client {
 
@@ -48,10 +49,11 @@ class Client {
 		colorOpponent = "NOIRS";
 
 		board.printBoard();
-		System.out.print("Nouvelle partie! Vous jouer rouge, entrez votre premier coup : ");
-		String move = console.readLine();
-		// String move = cpu.getNextMoveMinMax(board).get(0).toString();
-		// System.out.print("Nouvelle partie! Vous jouer rouge, votre premier coup est : "+move.toString());
+//		System.out.print("Nouvelle partie! Vous jouer rouge, entrez votre premier coup : ");
+//		String move = console.readLine();
+		int randomIndex = (int)Math.floor(Math.random() * (155 - 0 + 1) + 0);
+		String move = cpu.getNextMoveAB(board).get(randomIndex).toString();
+		System.out.print("Nouvelle partie! Vous jouer rouge, votre premier coup est : "+move.toString());
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0,move.length());
 
@@ -89,7 +91,9 @@ class Client {
 		// AI (réseau) joue :
 		// System.out.print("\n"+colorAI+" Entrez votre coup : ");
 		// String move = console.readLine();
-		String move = cpu.getNextMoveMinMax(board).get(0).toString();
+		ArrayList<Move> moves = cpu.getNextMoveAB(board);
+		int randomIndex = (int)Math.floor(Math.random() * (moves.size()-1 - 0 + 1) + 0);
+		String move = moves.get(randomIndex).toString();
 		System.out.print("Tour du ai "+colorAI+", coup joué est : "+move);
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0,move.length());

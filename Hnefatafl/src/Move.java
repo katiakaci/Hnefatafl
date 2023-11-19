@@ -23,9 +23,9 @@ class Move
 		for(int i=0; i<rows.length;i++) {
 			conversionNumberToLetterRow.put(i, String.valueOf(rows[i]));
 		}
-		rowStart++;
-		rowTarget++;
-		return conversionNumberToLetterRow.get(colStart)+""+rowStart+"-"+conversionNumberToLetterRow.get(colTarget)+""+rowTarget;
+		int rowStartPlusOne = rowStart + 1;
+		int rowTargetPlusOne = rowTarget + 1;
+		return conversionNumberToLetterRow.get(colStart)+""+rowStartPlusOne+"-"+conversionNumberToLetterRow.get(colTarget)+""+rowTargetPlusOne;
 	}
 
 	public int getRowStart(){
