@@ -42,12 +42,8 @@ class Board implements Cloneable
 			conversionNumberToLetterColumn.put(i, String.valueOf(rows[i]));
 			conversionLetterToNumberColumn.put(String.valueOf(rows[i]), i);
 		}
-		for(int i = 1; i <= 13; i++) {
-			conversionLetterToNumberRow.put(i, i-1);
-		}
-		for(int i = 0; i <= 12; i++) {
-			conversionNumberToLetterRow.put(i, i+1);
-		}
+		for(int i = 1; i <= 13; i++) conversionLetterToNumberRow.put(i, i-1);
+		for(int i = 0; i <= 12; i++) conversionNumberToLetterRow.put(i, i+1);
 	}
 
 	/**
@@ -191,7 +187,7 @@ class Board implements Cloneable
 			start = positions[0].trim();
 			end = positions[1].trim();
 		}
-		// Format D6D7 (TODO à enlever qd le ai sera fait pcq on recoit tjrs le 1e format)
+		// Format D6D7
 		else {
 			int indexOfSecondLetter = 1;
 			while (indexOfSecondLetter < move.length() && !Character.isLetter(move.charAt(indexOfSecondLetter))) {
@@ -428,7 +424,12 @@ class Board implements Cloneable
 		for (int x = 0; x < 13; x++) {
 			System.out.print(String.format("%3d", 0 + x) + " |");
 			for (int y = 0; y < 13; y++) {
-				System.out.print("  " + board[y][x]);
+				if(board[y][x]==RED) System.out.print("  R");
+				else if(board[y][x] == BLACK) System.out.print("  N");
+				else if(board[y][x] == KING) System.out.print("  K");
+				else if(board[y][x] == CORNER) System.out.print("  C");
+				else if(board[y][x] == THRONE) System.out.print("  T");
+				else System.out.print("  " + board[y][x]);
 			}
 			System.out.println();
 		}
