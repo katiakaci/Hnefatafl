@@ -11,8 +11,8 @@ class Client {
 	static BufferedReader console;
 	static Socket MyClient;
 	static int aiPlayer, opponent; 
-	static final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5;
 	static String colorAI, colorOpponent;
+	static final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5;
 
 	public static void main(String[] args) {
 		try {
@@ -48,15 +48,10 @@ class Client {
 		colorAI = "ROUGES";
 		colorOpponent = "NOIRS";
 
-		board.printBoard();
-//		System.out.print("Nouvelle partie! Vous jouer rouge, entrez votre premier coup : ");
-//		String move = console.readLine();
-		int randomIndex = (int)Math.floor(Math.random() * (155 - 0 + 1) + 0);
-		String move = cpu.getNextMoveAB(board).get(randomIndex).toString();
-		System.out.print("Nouvelle partie! Vous jouer rouge, votre premier coup est : "+move.toString());
+		board.printBoard();		
+		String move = playWithAlphaBeta();
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0,move.length());
-
 		board.printBoard();
 		output.flush();
 	}
@@ -77,34 +72,27 @@ class Client {
 	}
 
 	private static void nextMove() throws IOException {
+		// Ordinateur joue :
 		byte[] aBuffer = new byte[16];
 		int size = input.available();
-		// System.out.println("size :" + size);
-
-		// Ordinateur joue :
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer);
 		System.out.println("Dernier coup pour les "+colorOpponent+":"+ s);
 		board.play(s, opponent);
 		board.printBoard();
 
-		// AI (réseau) joue :
-		// System.out.print("\n"+colorAI+" Entrez votre coup : ");
-		// String move = console.readLine();
-		ArrayList<Move> moves = cpu.getNextMoveAB(board);
-		int randomIndex = (int)Math.floor(Math.random() * (moves.size()-1 - 0 + 1) + 0);
-		String move = moves.get(randomIndex).toString();
-		System.out.print("Tour du ai "+colorAI+", coup joué est : "+move);
+		// AI (réseau) joue :	
+		String move = playWithAlphaBeta();
 		board.play(move, aiPlayer);
-		output.write(move.getBytes(),0,move.length());
+		output.write(move.getBytes(),0, move.length());
 		board.printBoard();
 
 		output.flush();
 	}
 
 	private static void invalidMove() throws IOException {
-		System.out.print("Coup invalide, entrez un nouveau coup : ");
-		String move = console.readLine();
+		System.out.print("Coup invalide");
+		String move = playManually();
 		board.play(move, aiPlayer);
 		board.printBoard();
 		output.write(move.getBytes(),0,move.length());
@@ -120,6 +108,28 @@ class Client {
 		String move = console.readLine();
 		output.write(move.getBytes(),0,move.length());
 		output.flush();
+	}
+
+
+	private static String playManually() throws IOException {
+		System.out.print("Tour des "+colorAI+". Entrez votre coup : ");
+		return console.readLine();  
+	}
+
+	private static String playWithMinMax() {
+		ArrayList<Move> moves = cpu.getNextMoveMinMax(board);
+		int randomIndex = (int)Math.floor(Math.random() * moves.size());
+		String move = moves.get(randomIndex).toString();
+		System.out.print("Tour du ai "+colorAI+", coup joué est : "+move);
+		return move;
+	}
+
+	private static String playWithAlphaBeta() {
+		ArrayList<Move> moves = cpu.getNextMoveAB(board);
+		int randomIndex = (int)Math.floor(Math.random() * moves.size());
+		String move = moves.get(randomIndex).toString();
+		System.out.print("Tour du ai "+colorAI+", coup joué est : "+move);
+		return move;
 	}
 
 }
