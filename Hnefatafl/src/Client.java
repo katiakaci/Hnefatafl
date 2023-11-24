@@ -110,7 +110,6 @@ class Client {
 		output.flush();
 	}
 
-
 	private static String playManually() throws IOException {
 		System.out.print("Tour des "+colorAI+". Entrez votre coup : ");
 		return console.readLine();  
@@ -120,7 +119,7 @@ class Client {
 		ArrayList<Move> moves = cpu.getNextMoveMinMax(board);
 		int randomIndex = (int)Math.floor(Math.random() * moves.size());
 		String move = moves.get(randomIndex).toString();
-		System.out.print("Tour du ai "+colorAI+", coup joué est : "+move);
+		System.out.println("Tour du ai "+colorAI+", coup joué est : "+move);
 		return move;
 	}
 
@@ -128,7 +127,7 @@ class Client {
 		ArrayList<Move> moves = cpu.getNextMoveAB(board);
 		int randomIndex = (int)Math.floor(Math.random() * moves.size());
 		String move = moves.get(randomIndex).toString();
-		System.out.print("Tour du ai "+colorAI+", coup joué est : "+move);
+		System.out.println("Tour du ai "+colorAI+", coup joué est : "+move);
 		return move;
 	}
 

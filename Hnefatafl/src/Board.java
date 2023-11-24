@@ -1,6 +1,6 @@
 import java.util.*;
 
-class Board implements Cloneable
+class Board
 {
 	private final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5, THRONE = 6;
 	private int[][] board;
@@ -8,7 +8,6 @@ class Board implements Cloneable
 	private Map<Integer, String> conversionNumberToLetterColumn = new HashMap<>();
 	private Map<String, Integer> conversionLetterToNumberColumn = new HashMap<>();
 	private Map<Integer, Integer> conversionLetterToNumberRow = new HashMap<>(), conversionNumberToLetterRow = new HashMap<>();
-	private ArrayList<String> eliminatedPawns = new ArrayList<>();
 
 	/**
 	 * Initialise le plateau de la console
@@ -42,7 +41,8 @@ class Board implements Cloneable
 			conversionNumberToLetterColumn.put(i, String.valueOf(rows[i]));
 			conversionLetterToNumberColumn.put(String.valueOf(rows[i]), i);
 		}
-		for(int i = 1; i <= 13; i++) conversionLetterToNumberRow.put(i, i-1);
+		for(int i = 1; i <= 13; i++) 
+			conversionLetterToNumberRow.put(i, i-1);
 		for(int i = 0; i <= 12; i++) conversionNumberToLetterRow.put(i, i+1);
 	}
 
@@ -155,7 +155,8 @@ class Board implements Cloneable
 				for (int i = oldColumn + 1; i <= newColumn; i++) {
 					if (board[oldRow][i] > 1 && board[oldRow][i] < 6) return false;
 				}
-			} else {
+			} 
+			else {
 				for (int i = newColumn; i < oldColumn; i++) {
 					if (board[oldRow][i] > 1 && board[oldRow][i] < 6) return false;
 				}
@@ -168,7 +169,8 @@ class Board implements Cloneable
 				for (int i = oldRow + 1; i <= newRow; i++) {
 					if (board[i][oldColumn] > 1) return false;
 				}
-			} else {
+			} 
+			else {
 				for (int i = newRow; i < oldRow; i++) {
 					if (board[i][oldColumn] > 1) return false;
 				}
@@ -218,10 +220,9 @@ class Board implements Cloneable
 			}	
 
 			verifyPawnsElimination(newRow, newColumn, player);
-			System.out.println("Coup joué: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
-			//			System.out.println("eliminatedPawns size : "+eliminatedPawns.size());
+			//			System.out.println("Coup joué: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
 		}
-		else System.out.println("Coup invalide: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
+		//		else System.out.println("Coup invalide: "+oldRow+" "+oldColumn+" - "+newRow+" "+newColumn);
 	}
 
 	/**
@@ -234,12 +235,29 @@ class Board implements Cloneable
 		if(player == RED) {
 			if(isKingTrapped()) return victory;
 			else if(isKingInCorner()) return defeat;
+			//  TODO Ajouter des points quand le move tue des pions adverses ou perd un de ses propres pions
+			//			else numberOfKilledPawns(player);
 		}
 		else {
 			if(isKingTrapped()) return defeat;
 			else if(isKingInCorner()) return victory;
 		}
+//		int numberOfBlackKilledPawns = numberOfKilledPawns(BLACK);
+//		int numberOfRedKilledPawns = numberOfKilledPawns(BLACK);
+
 		return draw;
+	}
+
+	private int numberOfKilledPawns(int player) {
+		int numberOfPawnsOnBoard = 0;
+		for(int i=0; i < board.length; i++){
+			for(int j=0; j < board[i].length; j++){
+				if(board[i][j] == player) numberOfPawnsOnBoard++;
+			}
+		}
+		int numberOfPawnsInitially = (player == BLACK) ? 12: 24;
+		int numberOfKilledPawns = numberOfPawnsInitially - numberOfPawnsOnBoard;
+		return numberOfKilledPawns;
 	}
 
 	/**
@@ -289,47 +307,12 @@ class Board implements Cloneable
 	}
 
 	/**
-	 * Annule le mouvement recu et restore les pions tués par ce mouvement
-	 * @param move
-	 */
-	public void cancelMove(Move move) {	
-		int oldRow = move.getRowStart();
-		int oldColumn = move.getColStart();
-		int newRow = move.getRowTarget();
-		int newColumn = move.getColTarget();
-
-		int player = this.board[newRow][newColumn];
-
-		// Si c'est le roi qui a bougé
-		if(player == KING) {
-			this.board[newRow][newColumn] = EMPTY;
-			this.board[6][6] = THRONE;
-			this.board[oldRow][oldColumn] = KING;
-			this.rowKing = oldRow;
-			this.colKing = oldColumn;
-		}
-		else {
-			this.board[oldRow][oldColumn] = player;
-			this.board[newRow][newColumn] = EMPTY;
-		}
-
-		// TODO verifier ca!!!!!!!!!
-		// Remettre les pions tués
-		for(String pawn: eliminatedPawns) {			
-			int rowOfPawn = conversionLetterToNumberRow.get(Integer.parseInt(pawn.substring(1)));
-			int columnOfPawn = conversionLetterToNumberColumn.get(pawn.substring(0, 1));
-			this.board[rowOfPawn][columnOfPawn] = opponentOfPlayer(player);
-		}
-		eliminatedPawns.clear();
-	}
-
-	/**
 	 * Selon la position du pion joué, vérifie s'il y a un pion adverse aux alentours
 	 * @param newRow rangée du pion joué
 	 * @param newColumn colonne du pion joué
 	 * @param player joueur ayant effectué le mouvement
 	 */
-	private void  verifyPawnsElimination(int newRow, int newColumn, int player) {
+	private void verifyPawnsElimination(int newRow, int newColumn, int player) {
 		// CENTRE
 		if(newRow < 11 && newColumn < 11 && newRow > 1 && newColumn > 1) checkRowAndColumn(true, true, true, true, newRow, newColumn, player);	
 
@@ -360,7 +343,6 @@ class Board implements Cloneable
 
 	/**
 	 * Vérifie s'il y a un pion adverse en haut, en bas, à droite et/ou à gauche du pion joué et l'élimine si c'est le cas.
-	 * Le pion tué est ajouté à la liste des pions mangées
 	 * @param up
 	 * @param down
 	 * @param right
@@ -375,32 +357,28 @@ class Board implements Cloneable
 			if(board[newRow-1][newColumn] == opponent && (board[newRow-2][newColumn] == player || board[newRow-2][newColumn] == CORNER || (newRow-2==THRONE && newColumn==THRONE) )) {
 				board[newRow-1][newColumn] = EMPTY;
 				String position = conversionNumberToLetterColumn.get(newColumn)+""+conversionNumberToLetterRow.get(newRow-1);
-				eliminatedPawns.add(position);
-				System.out.println("Pion "+opponent+" éliminé à la position "+position+" donc ["+(newRow-1)+", "+newColumn+"]");
+				System.out.println("Pion "+opponent+" éliminé à la position "+position);
 			}
 		}
 		if(down) {
 			if(board[newRow+1][newColumn] == opponent && (board[newRow+2][newColumn] == player || board[newRow+2][newColumn] == CORNER || (newRow+2==THRONE && newColumn==THRONE) )) {
 				board[newRow+1][newColumn] = EMPTY;
 				String position = conversionNumberToLetterColumn.get(newColumn)+""+conversionNumberToLetterRow.get(newRow+1);
-				eliminatedPawns.add(position);
-				System.out.println("Pion "+opponent+" éliminé à la position: "+position+" donc ["+(newRow+1)+", "+newColumn+"]");
+				System.out.println("Pion "+opponent+" éliminé à la position "+position);
 			}
 		}
 		if(right) {
 			if(board[newRow][newColumn+1] == opponent && (board[newRow][newColumn+2] == player || board[newRow][newColumn+2] == CORNER || (newRow==THRONE && newColumn+2==THRONE) )) {
 				board[newRow][newColumn+1] = EMPTY;
 				String position = conversionNumberToLetterColumn.get(newColumn+1)+""+conversionNumberToLetterRow.get(newRow);
-				eliminatedPawns.add(position);
-				System.out.println("Pion "+opponent+" éliminé à la position: "+position+" donc ["+newRow+", "+(newColumn+1)+"]");
+				System.out.println("Pion "+opponent+" éliminé à la position "+position);
 			}
 		}
 		if(left) {
 			if(board[newRow][newColumn-1] == opponent && (board[newRow][newColumn-2] == player || board[newRow][newColumn-2] == CORNER || (newRow==THRONE && newColumn-2==THRONE) )) {
 				board[newRow][newColumn-1] = EMPTY;
 				String position = conversionNumberToLetterColumn.get(newColumn-1)+""+conversionNumberToLetterRow.get(newRow);
-				eliminatedPawns.add(position);
-				System.out.println("Pion "+opponent+" éliminé à la position: "+position+" donc ["+newRow+", "+(newColumn-1)+"]");
+				System.out.println("Pion "+opponent+" éliminé à la position "+position);
 			}
 		}
 	}
@@ -409,49 +387,60 @@ class Board implements Cloneable
 		return player == RED ? BLACK : RED; 
 	}
 
-	private void printPossibleMoves(int player) {
-		String color = (player == BLACK? "NOIRS" : "ROUGES");
-		String possiblesMoves= "";
-		for(Move m : findPossibleMoves(player)) {
-			possiblesMoves+=m.toString()+" / ";
-		}
-		System.out.println("Coups possibles pour les "+color+": "+possiblesMoves);
-		System.out.println("Nombre de coups possibles pour les "+color+": "+findPossibleMoves(player).size());
-	}
-
 	public void printBoard() {
-		System.out.println();
-		for (int x = 0; x < 13; x++) {
-			System.out.print(String.format("%3d", 0 + x) + " |");
-			for (int y = 0; y < 13; y++) {
-				if(board[y][x]==RED) System.out.print("  R");
-				else if(board[y][x] == BLACK) System.out.print("  N");
-				else if(board[y][x] == KING) System.out.print("  K");
-				else if(board[y][x] == CORNER) System.out.print("  C");
-				else if(board[y][x] == THRONE) System.out.print("  T");
-				else System.out.print("  " + board[y][x]);
-			}
-			System.out.println();
-		}
-		System.out.println("_____________________________________________");
-		System.out.println("       A  B  C  D  E  F  G  H  I  J  K  L  M\n");
-		printPossibleMoves(RED);
-		printPossibleMoves(BLACK);
+		String board = Arrays.deepToString(this.board).replace("], ", "]\n").replace("[[", "[").replace("]]", "]");
+		board = board.replace('2', 'N').replace('4', 'R').replace('1', 'C').replace('5', 'K').replace('6', 'T');
+		System.out.println("\n"+board);
+		//		String possiblesMovesBlack= "";
+		//		for(Move m : findPossibleMoves(BLACK)) possiblesMovesBlack += m.toString()+" / ";
+		//		System.out.println("Coups possibles pour les NOIRS: "+possiblesMovesBlack);
+		//		System.out.println("Nombre de coups possibles pour les NOIRS: "+findPossibleMoves(BLACK).size());
+
+		//		String possiblesMoves= "";
+		//		for(Move m : findPossibleMoves(RED)) {
+		//			possiblesMoves+=m.toString()+" / ";
+		//		}
+		//		System.out.println("Coups possibles pour les ROUGES: "+possiblesMoves);
+		//		System.out.println("Nombre de coups possibles pour les ROUGES: "+findPossibleMoves(RED).size());
 	}
 
 	public int[][] getBoard() {
 		return board;
 	}
 
-	@Override
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
+
+	/**
+	 * Annule le mouvement recu et restore les pions tués par ce mouvement
+	 * @param move
+	 */
+//	public void cancelMove(Move move, ArrayList<String> eliminatedPawns) {	
+//		int oldRow = move.getRowStart();
+//		int oldColumn = move.getColStart();
+//		int newRow = move.getRowTarget();
+//		int newColumn = move.getColTarget();
+//
+//		int player = this.board[newRow][newColumn];
+//
+//		// Si c'est le roi qui a bougé
+//		if(player == KING) {
+//			this.board[newRow][newColumn] = EMPTY;
+//			this.board[6][6] = THRONE;
+//			this.board[oldRow][oldColumn] = KING;
+//			this.rowKing = oldRow;
+//			this.colKing = oldColumn;
+//		}
+//		else {
+//			this.board[oldRow][oldColumn] = player;
+//			this.board[newRow][newColumn] = EMPTY;
+//		}
+//
+//		// TODO verifier ca!!!!!!!!!
+//		// Remettre les pions tués
+//		for(String pawn: eliminatedPawns) {			
+//			int rowOfPawn = conversionLetterToNumberRow.get(Integer.parseInt(pawn.substring(1)));
+//			int columnOfPawn = conversionLetterToNumberColumn.get(pawn.substring(0, 1));
+//			this.board[rowOfPawn][columnOfPawn] = opponentOfPlayer(player);
+//		}
+//	}
 
 }
