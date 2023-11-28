@@ -2,7 +2,6 @@ import java.util.ArrayList;
 
 public class CPUPlayer {
 
-	private int numExploredNodes;
 	private int cpu, max, min;
 	private final int BLACK = 2, RED = 4;
 	private final int DEPTH = 3;
@@ -13,26 +12,20 @@ public class CPUPlayer {
 		this.min = (cpu == RED? BLACK : RED);
 	}
 
-	public int  getNumOfExploredNodes(){
-		return numExploredNodes;
-	}
-
 	/**
 	 * Retourne la liste des meilleurs coups possibles avec l'algorithme miniMax
 	 * @param board
-	 * @return les meilleurs coups possibles
+	 * @return ArrayList des meilleurs coups possibles
 	 */
 	public ArrayList<Move> getNextMoveMinMax(Board board) {
-		this.numExploredNodes = 0;
 		int bestScore = Integer.MIN_VALUE;
 		ArrayList<Move> bestMoves = new ArrayList<>();
 		ArrayList<Move> possibleMoves = board.findPossibleMoves(cpu);
 
 		for (Move nextMove : possibleMoves) {
-			Board boardCopy = cloneBoard(board); // cloner à chaque itération
+			Board boardCopy = cloneBoard(board);
 			boardCopy.play(nextMove.toString(), cpu);
 			int score = miniMax(min, DEPTH, boardCopy);
-			System.out.println("score: "+score);
 
 			if(score > bestScore) {
 				bestMoves.clear(); 
@@ -49,8 +42,7 @@ public class CPUPlayer {
 	 * @param board
 	 * @return
 	 */
-	public ArrayList<Move> getNextMoveAB(Board board){
-		this.numExploredNodes = 0;
+	public ArrayList<Move> getNextMoveAB(Board board) {
 		int bestScore = Integer.MIN_VALUE;
 		int alpha = Integer.MIN_VALUE;
 		int beta = Integer.MAX_VALUE;
@@ -58,7 +50,7 @@ public class CPUPlayer {
 		ArrayList<Move> possibleMoves = board.findPossibleMoves(cpu);
 
 		for (Move nextMove : possibleMoves) {
-			Board boardCopy = cloneBoard(board); // cloner à chaque itération
+			Board boardCopy = cloneBoard(board);
 			boardCopy.play(nextMove.toString(), cpu);
 			int score = miniMaxAlphaBeta(min, alpha, beta, DEPTH, boardCopy);
 
@@ -68,7 +60,6 @@ public class CPUPlayer {
 				bestScore = score;
 			}
 			else if(score==bestScore) bestMoves.add(nextMove);
-
 			alpha = Math.max(alpha, bestScore);
 			if (beta <= alpha) break;
 		}	
@@ -80,18 +71,17 @@ public class CPUPlayer {
 	 * @param player
 	 * @param depth
 	 * @param board
-	 * @return
+	 * @return score
 	 */
 	private int miniMax(int player, int depth, Board board) {
-		numExploredNodes++;
 		if(depth == 0) return board.evaluate(cpu);
 
-		// Si positionActuelle est finale (victoire ou plus de mouvement possible)
-		ArrayList<Move> moves = board.findPossibleMoves(player);
+		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
 		int evaluation =  board.evaluate(cpu);
-		if (evaluation != 0 || moves.size() == 0) return evaluation;
+		if (evaluation == 100 || evaluation == -100 || board.getNumberOfPawnsOnBoardFor(player) == 0 || board.getNumberOfPawnsOnBoardFor(getOpponentOf(player)) == 0) return evaluation;
 
-		else if (player == max) {
+		ArrayList<Move> moves = board.findPossibleMoves(player);
+		if (player == max) {
 			int maxScore = Integer.MIN_VALUE;
 			for(Move nextMove : moves) {
 				Board boardCopy = cloneBoard(board);
@@ -101,7 +91,6 @@ public class CPUPlayer {
 			}
 			return maxScore;
 		}
-
 		else {
 			int minScore = Integer.MAX_VALUE;;
 			for(Move nextMove : moves) {
@@ -121,24 +110,22 @@ public class CPUPlayer {
 	 * @param beta
 	 * @param depth
 	 * @param board
-	 * @return
+	 * @return score
 	 */
 	private int miniMaxAlphaBeta(int player, int alpha, int beta, int depth, Board board) {
-		numExploredNodes++;
 		if(depth == 0) return board.evaluate(cpu);
 
-		// Si positionActuelle est finale (victoire ou board plein)
-		ArrayList<Move> moves = board.findPossibleMoves(player);
+		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
 		int evaluation =  board.evaluate(cpu);
-		if (evaluation == 100 || evaluation == -100 || moves.size()== 0) return evaluation;
+		if (evaluation == 100 || evaluation == -100 || board.getNumberOfPawnsOnBoardFor(player) == 0 || board.getNumberOfPawnsOnBoardFor(getOpponentOf(player)) == 0) return evaluation;
 
-		else if (player == max) {
+		ArrayList<Move> moves = board.findPossibleMoves(player);
+		if (player == max) {
 			int val = Integer.MIN_VALUE;
 			for(Move nextMove : moves) {
 				Board boardCopy = cloneBoard(board);
 				boardCopy.play(nextMove.toString(), player);
 				int score = miniMaxAlphaBeta(min, Math.max(alpha, val), beta, depth - 1, boardCopy);
-
 				val = Math.max(val, score);
 				if(val>=beta) return val;
 			}
@@ -150,7 +137,6 @@ public class CPUPlayer {
 				Board boardCopy = cloneBoard(board);
 				boardCopy.play(nextMove.toString(), player);
 				int score = miniMaxAlphaBeta(max, alpha, Math.min(beta, val), depth - 1, boardCopy);
-
 				val = Math.min(val, score);
 				if(val<=alpha) return val;
 			}
@@ -170,4 +156,7 @@ public class CPUPlayer {
 		return copyBoard;
 	}
 
+	private int getOpponentOf(int player) {
+		return player == RED ? BLACK : RED; 
+	}
 }

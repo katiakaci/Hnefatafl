@@ -206,16 +206,30 @@ class Board
 		return draw;
 	}
 
-	private int numberOfKilledPawns(int player) {
+	/**
+	 * Trouve le nombre de pions morts du joueur recu
+	 * @param player
+	 * @return le nombre de pions tués
+	 */
+	private int getNumberOfKilledPawns(int player) {
+		int numberOfPawnsInitially = (player == BLACK) ? 12: 24;
+		int numberOfKilledPawns = numberOfPawnsInitially - getNumberOfPawnsOnBoardFor(player);
+		return numberOfKilledPawns;
+	}
+
+	/**
+	 * Trouve le nombre de pions vivants du joueur recu
+	 * @param player
+	 * @return le nombre de pions sur le board
+	 */
+	public int getNumberOfPawnsOnBoardFor(int player) {
 		int numberOfPawnsOnBoard = 0;
 		for(int i=0; i < board.length; i++){
 			for(int j=0; j < board[i].length; j++){
 				if(board[i][j] == player) numberOfPawnsOnBoard++;
 			}
 		}
-		int numberOfPawnsInitially = (player == BLACK) ? 12: 24;
-		int numberOfKilledPawns = numberOfPawnsInitially - numberOfPawnsOnBoard;
-		return numberOfKilledPawns;
+		return numberOfPawnsOnBoard;
 	}
 
 	/**
@@ -260,6 +274,10 @@ class Board
 		return false;
 	}
 
+	/**
+	 * Vérifie si le roi est dans un des quatre coins
+	 * @return true si le roi est dans un coin, false sinon
+	 */
 	private boolean isKingInCorner() {
 		return (board[0][0] == KING || board[0][12] == KING || board[12][0] == KING || board[12][12] == KING);
 	}
@@ -312,31 +330,31 @@ class Board
 	private void checkRowAndColumn(boolean up, boolean down, boolean right, boolean left, int newRow, int newColumn, int player) {	
 		if(player == RED) {	
 			if(up) {
-				if(board[newRow-1][newColumn] == BLACK && (board[newRow-2][newColumn] == player || board[newRow-2][newColumn] == CORNER || (newRow-2==THRONE && newColumn==THRONE) )) {
+				if(board[newRow-1][newColumn] == BLACK && (board[newRow-2][newColumn] == player || board[newRow-2][newColumn] == CORNER || (newRow-2 == THRONE && newColumn == THRONE) )) {
 					board[newRow-1][newColumn] = EMPTY;
 					String position = conversionNumberToLetterColumn.get(newColumn)+""+conversionNumberToLetterRow.get(newRow-1);
-					//					System.out.println("Pion "+BLACK+" éliminé à la position "+position);
+					//					System.out.println("Pion noir éliminé à la position "+position);
 				}
 			}
 			if(down) {
-				if(board[newRow+1][newColumn] == BLACK && (board[newRow+2][newColumn] == player || board[newRow+2][newColumn] == CORNER || (newRow+2==THRONE && newColumn==THRONE) )) {
+				if(board[newRow+1][newColumn] == BLACK && (board[newRow+2][newColumn] == player || board[newRow+2][newColumn] == CORNER || (newRow+2 == THRONE && newColumn == THRONE) )) {
 					board[newRow+1][newColumn] = EMPTY;
 					String position = conversionNumberToLetterColumn.get(newColumn)+""+conversionNumberToLetterRow.get(newRow+1);
-					//					System.out.println("Pion "+BLACK+" éliminé à la position "+position);
+					//					System.out.println("Pion noir éliminé à la position "+position);
 				}
 			}
 			if(right) {
-				if(board[newRow][newColumn+1] == BLACK && (board[newRow][newColumn+2] == player || board[newRow][newColumn+2] == CORNER || (newRow==THRONE && newColumn+2==THRONE) )) {
+				if(board[newRow][newColumn+1] == BLACK && (board[newRow][newColumn+2] == player || board[newRow][newColumn+2] == CORNER || (newRow == THRONE && newColumn+2 == THRONE) )) {
 					board[newRow][newColumn+1] = EMPTY;
 					String position = conversionNumberToLetterColumn.get(newColumn+1)+""+conversionNumberToLetterRow.get(newRow);
-					//					System.out.println("Pion "+BLACK+" éliminé à la position "+position);
+					//					System.out.println("Pion noir éliminé à la position "+position);
 				}
 			}
 			if(left) {
-				if(board[newRow][newColumn-1] == BLACK && (board[newRow][newColumn-2] == player || board[newRow][newColumn-2] == CORNER || (newRow==THRONE && newColumn-2==THRONE) )) {
+				if(board[newRow][newColumn-1] == BLACK && (board[newRow][newColumn-2] == player || board[newRow][newColumn-2] == CORNER || (newRow == THRONE && newColumn-2 == THRONE) )) {
 					board[newRow][newColumn-1] = EMPTY;
 					String position = conversionNumberToLetterColumn.get(newColumn-1)+""+conversionNumberToLetterRow.get(newRow);
-					//					System.out.println("Pion "+BLACK+" éliminé à la position "+position);
+					//					System.out.println("Pion noir éliminé à la position "+position);
 				}
 			}
 		}
@@ -345,28 +363,28 @@ class Board
 				if(board[newRow-1][newColumn] == RED && (board[newRow-2][newColumn] == player || board[newRow-2][newColumn] == KING || board[newRow-2][newColumn] == CORNER || (newRow-2==THRONE && newColumn==THRONE) )) {
 					board[newRow-1][newColumn] = EMPTY;
 					String position = conversionNumberToLetterColumn.get(newColumn)+""+conversionNumberToLetterRow.get(newRow-1);
-					//					System.out.println("Pion "+RED+" éliminé à la position "+position);
+					//					System.out.println("Pion rouge éliminé à la position "+position);
 				}
 			}
 			if(down) {
 				if(board[newRow+1][newColumn] == RED && (board[newRow+2][newColumn] == player || board[newRow+2][newColumn] == KING || board[newRow+2][newColumn] == CORNER || (newRow+2==THRONE && newColumn==THRONE) )) {
 					board[newRow+1][newColumn] = EMPTY;
 					String position = conversionNumberToLetterColumn.get(newColumn)+""+conversionNumberToLetterRow.get(newRow+1);
-					//					System.out.println("Pion "+RED+" éliminé à la position "+position);
+					//					System.out.println("Pion rouge éliminé à la position "+position);
 				}
 			}
 			if(right) {
 				if(board[newRow][newColumn+1] == RED && (board[newRow][newColumn+2] == player || board[newRow][newColumn+2] == KING || board[newRow][newColumn+2] == CORNER || (newRow==THRONE && newColumn+2==THRONE) )) {
 					board[newRow][newColumn+1] = EMPTY;
 					String position = conversionNumberToLetterColumn.get(newColumn+1)+""+conversionNumberToLetterRow.get(newRow);
-					//					System.out.println("Pion "+RED+" éliminé à la position "+position);
+					//					System.out.println("Pion rouge éliminé à la position "+position);
 				}
 			}
 			if(left) {
 				if(board[newRow][newColumn-1] == RED && (board[newRow][newColumn-2] == player || board[newRow][newColumn-2] == KING || board[newRow][newColumn-2] == CORNER || (newRow==THRONE && newColumn-2==THRONE) )) {
 					board[newRow][newColumn-1] = EMPTY;
 					String position = conversionNumberToLetterColumn.get(newColumn-1)+""+conversionNumberToLetterRow.get(newRow);
-					//					System.out.println("Pion "+RED+" éliminé à la position "+position);
+					//					System.out.println("Pion rouge éliminé à la position "+position);
 				}
 			}
 		}
