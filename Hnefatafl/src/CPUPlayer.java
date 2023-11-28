@@ -78,7 +78,7 @@ public class CPUPlayer {
 
 		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
 		int evaluation =  board.evaluate(cpu);
-		if (evaluation == 100 || evaluation == -100 || board.getNumberOfPawnsOnBoardFor(player) == 0 || board.getNumberOfPawnsOnBoardFor(getOpponentOf(player)) == 0) return evaluation;
+		if (evaluation == 100 || evaluation == -100 || board.getNumberOfPawnsOnBoardFor(RED) == 0 || board.getNumberOfPawnsOnBoardFor(BLACK) == 0) return evaluation;
 
 		ArrayList<Move> moves = board.findPossibleMoves(player);
 		if (player == max) {
@@ -117,7 +117,7 @@ public class CPUPlayer {
 
 		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
 		int evaluation =  board.evaluate(cpu);
-		if (evaluation == 100 || evaluation == -100 || board.getNumberOfPawnsOnBoardFor(player) == 0 || board.getNumberOfPawnsOnBoardFor(getOpponentOf(player)) == 0) return evaluation;
+		if (evaluation == 100 || evaluation == -100 || board.getNumberOfPawnsOnBoardFor(RED) == 0 || board.getNumberOfPawnsOnBoardFor(BLACK) == 0) return evaluation;
 
 		ArrayList<Move> moves = board.findPossibleMoves(player);
 		if (player == max) {
@@ -156,7 +156,4 @@ public class CPUPlayer {
 		return copyBoard;
 	}
 
-	private int getOpponentOf(int player) {
-		return player == RED ? BLACK : RED; 
-	}
 }
