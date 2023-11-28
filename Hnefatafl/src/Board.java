@@ -41,8 +41,7 @@ class Board
 			conversionNumberToLetterColumn.put(i, String.valueOf(rows[i]));
 			conversionLetterToNumberColumn.put(String.valueOf(rows[i]), i);
 		}
-		for(int i = 1; i <= 13; i++) 
-			conversionLetterToNumberRow.put(i, i-1);
+		for(int i = 1; i <= 13; i++) conversionLetterToNumberRow.put(i, i-1);
 		for(int i = 0; i <= 12; i++) conversionNumberToLetterRow.put(i, i+1);
 	}
 
@@ -56,7 +55,6 @@ class Board
 
 		for(int i = 0; i < board.length; i++) {
 			for(int j = 0; j < board[i].length; j++) {
-
 				// Si on a un player rouge, on cherche pour tous les pions rouges du board s'ils ont des cases vides aux alentours
 				if(player == RED && board[i][j] == RED) {
 					// vérifier en bas du pion
@@ -130,13 +128,6 @@ class Board
 				}		 
 			}
 		}
-
-		//		for(Move move: possibleMoves) {
-		//			if(!isValidMove(move.getRowStart(), move.getColStart(), move,))
-		//		}
-
-
-
 		return possibleMoves;
 	}
 
@@ -166,7 +157,12 @@ class Board
 
 		// Si c'est le roi qui a bougé
 		if(this.board[oldRow][oldColumn] == KING) {
+//			System.out.println("On joue le roi "); // TODO ON REVIENT ICIIIIIIIIIIIIIIIIIIIIIIIIIII
 			this.board[oldRow][oldColumn] = EMPTY;
+			this.board[0][0] = CORNER;
+			this.board[0][12] = CORNER;
+			this.board[12][0] = CORNER;
+			this.board[12][12] = CORNER;
 			this.board[6][6] = THRONE;
 			this.board[newRow][newColumn] = KING;
 			this.rowKing = newRow;
@@ -182,21 +178,21 @@ class Board
 	/**
 	 * Vérifie s'il y a un gagnant
 	 * @param player
-	 * @return 100 si le joueur gagne, -100 s'il perd, 1 si pion adverse tué, -1 si pion joueur tué, 0 sinon
+	 * @return 100 si le joueur gagne, -100 s'il perd, 1, 2 3 si pion adverse tué, -1, -2, -3 si pion joueur tué, 0 sinon
 	 */
 	public int evaluate(int player) {
 		int victory = 100, defeat = -100, draw = 0;
 
 		if(player == RED) {
+			if(isKingInCorner()) return defeat;
 			if(isKingTrapped()) return victory;
-			else if(isKingInCorner()) return defeat;
 			//  TODO Ajouter des points quand le move tue des pions adverses ou perd un de ses propres pions
 			// else encadrer le roi
 			//			else numberOfKilledPawns(player);
 		}
-		else {
+		else {			
+			if(isKingInCorner()) return victory;
 			if(isKingTrapped()) return defeat;
-			else if(isKingInCorner()) return victory;
 			//			else // regarder qd le roi est proche du trone
 			// else pion
 		}
@@ -270,7 +266,6 @@ class Board
 					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
 				return true;
 		}
-
 		return false;
 	}
 
@@ -279,7 +274,11 @@ class Board
 	 * @return true si le roi est dans un coin, false sinon
 	 */
 	private boolean isKingInCorner() {
-		return (board[0][0] == KING || board[0][12] == KING || board[12][0] == KING || board[12][12] == KING);
+		return (this.getColKing() == 0 && this.getRowKing() == 0) 
+				|| (this.getColKing() == 0 && this.getRowKing() == 12) 
+				|| (this.getColKing() == 12 && this.getRowKing() == 0)
+				|| (this.getColKing() == 12 && this.getRowKing() == 12);
+		 //		return (board[0][0] == KING || board[0][12] == KING || board[12][0] == KING || board[12][12] == KING);
 	}
 
 	/**
@@ -394,21 +393,31 @@ class Board
 		String board = Arrays.deepToString(this.board).replace("], ", "]\n").replace("[[", "[").replace("]]", "]");
 		board = board.replace('2', 'N').replace('4', 'R').replace('1', 'C').replace('5', 'K').replace('6', 'T');
 		System.out.println("\n"+board);
-		//		String possiblesMovesBlack= "";
-		//		for(Move m : findPossibleMoves(BLACK)) possiblesMovesBlack += m.toString()+" / ";
-		//		System.out.println("Coups possibles pour les NOIRS: "+possiblesMovesBlack);
-		//		System.out.println("Nombre de coups possibles pour les NOIRS: "+findPossibleMoves(BLACK).size());
 
-		//		String possiblesMoves= "";
-		//		for(Move m : findPossibleMoves(RED)) {
-		//			possiblesMoves+=m.toString()+" / ";
-		//		}
-		//		System.out.println("Coups possibles pour les ROUGES: "+possiblesMoves);
-		//		System.out.println("Nombre de coups possibles pour les ROUGES: "+findPossibleMoves(RED).size());
+	}
+	
+	public void printPossibleMoves() {
+		// NOIR
+		String possiblesMovesBlack= "";
+		for(Move m : findPossibleMoves(BLACK)) possiblesMovesBlack += m.toString()+" / ";
+		System.out.println("\nCoups possibles pour les NOIRS: "+possiblesMovesBlack);
+		System.out.println("Nombre de coups possibles pour les NOIRS: "+findPossibleMoves(BLACK).size());
+
+		// ROUGE 
+//		String possiblesMoves= "";
+//		for(Move m : findPossibleMoves(RED)) possiblesMoves+=m.toString()+" / ";
+//		System.out.println("Coups possibles pour les ROUGES: "+possiblesMoves);
+//		System.out.println("Nombre de coups possibles pour les ROUGES: "+findPossibleMoves(RED).size());
 	}
 
 	public int[][] getBoard() {
 		return board;
+	}
+	public int getRowKing() {
+		return rowKing;
+	}
+	public int getColKing() {
+		return colKing;
 	}
 
 }

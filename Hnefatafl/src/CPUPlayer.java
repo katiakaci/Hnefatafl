@@ -54,6 +54,7 @@ public class CPUPlayer {
 			boardCopy.play(nextMove.toString(), cpu);
 			int score = miniMaxAlphaBeta(min, alpha, beta, DEPTH, boardCopy);
 
+//			System.out.println("score "+score);
 			if(score > bestScore) {
 				bestMoves.clear(); 
 				bestMoves.add(nextMove);
@@ -117,6 +118,7 @@ public class CPUPlayer {
 
 		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
 		int evaluation =  board.evaluate(cpu);
+//		System.out.println("evaluation: "+evaluation);
 		if (evaluation == 100 || evaluation == -100 || board.getNumberOfPawnsOnBoardFor(RED) == 0 || board.getNumberOfPawnsOnBoardFor(BLACK) == 0) return evaluation;
 
 		ArrayList<Move> moves = board.findPossibleMoves(player);

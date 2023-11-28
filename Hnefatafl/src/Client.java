@@ -48,11 +48,11 @@ class Client {
 		colorAI = "ROUGES";
 		colorOpponent = "NOIRS";
 
-		board.printBoard();		
+//		board.printBoard();		
 		String move = playWithAlphaBeta();
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0,move.length());
-		board.printBoard();
+//		board.printBoard();
 		output.flush();
 	}
 
@@ -79,14 +79,16 @@ class Client {
 		String s = new String(aBuffer);
 		System.out.println("Dernier coup pour les "+colorOpponent+":"+ s);
 		board.play(s, opponent);
-		board.printBoard();
 
+//		board.printBoard();
 		// AI (réseau) joue :	
 		String move = playWithAlphaBeta();
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0, move.length());
-		board.printBoard();
 
+//		board.printBoard();
+//		System.out.println("COLONNE du roi:  "+board.getColKing()+" - ROW du roi:  "+board.getRowKing());
+//		board.printPossibleMoves();
 		output.flush();
 	}
 
