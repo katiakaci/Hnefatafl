@@ -38,36 +38,6 @@ public class CPUPlayer {
 	}
 
 	/**
-	 * Retourne la liste des meilleurs coups possibles avec l'algorithme alpha beta
-	 * @param board
-	 * @return
-	 */
-	public ArrayList<Move> getNextMoveAB(Board board) {
-		int bestScore = Integer.MIN_VALUE;
-		int alpha = Integer.MIN_VALUE;
-		int beta = Integer.MAX_VALUE;
-		ArrayList<Move> bestMoves = new ArrayList<>();
-		ArrayList<Move> possibleMoves = board.findPossibleMoves(cpu);
-
-		for (Move nextMove : possibleMoves) {
-			Board boardCopy = cloneBoard(board);
-			boardCopy.play(nextMove.toString(), cpu);
-			int score = miniMaxAlphaBeta(min, alpha, beta, DEPTH, boardCopy);
-
-//			System.out.println("score "+score);
-			if(score > bestScore) {
-				bestMoves.clear(); 
-				bestMoves.add(nextMove);
-				bestScore = score;
-			}
-			else if(score==bestScore) bestMoves.add(nextMove);
-			alpha = Math.max(alpha, bestScore);
-			if (beta <= alpha) break;
-		}	
-		return bestMoves;
-	}
-
-	/**
 	 * Algorithme MiniMax
 	 * @param player
 	 * @param depth
@@ -75,10 +45,10 @@ public class CPUPlayer {
 	 * @return score
 	 */
 	private int miniMax(int player, int depth, Board board) {
-		if(depth == 0) return board.evaluate(cpu);
+		if(depth == 0) return board.evaluate(cpu, depth);
 
 		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
-		int evaluation =  board.evaluate(cpu);
+		int evaluation =  board.evaluate(cpu, depth);
 		if (evaluation == 100 || evaluation == -100 || board.getNumberOfPawnsOnBoardFor(RED) == 0 || board.getNumberOfPawnsOnBoardFor(BLACK) == 0) return evaluation;
 
 		ArrayList<Move> moves = board.findPossibleMoves(player);
@@ -105,6 +75,46 @@ public class CPUPlayer {
 	}
 
 	/**
+	 * Retourne la liste des meilleurs coups possibles avec l'algorithme alpha beta
+	 * @param board
+	 * @return
+	 */
+	public ArrayList<Move> getNextMoveAB(Board board) {
+		int bestScore = Integer.MIN_VALUE;
+		int alpha = Integer.MIN_VALUE;
+		int beta = Integer.MAX_VALUE;
+		ArrayList<Move> bestMoves = new ArrayList<>();
+		ArrayList<Move> possibleMoves = board.findPossibleMoves(cpu);
+
+		for (Move nextMove : possibleMoves) {
+			if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsWinner(nextMove)) {
+				bestMoves.clear();
+				bestMoves.add(nextMove);
+				return bestMoves;
+			}
+			if(cpu == RED && board.canMoveTrapKing(nextMove)) {
+				bestMoves.clear();
+				bestMoves.add(nextMove);
+				return bestMoves;
+			}
+
+			Board boardCopy = cloneBoard(board);
+			boardCopy.play(nextMove.toString(), cpu);
+			int score = miniMaxAlphaBeta(min, alpha, beta, DEPTH, boardCopy);
+
+			if(score > bestScore) {
+				bestMoves.clear(); 
+				bestMoves.add(nextMove);
+				bestScore = score;
+			}
+			else if(score==bestScore) bestMoves.add(nextMove);
+			alpha = Math.max(alpha, bestScore);
+			if (beta <= alpha) break;
+		}	
+		return bestMoves;
+	}
+
+	/**
 	 * Algorithme Élagage Alpha-Beta
 	 * @param player
 	 * @param alpha
@@ -114,11 +124,11 @@ public class CPUPlayer {
 	 * @return score
 	 */
 	private int miniMaxAlphaBeta(int player, int alpha, int beta, int depth, Board board) {
-		if(depth == 0) return board.evaluate(cpu);
+		if(depth == 0) return board.evaluate(cpu, depth);
 
 		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
-		int evaluation =  board.evaluate(cpu);
-//		System.out.println("evaluation: "+evaluation);
+		int evaluation =  board.evaluate(cpu, depth);
+		//		System.out.println("evaluation: "+evaluation);
 		if (evaluation == 100 || evaluation == -100 || board.getNumberOfPawnsOnBoardFor(RED) == 0 || board.getNumberOfPawnsOnBoardFor(BLACK) == 0) return evaluation;
 
 		ArrayList<Move> moves = board.findPossibleMoves(player);

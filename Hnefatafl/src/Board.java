@@ -154,15 +154,29 @@ class Board
 	 * @param player
 	 * @return 100 si le joueur gagne, -100 s'il perd, 1, 2 3 si pion adverse tué, -1, -2, -3 si pion joueur tué, 0 sinon
 	 */
-	public int evaluate(int player) {
-		int victory = 100, defeat = -100, draw = 0;
+	public int evaluate(int player, int depth) {
+		int victory = 100, victory2 = 90, victory3 = 80, victory4 = 70;
+		int defeat = -100, defeat2 = -90, defeat3 = -80, defeat4 = -70;
+		int draw = 0;
 
+		boolean isKingInCorner = isKingInCorner();
+		boolean isKingTrapped = isKingTrapped();
+		
 		if(player == RED) {
 			// l'objectif des rouge est de tuer le roi et tout les pions adverse
 			// prioriser l'élimination des pions.
-			if(isKingInCorner()) return defeat;
-			if(isKingTrapped()) return victory;
-
+			
+			if(isKingInCorner) return defeat;
+			if(isKingTrapped) return victory;
+//			if(isKingInCorner && depth == 3) return defeat;
+//			if(isKingInCorner && depth == 2) return defeat2;
+//			if(isKingInCorner && depth == 1) return defeat3;
+//			if(isKingInCorner && depth == 0) return defeat4;
+//			if(isKingTrapped && depth == 3) return victory;
+//			if(isKingTrapped && depth == 2) return victory2;
+//			if(isKingTrapped && depth == 1) return victory3;
+//			if(isKingTrapped && depth == 0) return victory4;
+			
 			//  TODO Ajouter des points quand le move tue des pions adverses ou perd un de ses propres pions
 			// else encadrer le roi
 			//			else numberOfKilledPawns(player);
@@ -170,9 +184,17 @@ class Board
 		else {			
 			// l'objectif des noirs est d'extraire le roi vers un des quatres coins 
 			// le second objectifs est de tuer les pions adverse.
-
-			if(isKingInCorner()) return victory;
-			if(isKingTrapped()) return defeat;
+//			if(isKingInCorner && depth == 3) return victory;
+//			if(isKingInCorner && depth == 2) return victory2;
+//			if(isKingInCorner && depth == 1) return victory3;
+//			if(isKingInCorner && depth == 0) return victory4;
+//			if(isKingTrapped && depth == 3) return defeat;
+//			if(isKingTrapped && depth == 2) return defeat2;
+//			if(isKingTrapped && depth == 1) return defeat3;
+//			if(isKingTrapped && depth == 0) return defeat4;
+			
+			if(isKingInCorner) return victory;
+			if(isKingTrapped) return defeat;
 			// else // regarder qd le roi est proche du trone
 			// else pion
 		}
