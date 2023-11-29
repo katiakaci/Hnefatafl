@@ -88,41 +88,49 @@ public class CPUPlayer {
 		boolean bestMoveFound = false;
 
 		for (Move nextMove : possibleMoves) {
-			// King va dans un coin
-			if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingToCorner(nextMove)) {
-				bestMoves.clear();
-				bestMoves.add(nextMove);
-				return bestMoves;
-			}
-
-			// King skip les moves qui font en sorte qu'il sera piégé de 3 côtés
-			if(cpu == BLACK && board.moveIsKing(nextMove) && board.isKingAlmostTrapped(nextMove.getRowTarget(), nextMove.getColTarget())) continue;
-
-			// King va dans une ligne de coin vide
-			if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptySide(nextMove)) {
-				bestMoves.clear();
-				bestMoves.add(nextMove);
-				bestMoveFound = true; // permet de ne plus vérifier les autres moves sauf un move de coin ou un move dangereux
-				continue;
-			}
-
-			// Si le roi est en danger ne pas jouer d'autres pions
-			if(cpu == BLACK && !board.moveIsKing(nextMove) && board.isKingAlmostTrapped(board.getRowKing(), board.getColKing())) continue;
-
-			// TODO MARCHE PAS mais normalement avec la condition davant on en a pas besoin :
-			// King fuit s'il est actuellement piégé de 3 côtés 
-			if(cpu == BLACK && board.moveIsKing(nextMove) && board.isKingAlmostTrapped(board.getRowKing(), board.getColKing()) 
-					&& board.canMoveFreeAlmostTrappedKing(nextMove)) {
-				bestMoves.add(nextMove);
-				continue;
-			}
 			
+			// King va dans un coin
+				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingToCorner(nextMove)) {
+					bestMoves.clear();
+					bestMoves.add(nextMove);
+					return bestMoves;
+				}
+
+				// King skip les moves qui font en sorte qu'il sera piégé de 3 côtés
+				if(cpu == BLACK && board.moveIsKing(nextMove) && board.isKingAlmostTrapped(nextMove.getRowTarget(), nextMove.getColTarget())) continue;
+
+				// King va dans une ligne de coin vide
+				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptySide(nextMove)) {
+					bestMoves.clear();
+					bestMoves.add(nextMove);
+					bestMoveFound = true; // permet de ne plus vérifier les autres moves sauf un move de coin ou un move dangereux
+					continue;
+				}
+
+				// Si le roi est en danger ne pas jouer d'autres pions
+				if(cpu == BLACK && !board.moveIsKing(nextMove) && board.isKingAlmostTrapped(board.getRowKing(), board.getColKing())) continue;
+
+				// King fuit s'il est actuellement piégé de 3 côtés 
+				if(cpu == BLACK && board.moveIsKing(nextMove) && board.isKingAlmostTrapped(board.getRowKing(), board.getColKing()) 
+						&& board.canMoveFreeAlmostTrappedKing(nextMove)) {
+					bestMoves.clear();
+					bestMoves.add(nextMove);
+					bestMoveFound = true;
+					continue;
+				}
+				
+				// TODO ajouter aller dans une ligne vide au centre
+				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptySide(nextMove)) {
+					bestMoves.clear();
+					bestMoves.add(nextMove);
+					continue;
+				}
+				
 			// noir:
 			// TODO Cas bizarre où le jeu bloque et alterne entre 2 move (donc match nul)(voir screenshot), faire si move pareil depuis 3 moves changer
-			// TODO ajouter aller dans une ligne vide au centre
 			// TODO ajouter quoi faire si tes dans une ligne vide au centre
 			
-			if(bestMoveFound == false) {
+			if(!bestMoveFound) {
 				// Rouge encadre le roi TODO
 				//				if(cpu == RED && board.canMoveTrapKing(nextMove)) {
 				//					bestMoves.clear();

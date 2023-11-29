@@ -481,6 +481,52 @@ class Board {
 		return isSideEmptyAndKingThere;
 	}
 
+	public boolean moveIsGoingOnEmptyRowOrColumn(Move nextMove) {
+		boolean isSideEmptyAndKingThere = true;
+		int column = nextMove.getColTarget();
+		int row = nextMove.getRowTarget();
+
+		// Vérifier si la colonne est vide en bas
+		for(int i=row; i<12; i++) {
+			if(board[i][column] != EMPTY){
+				isSideEmptyAndKingThere = false;	
+				break;
+			}
+		}
+		// Si la colonne n'était pas vide par en bas, on vérifie en haut
+		if(!isSideEmptyAndKingThere) {
+			isSideEmptyAndKingThere = true;	
+			for(int i=row; i>0; i--) {
+				if(board[i][column] != EMPTY){
+					isSideEmptyAndKingThere = false;
+					break;
+				}
+			}
+		}
+		
+		// Vérifier si la colonn est vide à droite
+		for(int i=column; i<12; i++) {
+			if(board[row][i] != EMPTY){
+				isSideEmptyAndKingThere = false;	
+				break;
+			}
+			isSideEmptyAndKingThere = true;
+		}
+		// Si la colonne n'était pas vide à droite, on vérifie à gauche
+		if(isSideEmptyAndKingThere == false) {
+			isSideEmptyAndKingThere = true;	
+			for(int i=column; i>0; i--) {
+				if(board[row][i] != EMPTY){
+					isSideEmptyAndKingThere = false;
+					break;
+				}
+				isSideEmptyAndKingThere = true;
+			}
+		}
+		return isSideEmptyAndKingThere;
+	}
+
+
 	/**
 	 * Vérifie si le move fait en sorte qu'on est encadré de trois côtés
 	 * @param nextMove
