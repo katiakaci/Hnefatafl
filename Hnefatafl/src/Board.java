@@ -184,17 +184,18 @@ class Board
 		else {			
 			// l'objectif des noirs est d'extraire le roi vers un des quatres coins 
 			// le second objectifs est de tuer les pions adverse.
-//			if(isKingInCorner && depth == 3) return victory;
-//			if(isKingInCorner && depth == 2) return victory2;
-//			if(isKingInCorner && depth == 1) return victory3;
-//			if(isKingInCorner && depth == 0) return victory4;
-//			if(isKingTrapped && depth == 3) return defeat;
-//			if(isKingTrapped && depth == 2) return defeat2;
-//			if(isKingTrapped && depth == 1) return defeat3;
-//			if(isKingTrapped && depth == 0) return defeat4;
+			if(isKingInCorner && depth == 3) return victory;
+			if(isKingInCorner && depth == 2) return victory2;
+			if(isKingInCorner && depth == 1) return victory3;
+			if(isKingInCorner && depth == 0) return victory4;
+			if(isKingTrapped && depth == 3) return defeat;
+			if(isKingTrapped && depth == 2) return defeat2;
+			if(isKingTrapped && depth == 1) return defeat3;
+			if(isKingTrapped && depth == 0) return defeat4;
 			
-			if(isKingInCorner) return victory;
-			if(isKingTrapped) return defeat;
+//			if(isKingInCorner) return victory;
+//			if(isKingTrapped) return defeat;
+			
 			// else // regarder qd le roi est proche du trone
 			// else pion
 		}
@@ -465,6 +466,10 @@ class Board
 				return true;
 		}
 		return false;
+	}
+	
+	private int distanceManhattan(int col, int row) {
+		return Math.abs(col-this.colKing)+Math.abs(row-this.rowKing);
 	}
 
 }

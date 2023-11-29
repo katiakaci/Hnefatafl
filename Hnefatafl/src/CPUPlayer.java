@@ -87,21 +87,22 @@ public class CPUPlayer {
 		ArrayList<Move> possibleMoves = board.findPossibleMoves(cpu);
 
 		for (Move nextMove : possibleMoves) {
-			if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsWinner(nextMove)) {
-				bestMoves.clear();
-				bestMoves.add(nextMove);
-				return bestMoves;
-			}
-			if(cpu == RED && board.canMoveTrapKing(nextMove)) {
-				bestMoves.clear();
-				bestMoves.add(nextMove);
-				return bestMoves;
-			}
-
+			
+//			if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsWinner(nextMove)) {
+//				bestMoves.clear();
+//				bestMoves.add(nextMove);
+//				return bestMoves;
+//			}
+//			if(cpu == RED && board.canMoveTrapKing(nextMove)) {
+//				bestMoves.clear();
+//				bestMoves.add(nextMove);
+//				return bestMoves;
+//			}	
+			
 			Board boardCopy = cloneBoard(board);
 			boardCopy.play(nextMove.toString(), cpu);
 			int score = miniMaxAlphaBeta(min, alpha, beta, DEPTH, boardCopy);
-
+			System.out.println("Score : "+ score);
 			if(score > bestScore) {
 				bestMoves.clear(); 
 				bestMoves.add(nextMove);
@@ -124,12 +125,13 @@ public class CPUPlayer {
 	 * @return score
 	 */
 	private int miniMaxAlphaBeta(int player, int alpha, int beta, int depth, Board board) {
+		System.out.println("depth: "+depth);
 		if(depth == 0) return board.evaluate(cpu, depth);
 
 		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
 		int evaluation =  board.evaluate(cpu, depth);
-		//		System.out.println("evaluation: "+evaluation);
-		if (evaluation == 100 || evaluation == -100 || board.getNumberOfPawnsOnBoardFor(RED) == 0 || board.getNumberOfPawnsOnBoardFor(BLACK) == 0) return evaluation;
+				System.out.println("evaluation: "+evaluation);
+		if (evaluation >= 70 || evaluation <= -70 || board.getNumberOfPawnsOnBoardFor(RED) == 0 || board.getNumberOfPawnsOnBoardFor(BLACK) == 0) return evaluation;
 
 		ArrayList<Move> moves = board.findPossibleMoves(player);
 		if (player == max) {

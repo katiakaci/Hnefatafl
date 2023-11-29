@@ -123,9 +123,10 @@ class Client {
 
 	private static String playWithAlphaBeta() {
 		ArrayList<Move> moves = cpu.getNextMoveAB(board);
+		System.out.println("nombres des move: "+moves.size());
 		int randomIndex = (int)Math.floor(Math.random() * moves.size());
 		String move = moves.get(randomIndex).toString();
-//		System.out.println("Tour du ai "+colorAI+", coup joué est : "+move);
+		System.out.println("Tour du ai "+colorAI+", coup joué est : "+move);
 		return move;
 	}
 
