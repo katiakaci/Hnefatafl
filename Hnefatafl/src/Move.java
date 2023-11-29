@@ -1,11 +1,6 @@
-import java.util.*;
 
-class Move
-{
-	private int rowStart;
-	private int colStart;
-	private int rowTarget;
-	private int colTarget;
+class Move{
+	private int rowStart, colStart, rowTarget, colTarget;
 
 	public Move(int rS, int cS, int rT, int cT){
 		rowStart = rS;
@@ -18,14 +13,10 @@ class Move
 	 * Retourne format D6-D5
 	 */
 	public String toString() {
-		Map<Integer, String> conversionNumberToLetterRow = new HashMap<>();
-		char[] rows = "ABCDEFGHIJKLM".toCharArray();
-		for(int i=0; i<rows.length;i++) {
-			conversionNumberToLetterRow.put(i, String.valueOf(rows[i]));
-		}
 		int rowStartPlusOne = rowStart + 1;
 		int rowTargetPlusOne = rowTarget + 1;
-		return conversionNumberToLetterRow.get(colStart)+""+rowStartPlusOne+"-"+conversionNumberToLetterRow.get(colTarget)+""+rowTargetPlusOne;
+		return MapConversion.getConversionNumberToLetterRow().get(colStart)+""+rowStartPlusOne+"-"
+				+MapConversion.getConversionNumberToLetterRow().get(colTarget)+""+rowTargetPlusOne;
 	}
 
 	public int getRowStart(){

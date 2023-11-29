@@ -22,7 +22,7 @@ class Client {
 			console = new BufferedReader(new InputStreamReader(System.in));
 			while(true) {
 				char cmd = (char)input.read();
-				System.out.println("\nCommande: "+cmd);
+//				System.out.println("\nCommande: "+cmd);
 				if(cmd == '1') startGameAsRed();
 				if(cmd == '2') startGameAsBlack();
 				if(cmd == '3') nextMove();
@@ -38,7 +38,6 @@ class Client {
 	private static void startGameAsRed() throws IOException {
 		byte[] aBuffer = new byte[1024];
 		int size = input.available();
-		//System.out.println("size " + size);
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer).trim();
 		board = new Board(s);
@@ -60,7 +59,6 @@ class Client {
 		System.out.println("Nouvelle partie! Vous jouer noir, attendez le coup des rouges");
 		byte[] aBuffer = new byte[1024];
 		int size = input.available();
-		// System.out.println("size " + size);
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer).trim();
 		board = new Board(s);
@@ -77,17 +75,15 @@ class Client {
 		int size = input.available();
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer);
-		System.out.println("Dernier coup pour les "+colorOpponent+":"+ s);
+//		System.out.println("Dernier coup pour les "+colorOpponent+":"+ s);
 		board.play(s, opponent);
-
 //		board.printBoard();
+		
 		// AI (réseau) joue :	
 		String move = playWithAlphaBeta();
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0, move.length());
-
 //		board.printBoard();
-//		System.out.println("COLONNE du roi:  "+board.getColKing()+" - ROW du roi:  "+board.getRowKing());
 //		board.printPossibleMoves();
 		output.flush();
 	}
@@ -129,7 +125,7 @@ class Client {
 		ArrayList<Move> moves = cpu.getNextMoveAB(board);
 		int randomIndex = (int)Math.floor(Math.random() * moves.size());
 		String move = moves.get(randomIndex).toString();
-		System.out.println("Tour du ai "+colorAI+", coup joué est : "+move);
+//		System.out.println("Tour du ai "+colorAI+", coup joué est : "+move);
 		return move;
 	}
 
