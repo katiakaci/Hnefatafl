@@ -120,7 +120,7 @@ public class CPUPlayer {
 				}
 				
 				// TODO ajouter aller dans une ligne vide au centre
-				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptySide(nextMove)) {
+				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptyRowOrColumn(nextMove)) {
 					bestMoves.clear();
 					bestMoves.add(nextMove);
 					continue;
