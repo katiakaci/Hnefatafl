@@ -4,7 +4,7 @@ public class CPUPlayer {
 
 	private int cpu, max, min;
 	private final int BLACK = 2, RED = 4;
-	private final int DEPTH = 3;
+	private final int DEPTH = 2;
 
 	public CPUPlayer(int cpu){
 		this.cpu = cpu;
@@ -85,33 +85,64 @@ public class CPUPlayer {
 		int beta = Integer.MAX_VALUE;
 		ArrayList<Move> bestMoves = new ArrayList<>();
 		ArrayList<Move> possibleMoves = board.findPossibleMoves(cpu);
+		boolean bestMoveFound = false;
 
 		for (Move nextMove : possibleMoves) {
-			
-//			if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsWinner(nextMove)) {
-//				bestMoves.clear();
-//				bestMoves.add(nextMove);
-//				return bestMoves;
-//			}
-//			if(cpu == RED && board.canMoveTrapKing(nextMove)) {
-//				bestMoves.clear();
-//				bestMoves.add(nextMove);
-//				return bestMoves;
-//			}	
-			
-			Board boardCopy = cloneBoard(board);
-			boardCopy.play(nextMove.toString(), cpu);
-			int score = miniMaxAlphaBeta(min, alpha, beta, DEPTH, boardCopy);
-			System.out.println("Score : "+ score);
-			if(score > bestScore) {
-				bestMoves.clear(); 
+			// King va dans un coin
+			if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingToCorner(nextMove)) {
+				bestMoves.clear();
 				bestMoves.add(nextMove);
-				bestScore = score;
+				return bestMoves;
 			}
-			else if(score==bestScore) bestMoves.add(nextMove);
-			alpha = Math.max(alpha, bestScore);
-			if (beta <= alpha) break;
-		}	
+
+			// King skip les moves qui font en sorte qu'il sera piégé de 3 côtés
+			if(cpu == BLACK && board.moveIsKing(nextMove) && board.isKingAlmostTrapped(nextMove.getRowTarget(), nextMove.getColTarget())) continue;
+
+			// King va dans une ligne de coin vide
+			if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptySide(nextMove)) {
+				bestMoves.clear();
+				bestMoves.add(nextMove);
+				bestMoveFound = true; // permet de ne plus vérifier les autres moves sauf un move de coin ou un move dangereux
+				continue;
+			}
+
+			// Si le roi est en danger ne pas jouer d'autres pions
+			if(cpu == BLACK && !board.moveIsKing(nextMove) && board.isKingAlmostTrapped(board.getRowKing(), board.getColKing())) continue;
+
+			// TODO MARCHE PAS mais normalement avec la condition davant on en a pas besoin :
+			// King fuit s'il est actuellement piégé de 3 côtés 
+			if(cpu == BLACK && board.moveIsKing(nextMove) && board.isKingAlmostTrapped(board.getRowKing(), board.getColKing()) 
+					&& board.canMoveFreeAlmostTrappedKing(nextMove)) {
+				bestMoves.add(nextMove);
+				continue;
+			}
+			
+			// noir:
+			// TODO Cas bizarre où le jeu bloque et alterne entre 2 move (donc match nul)(voir screenshot), faire si move pareil depuis 3 moves changer
+			// TODO ajouter aller dans une ligne vide au centre
+			// TODO ajouter quoi faire si tes dans une ligne vide au centre
+			
+			if(bestMoveFound == false) {
+				// Rouge encadre le roi TODO
+				//				if(cpu == RED && board.canMoveTrapKing(nextMove)) {
+				//					bestMoves.clear();
+				//					bestMoves.add(nextMove);
+				//					return bestMoves;
+				//				}	
+
+				Board boardCopy = cloneBoard(board);
+				boardCopy.play(nextMove.toString(), cpu);
+				int score = miniMaxAlphaBeta(min, alpha, beta, DEPTH, boardCopy);
+				if(score > bestScore) {
+					bestMoves.clear(); 
+					bestMoves.add(nextMove);
+					bestScore = score;
+				}
+				else if(score == bestScore) bestMoves.add(nextMove);
+				alpha = Math.max(alpha, bestScore);
+				if (beta <= alpha) break;
+			}
+		}
 		return bestMoves;
 	}
 
@@ -124,13 +155,11 @@ public class CPUPlayer {
 	 * @param board
 	 * @return score
 	 */
-	private int miniMaxAlphaBeta(int player, int alpha, int beta, int depth, Board board) {
-		System.out.println("depth: "+depth);
+	private int miniMaxAlphaBeta(int player, int alpha, int beta, int depth, Board board) {					
 		if(depth == 0) return board.evaluate(cpu, depth);
 
 		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
 		int evaluation =  board.evaluate(cpu, depth);
-				System.out.println("evaluation: "+evaluation);
 		if (evaluation >= 70 || evaluation <= -70 || board.getNumberOfPawnsOnBoardFor(RED) == 0 || board.getNumberOfPawnsOnBoardFor(BLACK) == 0) return evaluation;
 
 		ArrayList<Move> moves = board.findPossibleMoves(player);

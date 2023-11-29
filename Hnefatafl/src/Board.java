@@ -1,7 +1,6 @@
 import java.util.*;
 
-class Board
-{
+class Board {
 	private final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5, THRONE = 6;
 	private int[][] board;
 	private int rowKing, colKing;
@@ -161,22 +160,22 @@ class Board
 
 		boolean isKingInCorner = isKingInCorner();
 		boolean isKingTrapped = isKingTrapped();
-		
+
 		if(player == RED) {
 			// l'objectif des rouge est de tuer le roi et tout les pions adverse
 			// prioriser l'élimination des pions.
-			
+
 			if(isKingInCorner) return defeat;
 			if(isKingTrapped) return victory;
-//			if(isKingInCorner && depth == 3) return defeat;
-//			if(isKingInCorner && depth == 2) return defeat2;
-//			if(isKingInCorner && depth == 1) return defeat3;
-//			if(isKingInCorner && depth == 0) return defeat4;
-//			if(isKingTrapped && depth == 3) return victory;
-//			if(isKingTrapped && depth == 2) return victory2;
-//			if(isKingTrapped && depth == 1) return victory3;
-//			if(isKingTrapped && depth == 0) return victory4;
-			
+			//			if(isKingInCorner && depth == 3) return defeat;
+			//			if(isKingInCorner && depth == 2) return defeat2;
+			//			if(isKingInCorner && depth == 1) return defeat3;
+			//			if(isKingInCorner && depth == 0) return defeat4;
+			//			if(isKingTrapped && depth == 3) return victory;
+			//			if(isKingTrapped && depth == 2) return victory2;
+			//			if(isKingTrapped && depth == 1) return victory3;
+			//			if(isKingTrapped && depth == 0) return victory4;
+
 			//  TODO Ajouter des points quand le move tue des pions adverses ou perd un de ses propres pions
 			// else encadrer le roi
 			//			else numberOfKilledPawns(player);
@@ -192,10 +191,10 @@ class Board
 			if(isKingTrapped && depth == 2) return defeat2;
 			if(isKingTrapped && depth == 1) return defeat3;
 			if(isKingTrapped && depth == 0) return defeat4;
-			
-//			if(isKingInCorner) return victory;
-//			if(isKingTrapped) return defeat;
-			
+
+			//			if(isKingInCorner) return victory;
+			//			if(isKingTrapped) return defeat;
+
 			// else // regarder qd le roi est proche du trone
 			// else pion
 		}
@@ -229,55 +228,6 @@ class Board
 			}
 		}
 		return numberOfPawnsOnBoard;
-	}
-
-	/**
-	 * Vérifie si le roi est encerclé par 4 pions rouges, un mur, un coin ou le throne
-	 * @return true si le roi est encerclé, false sinon
-	 */
-	private boolean isKingTrapped() {
-		// Il y a un mur à un des quatre côtés
-		if(rowKing == 0) {
-			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
-					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
-					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
-				return true;
-		}
-		else if(rowKing == 12) {
-			if((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
-					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
-					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
-				return true;
-		}
-		if(colKing == 0) {
-			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
-					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
-					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
-				return true;
-		}
-		else if(colKing == 12) {
-			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
-					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
-					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
-				return true;
-		}
-		// Encadré des 4 côtés
-		if(rowKing > 0 && rowKing < 12 && colKing > 0 && colKing < 12) {	
-			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
-					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
-					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
-					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Vérifie si le roi est dans un des quatre coins
-	 * @return true si le roi est dans un coin, false sinon
-	 */
-	private boolean isKingInCorner() {
-		return (colKing == 0 && rowKing == 0) || (colKing == 0 && rowKing == 12) || (colKing == 12 && rowKing == 0) || (colKing == 12 && rowKing == 12);
 	}
 
 	/**
@@ -330,30 +280,21 @@ class Board
 			if(up) {
 				if(board[newRow-1][newColumn] == BLACK && (board[newRow-2][newColumn] == player || board[newRow-2][newColumn] == CORNER || (newRow-2 == THRONE && newColumn == THRONE) )) {
 					board[newRow-1][newColumn] = EMPTY;
-					String position = MapConversion.getConversionNumberToLetterColumn().get(newColumn)+""+MapConversion.getConversionNumberToLetterRow().get(newRow-1);
-					//					System.out.println("Pion noir éliminé à la position "+position);
 				}
 			}
 			if(down) {
 				if(board[newRow+1][newColumn] == BLACK && (board[newRow+2][newColumn] == player || board[newRow+2][newColumn] == CORNER || (newRow+2 == THRONE && newColumn == THRONE) )) {
 					board[newRow+1][newColumn] = EMPTY;
-					String position = MapConversion.getConversionNumberToLetterColumn().get(newColumn)+""+MapConversion.getConversionNumberToLetterRow().get(newRow+1);
-					//					System.out.println("Pion noir éliminé à la position "+position);
 				}
 			}
 			if(right) {
 				if(board[newRow][newColumn+1] == BLACK && (board[newRow][newColumn+2] == player || board[newRow][newColumn+2] == CORNER || (newRow == THRONE && newColumn+2 == THRONE) )) {
 					board[newRow][newColumn+1] = EMPTY;
-					String position = MapConversion.getConversionNumberToLetterColumn().get(newColumn+1)+""+MapConversion.getConversionNumberToLetterRow().get(newRow);
-					//					System.out.println("Pion noir éliminé à la position "+position);
 				}
 			}
 			if(left) {
 				if(board[newRow][newColumn-1] == BLACK && (board[newRow][newColumn-2] == player || board[newRow][newColumn-2] == CORNER || (newRow == THRONE && newColumn-2 == THRONE) )) {
 					board[newRow][newColumn-1] = EMPTY;
-					String position = MapConversion.getConversionNumberToLetterColumn().get(newColumn-1)+""+MapConversion.getConversionNumberToLetterRow().get(newRow);
-//							getConversionNumberToLetterColumn.get(newColumn-1)+""+conversionNumberToLetterRow.get(newRow);
-					//					System.out.println("Pion noir éliminé à la position "+position);
 				}
 			}
 		}
@@ -361,33 +302,21 @@ class Board
 			if(up) {
 				if(board[newRow-1][newColumn] == RED && (board[newRow-2][newColumn] == player || board[newRow-2][newColumn] == KING || board[newRow-2][newColumn] == CORNER || (newRow-2==THRONE && newColumn==THRONE) )) {
 					board[newRow-1][newColumn] = EMPTY;
-					String position = MapConversion.getConversionNumberToLetterColumn().get(newColumn)+""+MapConversion.getConversionNumberToLetterRow().get(newRow-1);
-//							conversionNumberToLetterColumn.get(newColumn)+""+conversionNumberToLetterRow.get(newRow-1);
-					//					System.out.println("Pion rouge éliminé à la position "+position);
 				}
 			}
 			if(down) {
 				if(board[newRow+1][newColumn] == RED && (board[newRow+2][newColumn] == player || board[newRow+2][newColumn] == KING || board[newRow+2][newColumn] == CORNER || (newRow+2==THRONE && newColumn==THRONE) )) {
 					board[newRow+1][newColumn] = EMPTY;
-					String position = MapConversion.getConversionNumberToLetterColumn().get(newColumn)+""+MapConversion.getConversionNumberToLetterRow().get(newRow+1);
-//							conversionNumberToLetterColumn.get(newColumn)+""+conversionNumberToLetterRow.get(newRow+1);
-					//					System.out.println("Pion rouge éliminé à la position "+position);
 				}
 			}
 			if(right) {
 				if(board[newRow][newColumn+1] == RED && (board[newRow][newColumn+2] == player || board[newRow][newColumn+2] == KING || board[newRow][newColumn+2] == CORNER || (newRow==THRONE && newColumn+2==THRONE) )) {
 					board[newRow][newColumn+1] = EMPTY;
-					String position = MapConversion.getConversionNumberToLetterColumn().get(newColumn+1)+""+MapConversion.getConversionNumberToLetterRow().get(newRow);
-//							conversionNumberToLetterColumn.get(newColumn+1)+""+conversionNumberToLetterRow.get(newRow);
-					//					System.out.println("Pion rouge éliminé à la position "+position);
 				}
 			}
 			if(left) {
 				if(board[newRow][newColumn-1] == RED && (board[newRow][newColumn-2] == player || board[newRow][newColumn-2] == KING || board[newRow][newColumn-2] == CORNER || (newRow==THRONE && newColumn-2==THRONE) )) {
 					board[newRow][newColumn-1] = EMPTY;
-					String position = MapConversion.getConversionNumberToLetterColumn().get(newColumn-1)+""+MapConversion.getConversionNumberToLetterRow().get(newRow);
-//							conversionNumberToLetterColumn.get(newColumn-1)+""+conversionNumberToLetterRow.get(newRow);
-					//					System.out.println("Pion rouge éliminé à la position "+position);
 				}
 			}
 		}
@@ -417,17 +346,238 @@ class Board
 		return board;
 	}
 
+	public int getRowKing() {
+		return rowKing;
+	}
+
+	public int getColKing() {
+		return colKing;
+	}
+
+	// ************************ MÉTHODES POUR LES NOIRS *********************************************
+	/**
+	 * Vérifie si le roi est encerclé par 4 pions rouges, un mur, un coin ou le throne
+	 * @return true si le roi est encerclé, false sinon
+	 */
+	private boolean isKingTrapped() {
+		// Il y a un mur à un des quatre côtés
+		if(rowKing == 0) {
+			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
+				return true;
+		}
+		else if(rowKing == 12) {
+			if((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
+				return true;
+		}
+		if(colKing == 0) {
+			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
+				return true;
+		}
+		else if(colKing == 12) {
+			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
+				return true;
+		}
+		// Encadré des 4 côtés
+		if(rowKing > 0 && rowKing < 12 && colKing > 0 && colKing < 12) {	
+			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Vérifie si le roi est dans un des quatre coins
+	 * @return true si le roi est dans un coin, false sinon
+	 */
+	private boolean isKingInCorner() {
+		return (colKing == 0 && rowKing == 0) || (colKing == 0 && rowKing == 12) || (colKing == 12 && rowKing == 0) || (colKing == 12 && rowKing == 12);
+	}
+
+	/**
+	 * Vérifie si le mouvement est un roi
+	 * @param nextMove
+	 * @return
+	 */
 	public boolean moveIsKing(Move nextMove) {
 		return nextMove.getColStart() == this.colKing && nextMove.getRowStart() == this.rowKing;
 	}
 
-	public boolean moveIsWinner(Move nextMove) {
+	/**
+	 * Vérifie si un move permet d'aller dans un des quatre coins
+	 * @param nextMove
+	 * @return
+	 */
+	public boolean moveIsGoingToCorner(Move nextMove) {
 		return (nextMove.getColTarget() == 12 && nextMove.getRowTarget() == 12)
 				||(nextMove.getColTarget() == 12 && nextMove.getRowTarget() == 0)
 				||(nextMove.getColTarget() == 0 && nextMove.getRowTarget() == 12)
 				||(nextMove.getColTarget() == 0 && nextMove.getRowTarget() == 0);
 	}
 
+	/**
+	 * Vérifie si un move permet d'aller dans un côté où un coin est accessible
+	 * @param nextMove
+	 * @return
+	 */
+	public boolean moveIsGoingOnEmptySide(Move nextMove) {
+		boolean isSideEmptyAndKingThere = false;
+		int column = nextMove.getColTarget();
+		int row = nextMove.getRowTarget();
+
+		// Vérifier qu'on est sur le côté droit ou gauche
+		if(column == 12 || column == 0) {
+			isSideEmptyAndKingThere = true;
+			// Vérifier si la colonne est vide en bas
+			for(int i=row; i<12; i++) {
+				if(board[i][column] != EMPTY){
+					isSideEmptyAndKingThere = false;	
+					break;
+				}
+			}
+			// Si la colonne n'était pas vide par en bas, on vérifie en haut
+			if(isSideEmptyAndKingThere == false) {
+				isSideEmptyAndKingThere = true;	
+				for(int i=row; i>0; i--) {
+					if(board[i][column] != EMPTY){
+						isSideEmptyAndKingThere = false;
+						break;
+					}
+				}
+			}
+		}
+
+		// Vérifier qu'on est sur le côté haut ou bas
+		else if(row == 0 || row == 12) {
+			isSideEmptyAndKingThere = true;
+			// Vérifier si la colonne est vide à droite
+			for(int i=column; i<12; i++) {
+				if(board[row][i] != EMPTY){
+					isSideEmptyAndKingThere = false;	
+					break;
+				}
+			}
+			// Si la colonne n'était pas vide à droite, on vérifie à gauche
+			if(isSideEmptyAndKingThere == false) {
+				isSideEmptyAndKingThere = true;	
+				for(int i=column; i>0; i--) {
+					if(board[row][i] != EMPTY){
+						isSideEmptyAndKingThere = false;
+						break;
+					}
+				}
+			}
+		}
+		return isSideEmptyAndKingThere;
+	}
+
+	/**
+	 * Vérifie si le move fait en sorte qu'on est encadré de trois côtés
+	 * @param nextMove
+	 * @return
+	 */
+	public boolean isKingAlmostTrapped(int rowKing, int colKing) {
+		// Il y a un mur à un des quatre côtés
+		if(rowKing == 0) {
+			if( ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE))
+					|| ((board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE) && (board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE))
+					|| ((board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE) && (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)) ) 
+				return true;
+		}
+		else if(rowKing == 12) {
+			if( ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
+					|| ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
+					|| ((board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) )
+				return true;
+		}
+		if(colKing == 0) {
+			if( ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE))
+					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
+					|| ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)) )
+				return true;
+		}
+		else if(colKing == 12) {
+			if( ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
+					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
+					|| ((board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) )	
+				return true;
+		}
+		// Encadré des 4 côtés
+		if(rowKing > 0 && rowKing < 12 && colKing > 0 && colKing < 12) {	
+			if( 	((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
+					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+							&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+							&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
+					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+							&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+							&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
+					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+							&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+							&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)) ) 
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Vérifie si le move permet de dégager un roi qui est entouré de trois côtés
+	 * (vérifie s'il y a au moins 2 cases libres à côté de lui)
+	 * @param nextMove
+	 * @return
+	 */
+	public boolean canMoveFreeAlmostTrappedKing(Move nextMove) {
+		int col = nextMove.getColTarget();
+		int row = nextMove.getRowTarget();
+
+		// Il y a un mur à un des quatre côtés
+		if(row == 0) {
+			if ((board[row][col+1] == EMPTY && board[row][col-1] == EMPTY) 
+					|| (board[row][col+1] == EMPTY && board[row+1][col] == EMPTY) 
+					|| (board[row][col-1] == EMPTY && board[row+1][col] == EMPTY)) return true;
+		}
+		else if(row == 12) {
+			if((board[row][col+1] == EMPTY && board[row][col-1] == EMPTY)
+					|| (board[row][col+1] == EMPTY && board[row-1][col] == EMPTY)
+					|| (board[row][col-1] == EMPTY && board[row-1][col] == EMPTY)) return true;
+		}
+		if(col == 0) {
+			if((board[row+1][col] == EMPTY && board[row-1][col] == EMPTY) 
+					|| (board[row+1][col] == EMPTY && board[row][col+1] == EMPTY) 
+					|| (board[row-1][col] == EMPTY && board[row][col+1] == EMPTY)) return true;
+		}
+		else if(col == 12) {
+			if ((board[row+1][col] == EMPTY && board[row-1][col] == EMPTY) 
+					|| (board[row+1][col] == EMPTY && board[row][col-1] == EMPTY)
+					|| (board[row-1][col] == EMPTY && board[row][col-1] == EMPTY)) return true;
+		}
+		// Aucun mur
+		if(row > 0 && row < 12 && col > 0 && col < 12) {	
+			if((board[row][col+1] == EMPTY && board[row][col-1] == EMPTY)
+					|| (board[row][col+1] == EMPTY && board[row+1][col] == EMPTY) 
+					|| (board[row][col-1] == EMPTY && board[row+1][col] == EMPTY) 
+					|| (board[row-1][col] == EMPTY && board[row][col+1] == EMPTY) 
+					|| (board[row][col-1] == EMPTY && board[row-1][col] == EMPTY) 
+					|| (board[row+1][col] == EMPTY && board[row-1][col] == EMPTY) 
+					) return true;
+		}
+		return false;
+	}
+
+
+	// ************************ MÉTHODES POUR LES ROUGES *********************************************
+	// TODO
 	public boolean canMoveTrapKing(Move nextMove) {
 		int col = nextMove.getColTarget();
 		int row = nextMove.getRowTarget();
@@ -467,8 +617,9 @@ class Board
 		}
 		return false;
 	}
-	
-	private int distanceManhattan(int col, int row) {
+
+	// TODO
+	private int distanceManhattanForKing(int col, int row) {
 		return Math.abs(col-this.colKing)+Math.abs(row-this.rowKing);
 	}
 

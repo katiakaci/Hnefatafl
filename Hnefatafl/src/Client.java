@@ -22,12 +22,13 @@ class Client {
 			console = new BufferedReader(new InputStreamReader(System.in));
 			while(true) {
 				char cmd = (char)input.read();
-//				System.out.println("\nCommande: "+cmd);
+				//				System.out.println("\nCommande: "+cmd);
 				if(cmd == '1') startGameAsRed();
 				if(cmd == '2') startGameAsBlack();
 				if(cmd == '3') nextMove();
 				if(cmd == '4')invalidMove();
 				if(cmd == '5')endGame();
+				//				board.printBoard();
 			}
 		}
 		catch (IOException e) {
@@ -47,11 +48,11 @@ class Client {
 		colorAI = "ROUGES";
 		colorOpponent = "NOIRS";
 
-//		board.printBoard();		
+		//		board.printBoard();		
 		String move = playWithAlphaBeta();
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0,move.length());
-//		board.printBoard();
+		//		board.printBoard();
 		output.flush();
 	}
 
@@ -75,16 +76,13 @@ class Client {
 		int size = input.available();
 		input.read(aBuffer,0,size);
 		String s = new String(aBuffer);
-//		System.out.println("Dernier coup pour les "+colorOpponent+":"+ s);
+		System.out.println("Dernier coup pour les "+colorOpponent+":"+ s);
 		board.play(s, opponent);
-//		board.printBoard();
-		
+
 		// AI (réseau) joue :	
 		String move = playWithAlphaBeta();
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0, move.length());
-//		board.printBoard();
-//		board.printPossibleMoves();
 		output.flush();
 	}
 
@@ -123,7 +121,6 @@ class Client {
 
 	private static String playWithAlphaBeta() {
 		ArrayList<Move> moves = cpu.getNextMoveAB(board);
-		System.out.println("nombres des move: "+moves.size());
 		int randomIndex = (int)Math.floor(Math.random() * moves.size());
 		String move = moves.get(randomIndex).toString();
 		System.out.println("Tour du ai "+colorAI+", coup joué est : "+move);
