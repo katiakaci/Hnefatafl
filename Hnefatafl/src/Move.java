@@ -15,8 +15,8 @@ class Move{
 	public String toString() {
 		int rowStartPlusOne = rowStart + 1;
 		int rowTargetPlusOne = rowTarget + 1;
-		return MapConversion.getConversionNumberToLetterRow().get(colStart)+""+rowStartPlusOne+"-"
-				+MapConversion.getConversionNumberToLetterRow().get(colTarget)+""+rowTargetPlusOne;
+		return MapConversion.getConversionNumberToLetterColumn().get(colStart)+""+rowStartPlusOne+"-"
+				+MapConversion.getConversionNumberToLetterColumn().get(colTarget)+""+rowTargetPlusOne;
 	}
 
 	public int getRowStart(){
