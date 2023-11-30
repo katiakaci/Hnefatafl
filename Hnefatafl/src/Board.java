@@ -159,61 +159,21 @@ class Board {
 		int defeat = -100, defeat2 = -90, defeat3 = -80, defeat4 = -70;
 		int draw = 0;
 
-		boolean isKingInCorner = isKingInCorner();
-		boolean isKingTrapped = isKingTrapped();
-
 		if(player == RED) {
-			// l'objectif des rouge est de tuer le roi et tout les pions adverse
-			// prioriser l'élimination des pions.
-
-			if(isKingInCorner) return defeat;
-			if(isKingTrapped) return victory;
-			//			if(isKingInCorner && depth == 3) return defeat;
-			//			if(isKingInCorner && depth == 2) return defeat2;
-			//			if(isKingInCorner && depth == 1) return defeat3;
-			//			if(isKingInCorner && depth == 0) return defeat4;
-			//			if(isKingTrapped && depth == 3) return victory;
-			//			if(isKingTrapped && depth == 2) return victory2;
-			//			if(isKingTrapped && depth == 1) return victory3;
-			//			if(isKingTrapped && depth == 0) return victory4;
-
-			//  TODO Ajouter des points quand le move tue des pions adverses ou perd un de ses propres pions
-			// else encadrer le roi
-			//			else numberOfKilledPawns(player);
+			if(isKingInCorner()) return defeat;
+			if(isKingTrapped()) return victory;
 		}
-		else {			
-			// l'objectif des noirs est d'extraire le roi vers un des quatres coins 
-			// le second objectifs est de tuer les pions adverse.
-			if(isKingInCorner && depth == 3) return victory;
-			if(isKingInCorner && depth == 2) return victory2;
-			if(isKingInCorner && depth == 1) return victory3;
-			if(isKingInCorner && depth == 0) return victory4;
-			if(isKingTrapped && depth == 3) return defeat;
-			if(isKingTrapped && depth == 2) return defeat2;
-			if(isKingTrapped && depth == 1) return defeat3;
-			if(isKingTrapped && depth == 0) return defeat4;
-
-			//			if(isKingInCorner) return victory;
-			//			if(isKingTrapped) return defeat;
-
-			// else // regarder qd le roi est proche du trone
-			// else pion
+		else {
+			if(depth == 3 && isKingInCorner()) return victory;
+			if(depth == 2 && isKingInCorner()) return victory2;
+			if(depth == 1 && isKingInCorner()) return victory3;
+			if(depth == 0 && isKingInCorner()) return victory4;
+			if(depth == 3 && isKingTrapped()) return defeat;
+			if(depth == 2 && isKingTrapped()) return defeat2;
+			if(depth == 1 && isKingTrapped()) return defeat3;
+			if(depth == 0 && isKingTrapped()) return defeat4;
 		}
-		//		int numberOfBlackKilledPawns = numberOfKilledPawns(BLACK);
-		//		int numberOfRedKilledPawns = numberOfKilledPawns(BLACK);
-
 		return draw;
-	}
-
-	/**
-	 * Trouve le nombre de pions morts du joueur recu
-	 * @param player
-	 * @return le nombre de pions tués
-	 */
-	private int getNumberOfKilledPawns(int player) {
-		int numberOfPawnsInitially = (player == BLACK) ? 12: 24;
-		int numberOfKilledPawns = numberOfPawnsInitially - getNumberOfPawnsOnBoardFor(player);
-		return numberOfKilledPawns;
 	}
 
 	/**
@@ -323,26 +283,6 @@ class Board {
 		}
 	}
 
-	public void printBoard() {
-		String board = Arrays.deepToString(this.board).replace("], ", "]\n").replace("[[", "[").replace("]]", "]");
-		board = board.replace('2', 'N').replace('4', 'R').replace('1', 'C').replace('5', 'K').replace('6', 'T');
-		System.out.println("\n"+board);
-	}
-
-	public void printPossibleMoves() {
-		// NOIR
-		String possiblesMovesBlack= "";
-		for(Move m : findPossibleMoves(BLACK)) possiblesMovesBlack += m.toString()+" / ";
-		System.out.println("\nCoups possibles pour les NOIRS: "+possiblesMovesBlack);
-		System.out.println("Nombre de coups possibles pour les NOIRS: "+findPossibleMoves(BLACK).size());
-
-		// ROUGE 
-		//		String possiblesMoves= "";
-		//		for(Move m : findPossibleMoves(RED)) possiblesMoves+=m.toString()+" / ";
-		//		System.out.println("Coups possibles pour les ROUGES: "+possiblesMoves);
-		//		System.out.println("Nombre de coups possibles pour les ROUGES: "+findPossibleMoves(RED).size());
-	}
-
 	public int[][] getBoard() {
 		return board;
 	}
@@ -355,7 +295,9 @@ class Board {
 		return colKing;
 	}
 
+
 	// ************************ MÉTHODES POUR LES NOIRS *********************************************
+
 	/**
 	 * Vérifie si le roi est encerclé par 4 pions rouges, un mur, un coin ou le throne
 	 * @return true si le roi est encerclé, false sinon
@@ -482,99 +424,72 @@ class Board {
 		return isSideEmptyAndKingThere;
 	}
 
-	public boolean moveIsGoingOnEmptyRowOrColumn(Move nextMove) {
-		boolean isSideEmptyAndKingThere = true;
-		int column = nextMove.getColTarget();
-		int row = nextMove.getRowTarget();
-
-		// Vérifier si la colonne est vide en bas
-		for(int i=row; i<12; i++) {
-			if(board[i][column] != EMPTY){
-				isSideEmptyAndKingThere = false;	
-				break;
-			}
-		}
-		// Si la colonne n'était pas vide par en bas, on vérifie en haut
-		if(!isSideEmptyAndKingThere) {
-			isSideEmptyAndKingThere = true;	
-			for(int i=row; i>0; i--) {
-				if(board[i][column] != EMPTY){
-					isSideEmptyAndKingThere = false;
-					break;
-				}
-			}
-		}
-		
-		// Vérifier si la colonn est vide à droite
-		for(int i=column; i<12; i++) {
-			if(board[row][i] != EMPTY){
-				isSideEmptyAndKingThere = false;	
-				break;
-			}
-			isSideEmptyAndKingThere = true;
-		}
-		// Si la colonne n'était pas vide à droite, on vérifie à gauche
-		if(isSideEmptyAndKingThere == false) {
-			isSideEmptyAndKingThere = true;	
-			for(int i=column; i>0; i--) {
-				if(board[row][i] != EMPTY){
-					isSideEmptyAndKingThere = false;
-					break;
-				}
-				isSideEmptyAndKingThere = true;
-			}
-		}
-		return isSideEmptyAndKingThere;
-	}
-
-
 	/**
 	 * Vérifie si le move fait en sorte qu'on est encadré de trois côtés
 	 * @param nextMove
 	 * @return
 	 */
-	public boolean isKingAlmostTrapped(int rowKing, int colKing) {
+	public boolean isKingAlmostTrapped(int rowKing, int colKing, int rowStart, int colStart) {
+		// si next move depart cest throne		
+		boolean isKingInThrone = false;
+		if(colStart == 6 && rowStart == 6) {
+			this.board[6][6] = THRONE;
+			isKingInThrone = true;
+		}
+
 		// Il y a un mur à un des quatre côtés
 		if(rowKing == 0) {
 			if( ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE))
 					|| ((board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE) && (board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE))
-					|| ((board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE) && (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)) ) 
+					|| ((board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE) && (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)) ){
+				if(isKingInThrone) this.board[6][6] = KING;
 				return true;
+			}
 		}
 		else if(rowKing == 12) {
 			if( ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
 					|| ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
-					|| ((board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) )
+					|| ((board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) ){
+				if(isKingInThrone) this.board[6][6] = KING;
 				return true;
+			}
 		}
 		if(colKing == 0) {
 			if( ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE))
 					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
-					|| ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)) )
+					|| ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)) ){
+				if(isKingInThrone) this.board[6][6] = KING;
 				return true;
+			}
 		}
 		else if(colKing == 12) {
 			if( ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
 					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
-					|| ((board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) )	
+					|| ((board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) ){
+				if(isKingInThrone) this.board[6][6] = KING;
 				return true;
+			}
 		}
 		// Encadré des 4 côtés
 		if(rowKing > 0 && rowKing < 12 && colKing > 0 && colKing < 12) {	
-			if( 	((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+			if( ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
 					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
-					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
-					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)
+					)||((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
 							&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
-							&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
-					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
-							&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
-							&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
-					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
-							&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
-							&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)) ) 
+							&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)
+							) || ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+									&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+									&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)
+									)||((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+											&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+											&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+											)){
+				if(isKingInThrone) this.board[6][6] = KING;
 				return true;
+			}
 		}
+		if(isKingInThrone) this.board[6][6] = KING;
 		return false;
 	}
 
@@ -621,7 +536,6 @@ class Board {
 		}
 		return false;
 	}
-
 
 	// ************************ MÉTHODES POUR LES ROUGES *********************************************
 	
@@ -829,18 +743,37 @@ class Board {
 		//return false;
 	}
 
+
+
+
+
+	// ************************ MÉTHODES DÉCHETS *********************************************
 	// TODO
 	private int distanceManhattanForKing(int col, int row) {
 		return Math.abs(col-this.colKing)+Math.abs(row-this.rowKing);
 	}
-	
-	/* Stratégie ROUGE pour bloquer toutes les sorties (12 pions rouges nécessaires)
+
+	/**
+	 * Trouve le nombre de pions morts du joueur recu
+	 * @param player
+	 * @return le nombre de pions tués
+	 */
+	private int getNumberOfKilledPawns(int player) {
+		int numberOfPawnsInitially = (player == BLACK) ? 12: 24;
+		int numberOfKilledPawns = numberOfPawnsInitially - getNumberOfPawnsOnBoardFor(player);
+		return numberOfKilledPawns;
+	}
+
+	// TODO : connecter ça avec le AlphaBeta
+	/**
+	 * Stratégie ROUGE pour bloquer toutes les sorties (12 pions rouges nécessaires)
 	Avant même d'essayer de manger les pions adverses (sauf si on peut manger le roi)
 	Ensuite, quand les sorties sont bloquées,dans l'idéal les 12 autres pions rouges 
 	jouent en 12 vs 13 pour capturer les adversaires. Les pions qui bloquent les sorties
-	ne bougent que si ils peuvent capturer le roi*/
-	
-	// TODO : connecter ça avec le AlphaBeta
+	ne bougent que si ils peuvent capturer le roi
+	 * @param possibleMoves
+	 * @return
+	 */
 	private ArrayList<Move> blockExit(ArrayList<Move> possibleMoves) {
 		// Bloquer la case en diagonale des coins en priorité
 		ArrayList<Move> bestCloseOut;
@@ -853,16 +786,16 @@ class Board {
 					(m.getRowTarget() == 11 && m.getColTarget() == 1) ||
 					(m.getRowTarget() == 11 && m.getColTarget() == 11)
 					).collect(Collectors.toList());;
-					
-			// Vérifier qu'on ne part pas d'une case en diagonale des coins vers une autre
-			bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
-					m -> 
-					(m.getRowStart() == 1 && m.getColStart() == 1) ||
-					(m.getRowStart() == 1 && m.getColStart() == 11) ||
-					(m.getRowStart() == 11 && m.getColStart() == 1) ||
-					(m.getRowStart() == 11 && m.getColStart() == 11)
-					).collect(Collectors.toList());;
-			return bestCloseOut;
+
+					// Vérifier qu'on ne part pas d'une case en diagonale des coins vers une autre
+					bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
+							m -> 
+							(m.getRowStart() == 1 && m.getColStart() == 1) ||
+							(m.getRowStart() == 1 && m.getColStart() == 11) ||
+							(m.getRowStart() == 11 && m.getColStart() == 1) ||
+							(m.getRowStart() == 11 && m.getColStart() == 11)
+							).collect(Collectors.toList());;
+							return bestCloseOut;
 		}
 		// Ensuite former une diagonale pour fermer les coins
 		else if (board[0][2] == EMPTY || board[2][0] == EMPTY || board[0][10] == EMPTY || board[2][12] == EMPTY 
@@ -881,27 +814,74 @@ class Board {
 					).collect(Collectors.toList());;
 
 					// Vérifier qu'on ne part pas d'une case à bloquer vers une autre
-			bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
-					m -> 
-					(m.getRowStart() == 1 && m.getColStart() == 1) ||
-					(m.getRowStart() == 1 && m.getColStart() == 11) ||
-					(m.getRowStart() == 11 && m.getColStart() == 1) ||
-					(m.getRowStart() == 11 && m.getColStart() == 11) ||
-					(m.getRowStart() == 0 && m.getColStart() == 2) ||
-					(m.getRowStart() == 2 && m.getColStart() == 0) ||
-					(m.getRowStart() == 0 && m.getColStart() == 10) ||
-					(m.getRowStart() == 2 && m.getColStart() == 12) ||
-					(m.getRowStart() == 10 && m.getColStart() == 12) ||
-					(m.getRowStart() == 12 && m.getColStart() == 10) ||
-					(m.getRowStart() == 10 && m.getColStart() == 0) ||
-					(m.getRowStart() == 12 && m.getColStart() == 2)
-					).collect(Collectors.toList());;
-			return bestCloseOut;
+					bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
+							m -> 
+							(m.getRowStart() == 1 && m.getColStart() == 1) ||
+							(m.getRowStart() == 1 && m.getColStart() == 11) ||
+							(m.getRowStart() == 11 && m.getColStart() == 1) ||
+							(m.getRowStart() == 11 && m.getColStart() == 11) ||
+							(m.getRowStart() == 0 && m.getColStart() == 2) ||
+							(m.getRowStart() == 2 && m.getColStart() == 0) ||
+							(m.getRowStart() == 0 && m.getColStart() == 10) ||
+							(m.getRowStart() == 2 && m.getColStart() == 12) ||
+							(m.getRowStart() == 10 && m.getColStart() == 12) ||
+							(m.getRowStart() == 12 && m.getColStart() == 10) ||
+							(m.getRowStart() == 10 && m.getColStart() == 0) ||
+							(m.getRowStart() == 12 && m.getColStart() == 2)
+							).collect(Collectors.toList());;
+							return bestCloseOut;
 		}
 		// Toutes les cases des coins sont déjà occupées (par un rouge ou par un noir)
 		else {
 			return null;
 		}
+	}
+
+	// TODO METHODE MARCHE PAS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	public boolean moveIsGoingOnEmptyRowOrColumn(Move nextMove) {
+		int column = nextMove.getColTarget();
+		int row = nextMove.getRowTarget();
+		// En bas
+		for(int i=row; i<13; i++) {
+			if(board[i][column] != EMPTY && board[i][column] != THRONE) break;
+			if(i==12) return true;
+		}
+		// En haut
+		for(int i=row; i>=0; i--) {
+			if(board[i][column] != EMPTY || board[i][column] != THRONE)	break;
+			if(i==0) return true;
+		}
+		// À droite
+		for(int i=column; i<13; i++) {
+			if(board[row][i] != EMPTY || board[row][i] != THRONE) break;
+			if(i==12) return true;
+		}
+		// À gauche
+		for(int i=column; i>=0; i--) {
+			if(board[row][i] != EMPTY || board[row][i] != THRONE) break;
+			if(i==0) return true;
+		}
+		return false;
+	}
+
+	void printBoard() {
+		String board = Arrays.deepToString(this.board).replace("], ", "]\n").replace("[[", "[").replace("]]", "]");
+		board = board.replace('2', 'N').replace('4', 'R').replace('1', 'C').replace('5', 'K').replace('6', 'T');
+		System.out.println("\n"+board);
+	}
+
+	public void printPossibleMoves() {
+		// NOIR
+		String possiblesMovesBlack= "";
+		for(Move m : findPossibleMoves(BLACK)) possiblesMovesBlack += m.toString()+" / ";
+		System.out.println("\nCoups possibles pour les NOIRS: "+possiblesMovesBlack);
+		System.out.println("Nombre de coups possibles pour les NOIRS: "+findPossibleMoves(BLACK).size());
+
+		// ROUGE 
+		//		String possiblesMoves= "";
+		//		for(Move m : findPossibleMoves(RED)) possiblesMoves+=m.toString()+" / ";
+		//		System.out.println("Coups possibles pour les ROUGES: "+possiblesMoves);
+		//		System.out.println("Nombre de coups possibles pour les ROUGES: "+findPossibleMoves(RED).size());
 	}
 
 }

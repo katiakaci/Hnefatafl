@@ -13,6 +13,7 @@ class Client {
 	static int aiPlayer, opponent; 
 	static String colorAI, colorOpponent;
 	static final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5;
+	static ArrayList<String> moveAI;
 
 	public static void main(String[] args) {
 		try {
@@ -48,12 +49,12 @@ class Client {
 		colorAI = "ROUGES";
 		colorOpponent = "NOIRS";
 
-		//		board.printBoard();		
 		String move = playWithAlphaBeta();
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0,move.length());
-		//		board.printBoard();
 		output.flush();
+		moveAI = new ArrayList<>();
+		moveAI.add(move);
 	}
 
 	private static void startGameAsBlack() throws IOException {
@@ -68,6 +69,7 @@ class Client {
 		colorAI = "NOIRS";
 		colorOpponent = "ROUGES";
 		cpu = new CPUPlayer(aiPlayer);
+		moveAI = new ArrayList<>();
 	}
 
 	private static void nextMove() throws IOException {
@@ -81,9 +83,17 @@ class Client {
 
 		// AI (réseau) joue :	
 		String move = playWithAlphaBeta();
+
+		// Vérifier si on joue le même mouvement trois fois de suite
+		if(aiPlayer == BLACK && moveAI.size() > 20) {
+			if(moveAI.get(moveAI.size()-1) == moveAI.get(moveAI.size()-3) && moveAI.get(moveAI.size()-1) == moveAI.get(moveAI.size()-5) && moveAI.get(moveAI.size()-1) == moveAI.get(moveAI.size()-7)) {
+				move = cpu.getDifferentMove(board);
+			}
+		}
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0, move.length());
 		output.flush();
+		moveAI.add(s);
 	}
 
 	private static void invalidMove() throws IOException {
