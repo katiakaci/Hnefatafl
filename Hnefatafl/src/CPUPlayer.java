@@ -90,7 +90,8 @@ public class CPUPlayer {
 				if (beta <= alpha) break;
 			}
 		}
-		return bestMoves;
+		if(bestMoves.size() == 0) return possibleMoves;
+		else return bestMoves;
 	}
 
 	/**

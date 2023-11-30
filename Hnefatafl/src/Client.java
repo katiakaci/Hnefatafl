@@ -126,6 +126,7 @@ class Client {
 	private static String playWithAlphaBeta() {
 		ArrayList<Move> moves = cpu.getNextMoveAB(board);
 		int randomIndex = (int)Math.floor(Math.random() * moves.size());
+		if(randomIndex!=0) randomIndex = randomIndex - 1;
 		String move = moves.get(randomIndex).toString();
 		System.out.println("Tour du ai "+colorAI+", coup joué est : "+move);
 		return move;
