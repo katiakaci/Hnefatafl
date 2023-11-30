@@ -88,36 +88,38 @@ public class CPUPlayer {
 		boolean bestMoveFound = false;
 
 		for (Move nextMove : possibleMoves) {
-			
-			// King va dans un coin
-				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingToCorner(nextMove)) {
+
+			if(cpu == BLACK) {
+				// King va dans un coin
+				if(board.moveIsKing(nextMove) && board.moveIsGoingToCorner(nextMove)) {
 					bestMoves.clear();
 					bestMoves.add(nextMove);
 					return bestMoves;
 				}
 
 				// King skip les moves qui font en sorte qu'il sera piégé de 3 côtés
-				if(cpu == BLACK && board.moveIsKing(nextMove) && board.isKingAlmostTrapped(nextMove.getRowTarget(), nextMove.getColTarget())) continue;
+				if(board.moveIsKing(nextMove) && board.isKingAlmostTrapped(nextMove.getRowTarget(), nextMove.getColTarget(), nextMove.getRowStart(), nextMove.getColStart())) continue;
+
+				// Si le roi est en danger ne pas jouer d'autres pions
+				if(!board.moveIsKing(nextMove) && board.isKingAlmostTrapped(board.getRowKing(), board.getColKing(), nextMove.getRowStart(), nextMove.getColStart())) continue;
 
 				// King va dans une ligne de coin vide
-				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptySide(nextMove)) {
+				if(board.moveIsKing(nextMove) && board.moveIsGoingOnEmptySide(nextMove)) {
 					bestMoves.clear();
 					bestMoves.add(nextMove);
-					bestMoveFound = true; // permet de ne plus vérifier les autres moves sauf un move de coin ou un move dangereux
+					bestMoveFound = true;
 					continue;
 				}
 
-				// Si le roi est en danger ne pas jouer d'autres pions
-				if(cpu == BLACK && !board.moveIsKing(nextMove) && board.isKingAlmostTrapped(board.getRowKing(), board.getColKing())) continue;
-
 				// King fuit s'il est actuellement piégé de 3 côtés 
-				if(cpu == BLACK && board.moveIsKing(nextMove) && board.isKingAlmostTrapped(board.getRowKing(), board.getColKing()) 
+				if(board.moveIsKing(nextMove) && board.isKingAlmostTrapped(board.getRowKing(), board.getColKing(), nextMove.getRowStart(), nextMove.getColStart()) 
 						&& board.canMoveFreeAlmostTrappedKing(nextMove)) {
 					bestMoves.clear();
 					bestMoves.add(nextMove);
 					bestMoveFound = true;
 					continue;
 				}
+<<<<<<< Updated upstream
 				
 				// TODO ajouter aller dans une ligne vide au centre
 				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptyRowOrColumn(nextMove)) {
@@ -168,13 +170,30 @@ public class CPUPlayer {
 			// TODO ajouter quoi faire si tes dans une ligne vide au centre
 			
 			if(!bestMoveFound) {
+=======
+
+				// King va dans une ligne vide au centre
+				//				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptyRowOrColumn(nextMove)) {
+				//					bestMoves.clear();
+				//					bestMoves.add(nextMove);
+				//					bestMoveFound = true;
+				//					continue;
+				//				}
+
+				// TODO ajouter quoi faire si tes dans une ligne vide au centre
+			}
+
+			if(cpu == RED) {
+>>>>>>> Stashed changes
 				// Rouge encadre le roi TODO
 				//				if(cpu == RED && board.canMoveTrapKing(nextMove)) {
 				//					bestMoves.clear();
 				//					bestMoves.add(nextMove);
 				//					return bestMoves;
 				//				}	
+			}
 
+			if(!bestMoveFound) {
 				Board boardCopy = cloneBoard(board);
 				boardCopy.play(nextMove.toString(), cpu);
 				int score = miniMaxAlphaBeta(min, alpha, beta, DEPTH, boardCopy);
@@ -200,7 +219,7 @@ public class CPUPlayer {
 	 * @param board
 	 * @return score
 	 */
-	private int miniMaxAlphaBeta(int player, int alpha, int beta, int depth, Board board) {					
+	private int miniMaxAlphaBeta(int player, int alpha, int beta, int depth, Board board) {
 		if(depth == 0) return board.evaluate(cpu, depth);
 
 		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
@@ -242,6 +261,33 @@ public class CPUPlayer {
 		String boardValues = sb.toString().trim();
 		Board copyBoard = new Board(boardValues);
 		return copyBoard;
+	}
+
+	/**
+	 * Cas où le jeu alterne entre 2 moves, on déplace un autre pion pour bloquer l'adverse
+	 * @param board
+	 * @return
+	 */
+	public String getDifferentMove(Board board) {
+		ArrayList<Move> possibleMoves = board.findPossibleMoves(cpu);
+		Move bestMove = possibleMoves.get(0);
+
+		// S'il reste d'autres pions noirs autre que le roi
+		if(board.getNumberOfPawnsOnBoardFor(cpu) > 1) {
+			for (Move nextMove : possibleMoves) {
+				if(board.moveIsKing(nextMove)) continue; // skip les moves du king
+				if(nextMove.getColTarget() == board.getColKing()+1 || nextMove.getColTarget() == board.getColKing()-1
+						|| nextMove.getRowTarget() == board.getRowKing()+1 || nextMove.getRowTarget() == board.getRowKing()-1) {
+					bestMove = nextMove;
+					break;
+				}
+			}
+		}
+		else {
+			int randomIndex = (int)Math.floor(Math.random() * possibleMoves.size());
+			bestMove= possibleMoves.get(randomIndex);
+		}
+		return bestMove.toString();
 	}
 
 }
