@@ -569,36 +569,36 @@ class Board {
 
 	private boolean verifyBlackPawnsElimination(int newRow, int newColumn) {
 		// CENTRE
-		if(newRow < 11 && newColumn < 11 && newRow > 1 && newColumn > 1) return checkRowAndColumn2(true, true, true, true, newRow, newColumn);	
+		if(newRow < 11 && newColumn < 11 && newRow > 1 && newColumn > 1) return checkRowAndColumnForBlack(true, true, true, true, newRow, newColumn);	
 
 		// RANGÉE 0 et 1
-		else if(newRow < 2 && newColumn < 11 && newColumn > 1) return checkRowAndColumn2(false, true, true, true, newRow, newColumn);	
+		else if(newRow < 2 && newColumn < 11 && newColumn > 1) return checkRowAndColumnForBlack(false, true, true, true, newRow, newColumn);	
 
 		// RANGÉE 11 et 12
-		else if(newRow > 10 && newColumn < 11 && newColumn > 1) return checkRowAndColumn2(true, false, true, true, newRow, newColumn);
+		else if(newRow > 10 && newColumn < 11 && newColumn > 1) return checkRowAndColumnForBlack(true, false, true, true, newRow, newColumn);
 
 		// COLONNE 0 et 1
-		else if(newRow < 11 && newRow > 1 && newColumn < 2) return checkRowAndColumn2(true, true, true, false, newRow, newColumn);	
+		else if(newRow < 11 && newRow > 1 && newColumn < 2) return checkRowAndColumnForBlack(true, true, true, false, newRow, newColumn);	
 
 		// COLONNE 11 et 12
-		else if(newRow < 11 && newRow > 1 && newColumn > 10) return checkRowAndColumn2(true, true, false, true, newRow, newColumn);
+		else if(newRow < 11 && newRow > 1 && newColumn > 10) return checkRowAndColumnForBlack(true, true, false, true, newRow, newColumn);
 
 		// TROIS CASES DANS LE COIN EN HAUT À GAUCHE
-		else if(newRow < 2 && newColumn < 2) return checkRowAndColumn2(false, true, true, false, newRow, newColumn);	
+		else if(newRow < 2 && newColumn < 2) return checkRowAndColumnForBlack(false, true, true, false, newRow, newColumn);	
 
 		// TROIS CASES DANS LE COIN EN HAUT À DROITE
-		else if(newRow < 2 && newColumn > 10) return checkRowAndColumn2(false, true, false, true, newRow, newColumn);
+		else if(newRow < 2 && newColumn > 10) return checkRowAndColumnForBlack(false, true, false, true, newRow, newColumn);
 
 		// TROIS CASES DANS LE COIN EN BAS À GAUCHE
-		else if(newRow > 10 && newColumn < 2) return checkRowAndColumn2(true, false, true, false, newRow, newColumn);	
+		else if(newRow > 10 && newColumn < 2) return checkRowAndColumnForBlack(true, false, true, false, newRow, newColumn);	
 
 		// TROIS CASES DANS LE COIN EN BAS À DROITE
-		else if(newRow > 10 && newColumn > 10) return checkRowAndColumn2(true, false, false, true, newRow, newColumn);
+		else if(newRow > 10 && newColumn > 10) return checkRowAndColumnForBlack(true, false, false, true, newRow, newColumn);
 
 		return false;
 	}
 
-	private boolean checkRowAndColumn2(boolean up, boolean down, boolean right, boolean left, int newRow, int newColumn) {	
+	private boolean checkRowAndColumnForBlack(boolean up, boolean down, boolean right, boolean left, int newRow, int newColumn) {	
 		if(up) {
 			if(board[newRow-1][newColumn] == BLACK && (board[newRow-2][newColumn] == RED || board[newRow-2][newColumn] == CORNER || (newRow-2 == THRONE && newColumn == THRONE) ))	return true;
 		}
@@ -689,12 +689,130 @@ class Board {
 				|| row == rowKing-1 && col == colKing);
 	}
 
+	public boolean isMoveDangerousForRedPawn(Move nextMove) {
+		int row = nextMove.getRowTarget();
+		int col = nextMove.getColTarget();
+		int rowStart = nextMove.getRowStart();
+		int colStart = nextMove.getColStart();
+
+		// Jouer provisoirement
+		this.board[row][col] = RED;
+		this.board[rowStart][colStart] = EMPTY;
+
+		boolean result = verifyRedPawnsElimination(row, col);
+
+		// Annuler le déplacement
+		this.board[rowStart][colStart] = RED;
+		this.board[row][col] = EMPTY;
+		return result;
+	}
+
+	private boolean verifyRedPawnsElimination(int newRow, int newColumn) {
+		// CENTRE
+		if(newRow < 11 && newColumn < 11 && newRow > 1 && newColumn > 1) return checkRowAndColumnForRed(true, true, true, true, newRow, newColumn);	
+
+		// RANGÉE 0 et 1
+		else if(newRow < 2 && newColumn < 11 && newColumn > 1) return checkRowAndColumnForRed(false, true, true, true, newRow, newColumn);	
+
+		// RANGÉE 11 et 12
+		else if(newRow > 10 && newColumn < 11 && newColumn > 1) return checkRowAndColumnForRed(true, false, true, true, newRow, newColumn);
+
+		// COLONNE 0 et 1
+		else if(newRow < 11 && newRow > 1 && newColumn < 2) return checkRowAndColumnForRed(true, true, true, false, newRow, newColumn);	
+
+		// COLONNE 11 et 12
+		else if(newRow < 11 && newRow > 1 && newColumn > 10) return checkRowAndColumnForRed(true, true, false, true, newRow, newColumn);
+
+		// TROIS CASES DANS LE COIN EN HAUT À GAUCHE
+		else if(newRow < 2 && newColumn < 2) return checkRowAndColumnForRed(false, true, true, false, newRow, newColumn);	
+
+		// TROIS CASES DANS LE COIN EN HAUT À DROITE
+		else if(newRow < 2 && newColumn > 10) return checkRowAndColumnForRed(false, true, false, true, newRow, newColumn);
+
+		// TROIS CASES DANS LE COIN EN BAS À GAUCHE
+		else if(newRow > 10 && newColumn < 2) return checkRowAndColumnForRed(true, false, true, false, newRow, newColumn);	
+
+		// TROIS CASES DANS LE COIN EN BAS À DROITE
+		else if(newRow > 10 && newColumn > 10) return checkRowAndColumnForRed(true, false, false, true, newRow, newColumn);
+
+		return false;
+	}
+
+	private boolean checkRowAndColumnForRed(boolean up, boolean down, boolean right, boolean left, int newRow, int newColumn) {	
+		if(up) {
+			if(board[newRow-1][newColumn] == RED && (board[newRow-2][newColumn] == BLACK || board[newRow-2][newColumn] == KING || board[newRow-2][newColumn] == CORNER || (newRow-2==THRONE && newColumn==THRONE) ))  return true;
+		}
+		if(down) {
+			if(board[newRow+1][newColumn] == RED && (board[newRow+2][newColumn] == BLACK || board[newRow+2][newColumn] == KING || board[newRow+2][newColumn] == CORNER || (newRow+2==THRONE && newColumn==THRONE) ))  return true;
+		}
+		if(right) {
+			if(board[newRow][newColumn+1] == RED && (board[newRow][newColumn+2] == BLACK || board[newRow][newColumn+2] == KING || board[newRow][newColumn+2] == CORNER || (newRow==THRONE && newColumn+2==THRONE) ))  return true;
+		}
+		if(left) {
+			if(board[newRow][newColumn-1] == RED && (board[newRow][newColumn-2] == BLACK || board[newRow][newColumn-2] == KING || board[newRow][newColumn-2] == CORNER || (newRow==THRONE && newColumn-2==THRONE) )) return true;
+		}
+		return false;
+	}
+
+	public boolean canMoveBlockAccessToKingWhoCanGoToThrone(Move nextMove) {
+		boolean isSideEmptyAndKingThere = false;
+		int column = this.colKing;
+		int row = this.rowKing;
+		// Vérifier qu'on est sur le côté droit ou gauche
+		if(column == 12 || column == 0) {
+			isSideEmptyAndKingThere = true;
+			// Vérifier si la colonne est vide en bas
+			for(int i=row; i<12; i++) {
+				if(board[i][column] != EMPTY ){
+					isSideEmptyAndKingThere = false;	
+					break;
+				}
+			}
+			if(isSideEmptyAndKingThere && nextMove.getColTarget()==column && nextMove.getRowTarget() > row) return true;
+			// Si la colonne n'était pas vide par en bas, on vérifie en haut
+			if(isSideEmptyAndKingThere == false) {
+				isSideEmptyAndKingThere = true;	
+				for(int i=row; i>0; i--) {
+					if(board[i][column] != EMPTY){
+						isSideEmptyAndKingThere = false;
+						break;
+					}
+				}
+				if(isSideEmptyAndKingThere && nextMove.getColTarget()==column && nextMove.getRowTarget() < row) return true;
+			}
+		}
+		// Vérifier qu'on est sur le côté haut ou bas
+		else if(row == 0 || row == 12) {
+			isSideEmptyAndKingThere = true;
+			// Vérifier si la colonne est vide à droite
+			for(int i=column; i<12; i++) {
+				if(board[row][i] != EMPTY){
+					isSideEmptyAndKingThere = false;	
+					break;
+				}
+			}
+			if(isSideEmptyAndKingThere && nextMove.getColTarget()>column && nextMove.getRowTarget() == row) return true;
+			// Si la colonne n'était pas vide à droite, on vérifie à gauche
+			if(isSideEmptyAndKingThere == false) {
+				isSideEmptyAndKingThere = true;	
+				for(int i=column; i>0; i--) {
+					if(board[row][i] != EMPTY){
+						isSideEmptyAndKingThere = false;
+						break;
+					}
+				}
+
+				if(isSideEmptyAndKingThere && nextMove.getColTarget()<column && nextMove.getRowTarget() == row) return true;
+			}
+		}
+		return false;
+	}
 
 
 
 
 
-
+	// ************************ MÉTHODES PAS ENCORE UTILISÉES *********************************************
 	/**
 	 * verifie si les coins sont bloquer
 	 */
@@ -843,6 +961,8 @@ class Board {
 		return false;
 
 	}
+
+
 
 	// ************************ MÉTHODES DÉCHETS *********************************************
 	// TODO

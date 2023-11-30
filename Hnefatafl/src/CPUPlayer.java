@@ -77,6 +77,24 @@ public class CPUPlayer {
 					return bestMoves;
 				}
 
+				if(board.canMoveBlockAccessToKingWhoCanGoToThrone(nextMove)) {
+					bestMoves.clear();
+					bestMoves.add(nextMove);
+					return bestMoves;
+				}
+
+
+				// Un pion va bloquer un coin
+				if(!board.isPawnNearCorner(nextMove.getRowStart(), nextMove.getColStart()) && board.isPawnNearCorner(nextMove.getRowTarget(), nextMove.getColTarget())) {
+					bestMoves.clear();
+					bestMoves.add(nextMove);
+					bestMoveFound = true;
+					continue;
+				}
+
+				// Si le move fait en sorte qu'il pourra se faire tuer apres, on le skip
+				if(board.isMoveDangerousForRedPawn(nextMove)) continue;
+
 				// Un pion va tuer un noir
 				if(board.canMoveKillBlackPawns(nextMove)) {
 					bestMoves.clear();
@@ -84,42 +102,32 @@ public class CPUPlayer {
 					bestMoveFound = true;
 					goodMoveFound = true;
 					continue;
-				}			
+				}	
 
+				// Un pion va encadré le roi et il ne lui restera qu'une case libre
+				if(board.canMoveAlmostTrapKing(nextMove)) {
+					bestMoves.clear();
+					bestMoves.add(nextMove);
+					bestMoveFound = true;
+					goodMoveFound = true;
+					continue;
+				}
 
 				if(!goodMoveFound) {
-					// Un pion va encadré le roi et il ne lui restera qu'une case libre
-					if(board.canMoveAlmostTrapKing(nextMove)) {
+					// Un pion va se placer à coté du roi
+					if(board.isMoveNextToKing(nextMove)) {
 						bestMoves.clear();
 						bestMoves.add(nextMove);
 						bestMoveFound = true;
-						okMoveFound = true;
 						continue;
-					}
-
-					if(!okMoveFound) {
-						// Un pion va se placer à coté du roi
-						if(board.isMoveNextToKing(nextMove)) {
-							bestMoves.clear();
-							bestMoves.add(nextMove);
-							bestMoveFound = true;
-							continue;
-						}
 					}
 
 					// Avec ces deux là on a match nul :
 					// Si un pion bloque un coin, on ne le bouge pas
 					//				if(board.isPawnNearCorner(nextMove.getRowStart(), nextMove.getColStart())) continue;
 					//				
-					//				// Un pion va bloquer un coin
-					//				if(board.isPawnNearCorner(nextMove.getRowTarget(), nextMove.getColTarget())) {
-					//					bestMoves.clear();
-					//					bestMoves.add(nextMove);
-					//					bestMoveFound = true;
-					//					continue;
-					//				}
+					//				
 				}
-
 			}
 
 			if(!bestMoveFound) {
