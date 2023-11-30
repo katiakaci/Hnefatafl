@@ -540,6 +540,32 @@ class Board {
 	// ************************ MÉTHODES POUR LES ROUGES *********************************************
 
 	/**
+	 * Vérifie si un move peut piéger un roi
+	 * @param nextMove
+	 * @return
+	 */
+	public boolean canMoveTrapKing(Move nextMove) {
+		int col = nextMove.getColTarget();
+		int row = nextMove.getRowTarget();
+		int colStart = nextMove.getColStart();
+		int rowStart = nextMove.getRowStart();
+
+		// Jouer provisoirement
+		this.board[row][col] = RED;
+		this.board[rowStart][colStart] = EMPTY;
+
+		boolean isTrapped = isKingTrapped();
+
+		// Annuler le déplacement
+		this.board[rowStart][colStart] = RED;
+		this.board[row][col] = EMPTY;
+
+		return isTrapped;
+	}
+
+
+
+	/**
 	 * verifie si les coins sont bloquer
 	 */
 	public ArrayList<Move> isCornerTrap(ArrayList<Move> possibleMoves) {
@@ -661,7 +687,7 @@ class Board {
 		return false;
 	}
 
-	//revoir la methode
+	//TODO revoir la methode
 	public boolean moveKillPawns(Move nextMove) {
 		int col = nextMove.getColTarget();
 		int row = nextMove.getRowTarget();
@@ -687,65 +713,6 @@ class Board {
 		return false;
 
 	}
-
-	// TODO
-	public boolean canMoveTrapKing(Move nextMove) {
-		int col = nextMove.getColTarget();
-		int row = nextMove.getRowTarget();
-
-		boolean trap = false;
-
-		this.board[row][col]=RED;
-
-		// Il y a un mur à un des quatre côtés
-		if(rowKing == 0) {
-			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
-					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
-					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
-				//return true;
-				trap =true;
-		}
-		else if(rowKing == 12) {
-			if((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
-					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
-					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
-				//return true;
-				trap =true;
-		}
-		if(colKing == 0) {
-			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
-					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
-					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
-				//return true;
-				trap =true;
-		}
-		else if(colKing == 12) {
-			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
-					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
-					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
-				//return true;
-				trap =true;
-		}
-		// Encadré des 4 côtés
-		if(rowKing > 0 && rowKing < 12 && colKing > 0 && colKing < 12) {	
-			if((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
-					&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
-					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
-					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) 
-				//return true;
-				trap =true;
-		}
-
-
-		this.board[row][col]=EMPTY;
-
-		return trap;
-		//return false;
-	}
-
-
-
-
 
 	// ************************ MÉTHODES DÉCHETS *********************************************
 	// TODO
@@ -832,12 +799,10 @@ class Board {
 							return bestCloseOut;
 		}
 		// Toutes les cases des coins sont déjà occupées (par un rouge ou par un noir)
-		else {
-			return null;
-		}
+		else return null;
 	}
 
-	// TODO METHODE MARCHE PAS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// TODO METHODE pour les noirs MARCHE PAS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	public boolean moveIsGoingOnEmptyRowOrColumn(Move nextMove) {
 		int column = nextMove.getColTarget();
 		int row = nextMove.getRowTarget();

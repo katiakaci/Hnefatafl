@@ -68,12 +68,13 @@ public class CPUPlayer {
 			}
 
 			if(cpu == RED) {
-				// Rouge encadre le roi TODO
-				//				if(cpu == RED && board.canMoveTrapKing(nextMove)) {
-				//					bestMoves.clear();
-				//					bestMoves.add(nextMove);
-				//					return bestMoves;
-				//				}	
+				// Rouge encadre le roi
+				if(board.canMoveTrapKing(nextMove)) {
+					bestMoves.clear();
+					bestMoves.add(nextMove);
+					return bestMoves;
+				}	
+
 			}
 
 			if(!bestMoveFound) {
