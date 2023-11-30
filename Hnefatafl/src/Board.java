@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 class Board {
 	private final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5, THRONE = 6;
@@ -667,6 +668,76 @@ class Board {
 	// TODO
 	private int distanceManhattanForKing(int col, int row) {
 		return Math.abs(col-this.colKing)+Math.abs(row-this.rowKing);
+	}
+	
+	/* Stratégie ROUGE pour bloquer toutes les sorties (12 pions rouges nécessaires)
+	Avant même d'essayer de manger les pions adverses (sauf si on peut manger le roi)
+	Ensuite, quand les sorties sont bloquées,dans l'idéal les 12 autres pions rouges 
+	jouent en 12 vs 13 pour capturer les adversaires. Les pions qui bloquent les sorties
+	ne bougent que si ils peuvent capturer le roi*/
+	
+	// TODO : connecter ça avec le AlphaBeta
+	private ArrayList<Move> blockExit(ArrayList<Move> possibleMoves) {
+		// Bloquer la case en diagonale des coins en priorité
+		ArrayList<Move> bestCloseOut;
+		if(board[1][1] == EMPTY || board[1][11] == EMPTY || board[11][1] == EMPTY || board[11][11] == EMPTY) {
+			// Chercher tous les moves vers une case en diagonale des coins
+			bestCloseOut = (ArrayList<Move>) possibleMoves.stream().filter(
+					m -> 
+					(m.getRowTarget() == 1 && m.getColTarget() == 1) ||
+					(m.getRowTarget() == 1 && m.getColTarget() == 11) ||
+					(m.getRowTarget() == 11 && m.getColTarget() == 1) ||
+					(m.getRowTarget() == 11 && m.getColTarget() == 11)
+					).collect(Collectors.toList());;
+					
+			// Vérifier qu'on ne part pas d'une case en diagonale des coins vers une autre
+			bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
+					m -> 
+					(m.getRowStart() == 1 && m.getColStart() == 1) ||
+					(m.getRowStart() == 1 && m.getColStart() == 11) ||
+					(m.getRowStart() == 11 && m.getColStart() == 1) ||
+					(m.getRowStart() == 11 && m.getColStart() == 11)
+					).collect(Collectors.toList());;
+			return bestCloseOut;
+		}
+		// Ensuite former une diagonale pour fermer les coins
+		else if (board[0][1] == EMPTY || board[1][0] == EMPTY || board[0][11] == EMPTY || board[1][12] == EMPTY 
+				|| board[11][12] == EMPTY || board[12][11] == EMPTY || board[11][0] == EMPTY || board[12][1] == EMPTY){
+			// Chercher tous les moves vers une case en diagonale des coins
+			bestCloseOut = (ArrayList<Move>) possibleMoves.stream().filter(
+					m -> 
+					(m.getRowTarget() == 0 && m.getColTarget() == 1) ||
+					(m.getRowTarget() == 1 && m.getColTarget() == 0) ||
+					(m.getRowTarget() == 0 && m.getColTarget() == 11) ||
+					(m.getRowTarget() == 1 && m.getColTarget() == 12) ||
+					(m.getRowTarget() == 11 && m.getColTarget() == 12) ||
+					(m.getRowTarget() == 12 && m.getColTarget() == 11) ||
+					(m.getRowTarget() == 11 && m.getColTarget() == 0) ||
+					(m.getRowTarget() == 12 && m.getColTarget() == 1)
+					).collect(Collectors.toList());;
+
+					// Vérifier qu'on ne part pas d'une case à bloquer vers une autre
+			bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
+					m -> 
+					(m.getRowStart() == 1 && m.getColStart() == 1) ||
+					(m.getRowStart() == 1 && m.getColStart() == 11) ||
+					(m.getRowStart() == 11 && m.getColStart() == 1) ||
+					(m.getRowStart() == 11 && m.getColStart() == 11) ||
+					(m.getRowStart() == 0 && m.getColStart() == 1) ||
+					(m.getRowStart() == 1 && m.getColStart() == 0) ||
+					(m.getRowStart() == 0 && m.getColStart() == 11) ||
+					(m.getRowStart() == 1 && m.getColStart() == 12) ||
+					(m.getRowStart() == 11 && m.getColStart() == 12) ||
+					(m.getRowStart() == 12 && m.getColStart() == 11) ||
+					(m.getRowStart() == 11 && m.getColStart() == 0) ||
+					(m.getRowStart() == 12 && m.getColStart() == 1)
+					).collect(Collectors.toList());;
+			return bestCloseOut;
+		}
+		// Toutes les cases des coins sont déjà occupées (par un rouge ou par un noir)
+		else {
+			return null;
+		}
 	}
 
 }
