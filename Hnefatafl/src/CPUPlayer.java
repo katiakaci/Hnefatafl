@@ -13,68 +13,6 @@ public class CPUPlayer {
 	}
 
 	/**
-	 * Retourne la liste des meilleurs coups possibles avec l'algorithme miniMax
-	 * @param board
-	 * @return ArrayList des meilleurs coups possibles
-	 */
-	public ArrayList<Move> getNextMoveMinMax(Board board) {
-		int bestScore = Integer.MIN_VALUE;
-		ArrayList<Move> bestMoves = new ArrayList<>();
-		ArrayList<Move> possibleMoves = board.findPossibleMoves(cpu);
-
-		for (Move nextMove : possibleMoves) {
-			Board boardCopy = cloneBoard(board);
-			boardCopy.play(nextMove.toString(), cpu);
-			int score = miniMax(min, DEPTH, boardCopy);
-
-			if(score > bestScore) {
-				bestMoves.clear(); 
-				bestMoves.add(nextMove);
-				bestScore = score;
-			}
-			else if(score == bestScore) bestMoves.add(nextMove);
-		}	
-		return bestMoves;
-	}
-
-	/**
-	 * Algorithme MiniMax
-	 * @param player
-	 * @param depth
-	 * @param board
-	 * @return score
-	 */
-	private int miniMax(int player, int depth, Board board) {
-		if(depth == 0) return board.evaluate(cpu, depth);
-
-		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
-		int evaluation =  board.evaluate(cpu, depth);
-		if (evaluation == 100 || evaluation == -100 || board.getNumberOfPawnsOnBoardFor(RED) == 0 || board.getNumberOfPawnsOnBoardFor(BLACK) == 0) return evaluation;
-
-		ArrayList<Move> moves = board.findPossibleMoves(player);
-		if (player == max) {
-			int maxScore = Integer.MIN_VALUE;
-			for(Move nextMove : moves) {
-				Board boardCopy = cloneBoard(board);
-				boardCopy.play(nextMove.toString(), player);
-				int score = miniMax(min, depth - 1, boardCopy);
-				maxScore = Math.max(maxScore, score);
-			}
-			return maxScore;
-		}
-		else {
-			int minScore = Integer.MAX_VALUE;;
-			for(Move nextMove : moves) {
-				Board boardCopy = cloneBoard(board);
-				boardCopy.play(nextMove.toString(), player);
-				int score = miniMax(max, depth - 1, boardCopy);
-				minScore = Math.min(minScore, score);
-			}
-			return minScore;
-		}
-	}
-
-	/**
 	 * Retourne la liste des meilleurs coups possibles avec l'algorithme alpha beta
 	 * @param board
 	 * @return
@@ -119,58 +57,6 @@ public class CPUPlayer {
 					bestMoveFound = true;
 					continue;
 				}
-<<<<<<< Updated upstream
-				
-				// TODO ajouter aller dans une ligne vide au centre
-				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptyRowOrColumn(nextMove)) {
-					bestMoves.clear();
-					bestMoves.add(nextMove);
-					continue;
-				}
-				
-				
-				/**
-				 * les coups des pions rouges
-				 */
-				
-				//verifie si les coins sont disponible
-				
-				if(cpu == RED && board.isCornerTrap(possibleMoves)!=null)
-				{
-					bestMoves.clear();
-					bestMoves = board.isCornerTrap(possibleMoves);
-					return bestMoves;
-				}
-////				
-				//verifie si on capture le roi
-				if(cpu == RED && board.canMoveTrapKing(nextMove))
-				{
-					bestMoves.clear();
-					bestMoves.add(nextMove);
-					return bestMoves;
-				}
-//				
-//				//verifie si on va a coter du roi
-				if(cpu == RED && board.isMoveBesideKing(nextMove))
-				{
-					bestMoves.clear();
-					bestMoves.add(nextMove);
-					return bestMoves;
-				}
-//				
-				//verifie si on tue un pion
-				if(cpu == RED && board.moveKillPawns(nextMove))
-				{
-					bestMoves.add(nextMove);
-					continue;
-				}
-//				
-			// noir:
-			// TODO Cas bizarre où le jeu bloque et alterne entre 2 move (donc match nul)(voir screenshot), faire si move pareil depuis 3 moves changer
-			// TODO ajouter quoi faire si tes dans une ligne vide au centre
-			
-			if(!bestMoveFound) {
-=======
 
 				// King va dans une ligne vide au centre
 				//				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptyRowOrColumn(nextMove)) {
@@ -179,12 +65,10 @@ public class CPUPlayer {
 				//					bestMoveFound = true;
 				//					continue;
 				//				}
-
 				// TODO ajouter quoi faire si tes dans une ligne vide au centre
 			}
 
 			if(cpu == RED) {
->>>>>>> Stashed changes
 				// Rouge encadre le roi TODO
 				//				if(cpu == RED && board.canMoveTrapKing(nextMove)) {
 				//					bestMoves.clear();

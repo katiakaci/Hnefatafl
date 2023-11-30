@@ -121,14 +121,6 @@ class Client {
 		return console.readLine();  
 	}
 
-	private static String playWithMinMax() {
-		ArrayList<Move> moves = cpu.getNextMoveMinMax(board);
-		int randomIndex = (int)Math.floor(Math.random() * moves.size());
-		String move = moves.get(randomIndex).toString();
-		System.out.println("Tour du ai "+colorAI+", coup joué est : "+move);
-		return move;
-	}
-
 	private static String playWithAlphaBeta() {
 		ArrayList<Move> moves = cpu.getNextMoveAB(board);
 		int randomIndex = (int)Math.floor(Math.random() * moves.size());
