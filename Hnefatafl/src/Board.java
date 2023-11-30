@@ -563,6 +563,136 @@ class Board {
 		return isTrapped;
 	}
 
+	public boolean canMoveKillBlackPawns(Move nextMove) {
+		return verifyBlackPawnsElimination(nextMove.getRowTarget(), nextMove.getColTarget());
+	}
+
+	private boolean verifyBlackPawnsElimination(int newRow, int newColumn) {
+		// CENTRE
+		if(newRow < 11 && newColumn < 11 && newRow > 1 && newColumn > 1) return checkRowAndColumn2(true, true, true, true, newRow, newColumn);	
+
+		// RANGÉE 0 et 1
+		else if(newRow < 2 && newColumn < 11 && newColumn > 1) return checkRowAndColumn2(false, true, true, true, newRow, newColumn);	
+
+		// RANGÉE 11 et 12
+		else if(newRow > 10 && newColumn < 11 && newColumn > 1) return checkRowAndColumn2(true, false, true, true, newRow, newColumn);
+
+		// COLONNE 0 et 1
+		else if(newRow < 11 && newRow > 1 && newColumn < 2) return checkRowAndColumn2(true, true, true, false, newRow, newColumn);	
+
+		// COLONNE 11 et 12
+		else if(newRow < 11 && newRow > 1 && newColumn > 10) return checkRowAndColumn2(true, true, false, true, newRow, newColumn);
+
+		// TROIS CASES DANS LE COIN EN HAUT À GAUCHE
+		else if(newRow < 2 && newColumn < 2) return checkRowAndColumn2(false, true, true, false, newRow, newColumn);	
+
+		// TROIS CASES DANS LE COIN EN HAUT À DROITE
+		else if(newRow < 2 && newColumn > 10) return checkRowAndColumn2(false, true, false, true, newRow, newColumn);
+
+		// TROIS CASES DANS LE COIN EN BAS À GAUCHE
+		else if(newRow > 10 && newColumn < 2) return checkRowAndColumn2(true, false, true, false, newRow, newColumn);	
+
+		// TROIS CASES DANS LE COIN EN BAS À DROITE
+		else if(newRow > 10 && newColumn > 10) return checkRowAndColumn2(true, false, false, true, newRow, newColumn);
+
+		return false;
+	}
+
+	private boolean checkRowAndColumn2(boolean up, boolean down, boolean right, boolean left, int newRow, int newColumn) {	
+		if(up) {
+			if(board[newRow-1][newColumn] == BLACK && (board[newRow-2][newColumn] == RED || board[newRow-2][newColumn] == CORNER || (newRow-2 == THRONE && newColumn == THRONE) ))	return true;
+		}
+		if(down) {
+			if(board[newRow+1][newColumn] == BLACK && (board[newRow+2][newColumn] == RED || board[newRow+2][newColumn] == CORNER || (newRow+2 == THRONE && newColumn == THRONE) )) return true;	
+		}
+		if(right) {
+			if(board[newRow][newColumn+1] == BLACK && (board[newRow][newColumn+2] == RED || board[newRow][newColumn+2] == CORNER || (newRow == THRONE && newColumn+2 == THRONE) )) return true;
+		}
+		if(left) {
+			if(board[newRow][newColumn-1] == BLACK && (board[newRow][newColumn-2] == RED || board[newRow][newColumn-2] == CORNER || (newRow == THRONE && newColumn-2 == THRONE) )) return true;
+		}
+		return false;
+	}
+
+	public boolean canMoveAlmostTrapKing(Move nextMove) {
+		boolean result = false;
+		int row = nextMove.getRowTarget();
+		int col = nextMove.getColTarget();
+		int rowStart = nextMove.getRowStart();
+		int colStart = nextMove.getColStart();
+
+		// Jouer provisoirement
+		this.board[row][col] = RED;
+		this.board[rowStart][colStart] = EMPTY;
+
+		// Il y a un mur à un des quatre côtés
+		if(rowKing == 0) {
+			if( ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE))
+					|| ((board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE) && (board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE))
+					|| ((board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE) && (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)) ){
+				result = true;
+			}
+		}
+		else if(rowKing == 12) {
+			if( ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
+					|| ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
+					|| ((board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) ){
+				result = true;
+			}
+		}
+		if(colKing == 0) {
+			if( ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE))
+					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
+					|| ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)) ){
+				result = true;
+			}
+		}
+		else if(colKing == 12) {
+			if( ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE))
+					|| ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE))
+					|| ((board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE) && (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)) ){
+				result = true;
+			}
+		}
+		// Encadré des 4 côtés
+		if(rowKing > 0 && rowKing < 12 && colKing > 0 && colKing < 12) {	
+			if( ((board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+					&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+					&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)
+					)||((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+							&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+							&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)
+							) || ((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+									&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+									&& (board[rowKing][colKing-1] == RED || board[rowKing][colKing-1] == CORNER || board[rowKing][colKing-1] == THRONE)
+									)||((board[rowKing+1][colKing] == RED || board[rowKing+1][colKing] == CORNER || board[rowKing+1][colKing] == THRONE)
+											&& (board[rowKing][colKing+1] == RED || board[rowKing][colKing+1] == CORNER || board[rowKing][colKing+1] == THRONE)
+											&& (board[rowKing-1][colKing] == RED || board[rowKing-1][colKing] == CORNER || board[rowKing-1][colKing] == THRONE)
+											)){
+				result = true;
+			}
+		}
+
+		// Annuler le déplacement
+		this.board[rowStart][colStart] = RED;
+		this.board[row][col] = EMPTY;
+
+		return result;
+	}
+
+	public boolean isMoveNextToKing(Move nextMove) {
+		int row = nextMove.getRowTarget();
+		int col = nextMove.getColTarget();
+		return ( row == rowKing && col == colKing+1
+				|| row == rowKing && col == colKing-1
+				|| row == rowKing+1 && col == colKing
+				|| row == rowKing-1 && col == colKing);
+	}
+
+
+
+
+
 
 
 	/**
@@ -729,6 +859,16 @@ class Board {
 		int numberOfPawnsInitially = (player == BLACK) ? 12: 24;
 		int numberOfKilledPawns = numberOfPawnsInitially - getNumberOfPawnsOnBoardFor(player);
 		return numberOfKilledPawns;
+	}
+
+	/**
+	 * Vérifier si un move peut bloquer l'accès à un coin
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	public boolean isPawnNearCorner(int row, int col) {
+		return((row == 1 && col == 0)||(row == 0 && col == 1)||(row == 1 && col == 12)||(row == 0 && col == 11)||(row == 11 && col == 0)||(row == 12 && col == 1)||(row == 11 && col == 12)||(row == 12 && col == 11));
 	}
 
 	// TODO : connecter ça avec le AlphaBeta

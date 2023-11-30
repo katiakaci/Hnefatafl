@@ -24,6 +24,8 @@ public class CPUPlayer {
 		ArrayList<Move> bestMoves = new ArrayList<>();
 		ArrayList<Move> possibleMoves = board.findPossibleMoves(cpu);
 		boolean bestMoveFound = false;
+		boolean goodMoveFound = false;
+		boolean okMoveFound = false;
 
 		for (Move nextMove : possibleMoves) {
 
@@ -67,13 +69,56 @@ public class CPUPlayer {
 				//				}
 			}
 
-			if(cpu == RED) {
-				// Rouge encadre le roi
+			if(cpu == RED) {				
+				// Rouge tue le roi
 				if(board.canMoveTrapKing(nextMove)) {
 					bestMoves.clear();
 					bestMoves.add(nextMove);
 					return bestMoves;
-				}	
+				}
+
+				// Un pion va tuer un noir
+				if(board.canMoveKillBlackPawns(nextMove)) {
+					bestMoves.clear();
+					bestMoves.add(nextMove);
+					bestMoveFound = true;
+					goodMoveFound = true;
+					continue;
+				}			
+
+
+				if(!goodMoveFound) {
+					// Un pion va encadré le roi et il ne lui restera qu'une case libre
+					if(board.canMoveAlmostTrapKing(nextMove)) {
+						bestMoves.clear();
+						bestMoves.add(nextMove);
+						bestMoveFound = true;
+						okMoveFound = true;
+						continue;
+					}
+
+					if(!okMoveFound) {
+						// Un pion va se placer à coté du roi
+						if(board.isMoveNextToKing(nextMove)) {
+							bestMoves.clear();
+							bestMoves.add(nextMove);
+							bestMoveFound = true;
+							continue;
+						}
+					}
+
+					// Avec ces deux là on a match nul :
+					// Si un pion bloque un coin, on ne le bouge pas
+					//				if(board.isPawnNearCorner(nextMove.getRowStart(), nextMove.getColStart())) continue;
+					//				
+					//				// Un pion va bloquer un coin
+					//				if(board.isPawnNearCorner(nextMove.getRowTarget(), nextMove.getColTarget())) {
+					//					bestMoves.clear();
+					//					bestMoves.add(nextMove);
+					//					bestMoveFound = true;
+					//					continue;
+					//				}
+				}
 
 			}
 
