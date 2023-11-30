@@ -126,6 +126,43 @@ public class CPUPlayer {
 					continue;
 				}
 				
+				
+				/**
+				 * les coups des pions rouges
+				 */
+				
+				//verifie si les coins sont disponible
+				
+				if(cpu == RED && board.isCornerTrap(possibleMoves)!=null)
+				{
+					bestMoves.clear();
+					bestMoves = board.isCornerTrap(possibleMoves);
+					return bestMoves;
+				}
+////				
+				//verifie si on capture le roi
+				if(cpu == RED && board.canMoveTrapKing(nextMove))
+				{
+					bestMoves.clear();
+					bestMoves.add(nextMove);
+					return bestMoves;
+				}
+//				
+//				//verifie si on va a coter du roi
+				if(cpu == RED && board.isMoveBesideKing(nextMove))
+				{
+					bestMoves.clear();
+					bestMoves.add(nextMove);
+					return bestMoves;
+				}
+//				
+				//verifie si on tue un pion
+				if(cpu == RED && board.moveKillPawns(nextMove))
+				{
+					bestMoves.add(nextMove);
+					continue;
+				}
+//				
 			// noir:
 			// TODO Cas bizarre où le jeu bloque et alterne entre 2 move (donc match nul)(voir screenshot), faire si move pareil depuis 3 moves changer
 			// TODO ajouter quoi faire si tes dans une ligne vide au centre
