@@ -701,19 +701,19 @@ class Board {
 			return bestCloseOut;
 		}
 		// Ensuite former une diagonale pour fermer les coins
-		else if (board[0][1] == EMPTY || board[1][0] == EMPTY || board[0][11] == EMPTY || board[1][12] == EMPTY 
-				|| board[11][12] == EMPTY || board[12][11] == EMPTY || board[11][0] == EMPTY || board[12][1] == EMPTY){
+		else if (board[0][2] == EMPTY || board[2][0] == EMPTY || board[0][10] == EMPTY || board[2][12] == EMPTY 
+				|| board[10][12] == EMPTY || board[12][10] == EMPTY || board[10][0] == EMPTY || board[12][2] == EMPTY){
 			// Chercher tous les moves vers une case en diagonale des coins
 			bestCloseOut = (ArrayList<Move>) possibleMoves.stream().filter(
 					m -> 
-					(m.getRowTarget() == 0 && m.getColTarget() == 1) ||
-					(m.getRowTarget() == 1 && m.getColTarget() == 0) ||
-					(m.getRowTarget() == 0 && m.getColTarget() == 11) ||
-					(m.getRowTarget() == 1 && m.getColTarget() == 12) ||
-					(m.getRowTarget() == 11 && m.getColTarget() == 12) ||
-					(m.getRowTarget() == 12 && m.getColTarget() == 11) ||
-					(m.getRowTarget() == 11 && m.getColTarget() == 0) ||
-					(m.getRowTarget() == 12 && m.getColTarget() == 1)
+					(m.getRowTarget() == 0 && m.getColTarget() == 2) ||
+					(m.getRowTarget() == 2 && m.getColTarget() == 0) ||
+					(m.getRowTarget() == 0 && m.getColTarget() == 10) ||
+					(m.getRowTarget() == 2 && m.getColTarget() == 12) ||
+					(m.getRowTarget() == 10 && m.getColTarget() == 12) ||
+					(m.getRowTarget() == 12 && m.getColTarget() == 10) ||
+					(m.getRowTarget() == 10 && m.getColTarget() == 0) ||
+					(m.getRowTarget() == 12 && m.getColTarget() == 2)
 					).collect(Collectors.toList());;
 
 					// Vérifier qu'on ne part pas d'une case à bloquer vers une autre
@@ -723,14 +723,14 @@ class Board {
 					(m.getRowStart() == 1 && m.getColStart() == 11) ||
 					(m.getRowStart() == 11 && m.getColStart() == 1) ||
 					(m.getRowStart() == 11 && m.getColStart() == 11) ||
-					(m.getRowStart() == 0 && m.getColStart() == 1) ||
-					(m.getRowStart() == 1 && m.getColStart() == 0) ||
-					(m.getRowStart() == 0 && m.getColStart() == 11) ||
-					(m.getRowStart() == 1 && m.getColStart() == 12) ||
-					(m.getRowStart() == 11 && m.getColStart() == 12) ||
-					(m.getRowStart() == 12 && m.getColStart() == 11) ||
-					(m.getRowStart() == 11 && m.getColStart() == 0) ||
-					(m.getRowStart() == 12 && m.getColStart() == 1)
+					(m.getRowStart() == 0 && m.getColStart() == 2) ||
+					(m.getRowStart() == 2 && m.getColStart() == 0) ||
+					(m.getRowStart() == 0 && m.getColStart() == 10) ||
+					(m.getRowStart() == 2 && m.getColStart() == 12) ||
+					(m.getRowStart() == 10 && m.getColStart() == 12) ||
+					(m.getRowStart() == 12 && m.getColStart() == 10) ||
+					(m.getRowStart() == 10 && m.getColStart() == 0) ||
+					(m.getRowStart() == 12 && m.getColStart() == 2)
 					).collect(Collectors.toList());;
 			return bestCloseOut;
 		}
