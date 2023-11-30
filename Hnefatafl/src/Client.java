@@ -86,14 +86,16 @@ class Client {
 
 		// Vérifier si on joue le même mouvement trois fois de suite
 		if(aiPlayer == BLACK && moveAI.size() > 20) {
-			if(moveAI.get(moveAI.size()-1) == moveAI.get(moveAI.size()-3) && moveAI.get(moveAI.size()-1) == moveAI.get(moveAI.size()-5) && moveAI.get(moveAI.size()-1) == moveAI.get(moveAI.size()-7)) {
+			if((moveAI.get(moveAI.size()-1).equals(moveAI.get(moveAI.size()-3))) &&
+					(moveAI.get(moveAI.size()-1).equals(moveAI.get(moveAI.size()-5))) &&
+					(moveAI.get(moveAI.size()-1).equals(moveAI.get(moveAI.size()-7)))) {
 				move = cpu.getDifferentMove(board);
 			}
 		}
 		board.play(move, aiPlayer);
 		output.write(move.getBytes(),0, move.length());
 		output.flush();
-		moveAI.add(s);
+		moveAI.add(move);
 	}
 
 	private static void invalidMove() throws IOException {

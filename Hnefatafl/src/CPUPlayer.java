@@ -65,7 +65,6 @@ public class CPUPlayer {
 				//					bestMoveFound = true;
 				//					continue;
 				//				}
-				// TODO ajouter quoi faire si tes dans une ligne vide au centre
 			}
 
 			if(cpu == RED) {
