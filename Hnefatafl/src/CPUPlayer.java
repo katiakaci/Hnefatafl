@@ -61,12 +61,30 @@ public class CPUPlayer {
 				}
 
 				// King va dans une ligne vide au centre
-				//				if(cpu == BLACK && board.moveIsKing(nextMove) && board.moveIsGoingOnEmptyRowOrColumn(nextMove)) {
+				//				if(board.moveIsKing(nextMove) && board.moveIsGoingOnEmptyRowOrColumn(nextMove)) {
 				//					bestMoves.clear();
 				//					bestMoves.add(nextMove);
 				//					bestMoveFound = true;
 				//					continue;
 				//				}
+
+				if(!bestMoveFound) {
+					// King sort du trone
+					if(board.moveIsKing(nextMove) && board.kingIsStillInThrone()) {
+						bestMoves.clear();
+						bestMoves.add(nextMove);
+						bestMoveFound = true;
+						continue;
+					}
+					//TODO
+//					// King va dans une ligne qui lui donnerea acces a une ligne de coin
+//					if(board.moveIsKing(nextMove) && board.kingIsGoingToEmptyLine) {
+//						bestMoves.clear();
+//						bestMoves.add(nextMove);
+//						bestMoveFound = true;
+//						continue;
+//					}
+				}
 			}
 
 			if(cpu == RED) {			
@@ -83,21 +101,17 @@ public class CPUPlayer {
 //					return bestMoves;
 //				}
 				
-				// Bloquer la case en diagonale des coins en priorité
+				// Ne pas deplacer un pion qui est dans une des cases en diagonale
 				int rowInit = nextMove.getRowStart();
 				int colInit = nextMove.getColStart();
-				int row = nextMove.getRowTarget();
-				int col = nextMove.getColTarget();
-				
 				if(rowInit == 1 && (colInit == 1 || colInit == 11)) continue;
 				if(rowInit == 11 && (colInit == 1 || colInit == 11)) continue;
 				if(colInit == 0 && (rowInit == 2 || rowInit == 10)) continue;
 				if(colInit == 12 && (rowInit == 2 || rowInit == 10)) continue;
 				if(rowInit == 0 && (colInit == 2 || colInit == 10)) continue;
 				if(rowInit == 12 && (colInit == 2 || colInit == 10)) continue;
-				
-				
-				
+
+				// Bloquer la case en diagonale des coins en priorité
 				if(board.blockExit(nextMove)) {
 					bestMoves.clear();
 					bestMoves.add(nextMove);
