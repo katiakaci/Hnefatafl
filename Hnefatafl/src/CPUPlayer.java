@@ -69,7 +69,7 @@ public class CPUPlayer {
 				//				}
 			}
 
-			if(cpu == RED) {				
+			if(cpu == RED) {			
 				// Rouge tue le roi
 				if(board.canMoveTrapKing(nextMove)) {
 					bestMoves.clear();
@@ -77,20 +77,41 @@ public class CPUPlayer {
 					return bestMoves;
 				}
 
-				if(board.canMoveBlockAccessToKingWhoCanGoToThrone(nextMove)) {
+//				if(board.canMoveBlockAccessToKingWhoCanGoToThrone(nextMove)) {
+//					bestMoves.clear();
+//					bestMoves.add(nextMove);
+//					return bestMoves;
+//				}
+				
+				// Bloquer la case en diagonale des coins en priorité
+				int rowInit = nextMove.getRowStart();
+				int colInit = nextMove.getColStart();
+				int row = nextMove.getRowTarget();
+				int col = nextMove.getColTarget();
+				
+				if(rowInit == 1 && (colInit == 1 || colInit == 11)) continue;
+				if(rowInit == 11 && (colInit == 1 || colInit == 11)) continue;
+				if(colInit == 0 && (rowInit == 2 || rowInit == 10)) continue;
+				if(colInit == 12 && (rowInit == 2 || rowInit == 10)) continue;
+				if(rowInit == 0 && (colInit == 2 || colInit == 10)) continue;
+				if(rowInit == 12 && (colInit == 2 || colInit == 10)) continue;
+				
+				
+				
+				if(board.blockExit(nextMove)) {
 					bestMoves.clear();
 					bestMoves.add(nextMove);
 					return bestMoves;
 				}
 
 
-				// Un pion va bloquer un coin
-				if(!board.isPawnNearCorner(nextMove.getRowStart(), nextMove.getColStart()) && board.isPawnNearCorner(nextMove.getRowTarget(), nextMove.getColTarget())) {
-					bestMoves.clear();
-					bestMoves.add(nextMove);
-					bestMoveFound = true;
-					continue;
-				}
+//				// Un pion va bloquer un coin
+//				if(!board.isPawnNearCorner(nextMove.getRowStart(), nextMove.getColStart()) && board.isPawnNearCorner(nextMove.getRowTarget(), nextMove.getColTarget())) {
+//					bestMoves.clear();
+//					bestMoves.add(nextMove);
+//					bestMoveFound = true;
+//					continue;
+//				}
 
 				// Si le move fait en sorte qu'il pourra se faire tuer apres, on le skip
 				if(board.isMoveDangerousForRedPawn(nextMove)) continue;

@@ -21,7 +21,7 @@ class Board {
 				x = 0;
 				y++;
 			}
-		}
+		}	
 		// Les quatres coins du board
 		this.board[0][0] = CORNER;
 		this.board[0][12] = CORNER;
@@ -158,22 +158,87 @@ class Board {
 		int victory = 100, victory2 = 90, victory3 = 80, victory4 = 70;
 		int defeat = -100, defeat2 = -90, defeat3 = -80, defeat4 = -70;
 		int draw = 0;
+		int score = 0;
 
 		if(player == RED) {
-			if(isKingInCorner()) return defeat;
-			if(isKingTrapped()) return victory;
+			int nbRouge = getNumberOfPawnsOnBoardFor(RED);
+			int nbNoir = getNumberOfPawnsOnBoardFor(BLACK);
+			score = nbRouge - nbNoir;
+
+			int topLeftDist = Math.abs(0 - this.rowKing) + Math.abs(0 - this.colKing);
+			int topRightDist = Math.abs(12 - this.rowKing) + Math.abs(0 - this.colKing);
+			int bottomLeftDist = Math.abs(0 - this.rowKing) + Math.abs(12 - this.colKing);
+			int bottomRightDist = Math.abs(12 - this.rowKing) + Math.abs(12 - this.colKing);
+
+			int shortestDist = Math.min(
+					Math.min(topLeftDist, topRightDist),
+					Math.min(bottomLeftDist, bottomRightDist)
+					);
+
+			score += shortestDist;
+
+			if(this.rowKing > 1 && this.colKing > 1 && this.rowKing  < 12 && this.colKing < 12) {
+				if(this.rowKing < 12) {
+					if(this.board[this.rowKing+1][this.colKing] == 4 && this.rowKing < 12) {
+						score += 1;;
+					}
+				}
+				if(this.colKing < 12) {
+					if(this.board[this.rowKing][this.colKing+1] == 4) {
+						score += 1;
+					}
+				}
+				if(this.rowKing > 1) {
+					if(this.board[this.rowKing-1][this.colKing] == 4) {
+						score += 1;
+					}
+				}
+				if(this.colKing > 1) {
+					if(this.board[this.rowKing][this.colKing-1] == 4) {
+						score += 1;
+					}
+				}
+			}
+
+			if(isKingInCorner()) score += defeat;
+			if(isKingTrapped()) score += victory;
+
+			return score;
 		}
 		else {
-			if(depth == 3 && isKingInCorner()) return victory;
-			if(depth == 2 && isKingInCorner()) return victory2;
-			if(depth == 1 && isKingInCorner()) return victory3;
-			if(depth == 0 && isKingInCorner()) return victory4;
-			if(depth == 3 && isKingTrapped()) return defeat;
-			if(depth == 2 && isKingTrapped()) return defeat2;
-			if(depth == 1 && isKingTrapped()) return defeat3;
-			if(depth == 0 && isKingTrapped()) return defeat4;
+			//			if(depth == 3 && isKingInCorner()) return victory;
+			//			if(depth == 2 && isKingInCorner()) return victory2;
+			//			if(depth == 1 && isKingInCorner()) return victory3;
+			//			if(depth == 0 && isKingInCorner()) return victory4;
+			//			if(depth == 3 && isKingTrapped()) return defeat;
+			//			if(depth == 2 && isKingTrapped()) return defeat2;
+			//			if(depth == 1 && isKingTrapped()) return defeat3;
+			//			if(depth == 0 && isKingTrapped()) return defeat4;
+
+			int nbRouge = getNumberOfPawnsOnBoardFor(RED);
+			int nbNoir = getNumberOfPawnsOnBoardFor(BLACK);
+			score = nbNoir - nbRouge;
+
+			int topLeftDist = Math.abs(0 - this.rowKing) + Math.abs(0 - this.colKing);
+			int topRightDist = Math.abs(12 - this.rowKing) + Math.abs(0 - this.colKing);
+			int bottomLeftDist = Math.abs(0 - this.rowKing) + Math.abs(12 - this.colKing);
+			int bottomRightDist = Math.abs(12 - this.rowKing) + Math.abs(12 - this.colKing);
+
+			int shortestDist = Math.min(
+					Math.min(topLeftDist, topRightDist),
+					Math.min(bottomLeftDist, bottomRightDist)
+					);
+
+			score -= shortestDist;
+
+
+
+			if(isKingInCorner()) score += victory;
+			if(isKingTrapped()) score += defeat;
+
+			return score;
 		}
-		return draw;
+		//		return draw;
 	}
 
 	/**
@@ -964,6 +1029,26 @@ class Board {
 
 
 
+	public boolean blockExit(Move nextMove) {
+
+		// Bloquer la case en diagonale des coins en priorité
+		int rowInit = nextMove.getRowStart();
+		int colInit = nextMove.getColStart();
+		int row = nextMove.getRowTarget();
+		int col = nextMove.getColTarget();
+
+		
+		if(row == 1 && (col == 1 || col == 11)) return true;
+		if(row == 11 && (col == 1 || col == 11)) return true;
+		if(col == 0 && (row == 2 || row == 10)) return true;
+		if(col == 12 && (row == 2 || row == 10)) return true;
+		if(row == 0 && (col == 2 || col == 10)) return true;
+		if(row == 12 && (col == 2 || col == 10)) return true;
+
+		return false;
+	}
+
+
 	// ************************ MÉTHODES DÉCHETS *********************************************
 	// TODO
 	private int distanceManhattanForKing(int col, int row) {
@@ -1001,66 +1086,66 @@ class Board {
 	 * @param possibleMoves
 	 * @return
 	 */
-	private ArrayList<Move> blockExit(ArrayList<Move> possibleMoves) {
-		// Bloquer la case en diagonale des coins en priorité
-		ArrayList<Move> bestCloseOut;
-		if(board[1][1] == EMPTY || board[1][11] == EMPTY || board[11][1] == EMPTY || board[11][11] == EMPTY) {
-			// Chercher tous les moves vers une case en diagonale des coins
-			bestCloseOut = (ArrayList<Move>) possibleMoves.stream().filter(
-					m -> 
-					(m.getRowTarget() == 1 && m.getColTarget() == 1) ||
-					(m.getRowTarget() == 1 && m.getColTarget() == 11) ||
-					(m.getRowTarget() == 11 && m.getColTarget() == 1) ||
-					(m.getRowTarget() == 11 && m.getColTarget() == 11)
-					).collect(Collectors.toList());;
-
-					// Vérifier qu'on ne part pas d'une case en diagonale des coins vers une autre
-					bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
-							m -> 
-							(m.getRowStart() == 1 && m.getColStart() == 1) ||
-							(m.getRowStart() == 1 && m.getColStart() == 11) ||
-							(m.getRowStart() == 11 && m.getColStart() == 1) ||
-							(m.getRowStart() == 11 && m.getColStart() == 11)
-							).collect(Collectors.toList());;
-							return bestCloseOut;
-		}
-		// Ensuite former une diagonale pour fermer les coins
-		else if (board[0][2] == EMPTY || board[2][0] == EMPTY || board[0][10] == EMPTY || board[2][12] == EMPTY 
-				|| board[10][12] == EMPTY || board[12][10] == EMPTY || board[10][0] == EMPTY || board[12][2] == EMPTY){
-			// Chercher tous les moves vers une case en diagonale des coins
-			bestCloseOut = (ArrayList<Move>) possibleMoves.stream().filter(
-					m -> 
-					(m.getRowTarget() == 0 && m.getColTarget() == 2) ||
-					(m.getRowTarget() == 2 && m.getColTarget() == 0) ||
-					(m.getRowTarget() == 0 && m.getColTarget() == 10) ||
-					(m.getRowTarget() == 2 && m.getColTarget() == 12) ||
-					(m.getRowTarget() == 10 && m.getColTarget() == 12) ||
-					(m.getRowTarget() == 12 && m.getColTarget() == 10) ||
-					(m.getRowTarget() == 10 && m.getColTarget() == 0) ||
-					(m.getRowTarget() == 12 && m.getColTarget() == 2)
-					).collect(Collectors.toList());;
-
-					// Vérifier qu'on ne part pas d'une case à bloquer vers une autre
-					bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
-							m -> 
-							(m.getRowStart() == 1 && m.getColStart() == 1) ||
-							(m.getRowStart() == 1 && m.getColStart() == 11) ||
-							(m.getRowStart() == 11 && m.getColStart() == 1) ||
-							(m.getRowStart() == 11 && m.getColStart() == 11) ||
-							(m.getRowStart() == 0 && m.getColStart() == 2) ||
-							(m.getRowStart() == 2 && m.getColStart() == 0) ||
-							(m.getRowStart() == 0 && m.getColStart() == 10) ||
-							(m.getRowStart() == 2 && m.getColStart() == 12) ||
-							(m.getRowStart() == 10 && m.getColStart() == 12) ||
-							(m.getRowStart() == 12 && m.getColStart() == 10) ||
-							(m.getRowStart() == 10 && m.getColStart() == 0) ||
-							(m.getRowStart() == 12 && m.getColStart() == 2)
-							).collect(Collectors.toList());;
-							return bestCloseOut;
-		}
-		// Toutes les cases des coins sont déjà occupées (par un rouge ou par un noir)
-		else return null;
-	}
+	//	private ArrayList<Move> blockExit(ArrayList<Move> possibleMoves) {
+	//		// Bloquer la case en diagonale des coins en priorité
+	//		ArrayList<Move> bestCloseOut;
+	//		if(board[1][1] == EMPTY || board[1][11] == EMPTY || board[11][1] == EMPTY || board[11][11] == EMPTY) {
+	//			// Chercher tous les moves vers une case en diagonale des coins
+	//			bestCloseOut = (ArrayList<Move>) possibleMoves.stream().filter(
+	//					m -> 
+	//					(m.getRowTarget() == 1 && m.getColTarget() == 1) ||
+	//					(m.getRowTarget() == 1 && m.getColTarget() == 11) ||
+	//					(m.getRowTarget() == 11 && m.getColTarget() == 1) ||
+	//					(m.getRowTarget() == 11 && m.getColTarget() == 11)
+	//					).collect(Collectors.toList());;
+	//
+	//					// Vérifier qu'on ne part pas d'une case en diagonale des coins vers une autre
+	//					bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
+	//							m -> 
+	//							(m.getRowStart() == 1 && m.getColStart() == 1) ||
+	//							(m.getRowStart() == 1 && m.getColStart() == 11) ||
+	//							(m.getRowStart() == 11 && m.getColStart() == 1) ||
+	//							(m.getRowStart() == 11 && m.getColStart() == 11)
+	//							).collect(Collectors.toList());;
+	//							return bestCloseOut;
+	//		}
+	//		// Ensuite former une diagonale pour fermer les coins
+	//		else if (board[0][2] == EMPTY || board[2][0] == EMPTY || board[0][10] == EMPTY || board[2][12] == EMPTY 
+	//				|| board[10][12] == EMPTY || board[12][10] == EMPTY || board[10][0] == EMPTY || board[12][2] == EMPTY){
+	//			// Chercher tous les moves vers une case en diagonale des coins
+	//			bestCloseOut = (ArrayList<Move>) possibleMoves.stream().filter(
+	//					m -> 
+	//					(m.getRowTarget() == 0 && m.getColTarget() == 2) ||
+	//					(m.getRowTarget() == 2 && m.getColTarget() == 0) ||
+	//					(m.getRowTarget() == 0 && m.getColTarget() == 10) ||
+	//					(m.getRowTarget() == 2 && m.getColTarget() == 12) ||
+	//					(m.getRowTarget() == 10 && m.getColTarget() == 12) ||
+	//					(m.getRowTarget() == 12 && m.getColTarget() == 10) ||
+	//					(m.getRowTarget() == 10 && m.getColTarget() == 0) ||
+	//					(m.getRowTarget() == 12 && m.getColTarget() == 2)
+	//					).collect(Collectors.toList());;
+	//
+	//					// Vérifier qu'on ne part pas d'une case à bloquer vers une autre
+	//					bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
+	//							m -> 
+	//							(m.getRowStart() == 1 && m.getColStart() == 1) ||
+	//							(m.getRowStart() == 1 && m.getColStart() == 11) ||
+	//							(m.getRowStart() == 11 && m.getColStart() == 1) ||
+	//							(m.getRowStart() == 11 && m.getColStart() == 11) ||
+	//							(m.getRowStart() == 0 && m.getColStart() == 2) ||
+	//							(m.getRowStart() == 2 && m.getColStart() == 0) ||
+	//							(m.getRowStart() == 0 && m.getColStart() == 10) ||
+	//							(m.getRowStart() == 2 && m.getColStart() == 12) ||
+	//							(m.getRowStart() == 10 && m.getColStart() == 12) ||
+	//							(m.getRowStart() == 12 && m.getColStart() == 10) ||
+	//							(m.getRowStart() == 10 && m.getColStart() == 0) ||
+	//							(m.getRowStart() == 12 && m.getColStart() == 2)
+	//							).collect(Collectors.toList());;
+	//							return bestCloseOut;
+	//		}
+	//		// Toutes les cases des coins sont déjà occupées (par un rouge ou par un noir)
+	//		else return null;
+	//	}
 
 	// TODO METHODE pour les noirs MARCHE PAS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	public boolean moveIsGoingOnEmptyRowOrColumn(Move nextMove) {
