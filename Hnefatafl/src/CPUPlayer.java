@@ -120,7 +120,6 @@ public class CPUPlayer {
 					}
 				}
 				
-
 				// Si le move fait en sorte qu'il pourra se faire tuer apres, on le skip
 				// marche pas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 				if(board.isMoveDangerousForRedPawn(nextMove)) continue;
@@ -132,8 +131,8 @@ public class CPUPlayer {
 					bestMoveFound = true;
 					goodMoveFound = true;
 					continue;
-				}	
-
+				}
+				
 				// Un pion va encadré le roi et il ne lui restera qu'une case libre
 				if(board.canMoveAlmostTrapKing(nextMove)) {
 					bestMoves.clear();
@@ -142,10 +141,20 @@ public class CPUPlayer {
 					goodMoveFound = true;
 					continue;
 				}
+				
+				
 
 				if(!goodMoveFound) {
+
+					if(board.moveIsOnSides(nextMove)) {
+						bestMoves.clear();
+						bestMoves.add(nextMove);
+						bestMoveFound = true;
+						continue;
+					}
+					
 					// Un pion va se placer à coté du roi
-					if(board.isMoveNextToKing(nextMove)) {
+					else if(board.isMoveNextToKing(nextMove)) {
 						bestMoves.clear();
 						bestMoves.add(nextMove);
 						bestMoveFound = true;
@@ -154,9 +163,7 @@ public class CPUPlayer {
 
 					// Avec ces deux là on a match nul :
 					// Si un pion bloque un coin, on ne le bouge pas
-					//				if(board.isPawnNearCorner(nextMove.getRowStart(), nextMove.getColStart())) continue;
-					//				
-					//				
+					//				if(board.isPawnNearCorner(nextMove.getRowStart(), nextMove.getColStart())) continue;			
 				}
 			}
 

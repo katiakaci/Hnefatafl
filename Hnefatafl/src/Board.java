@@ -186,7 +186,7 @@ class Board {
 			if(this.rowKing > 1 && this.colKing > 1 && this.rowKing  < 12 && this.colKing < 12) {
 				if(this.rowKing < 12) {
 					if(this.board[this.rowKing+1][this.colKing] == 4 && this.rowKing < 12) {
-						score += 1;;
+						score += 1;
 					}
 				}
 				if(this.colKing < 12) {
@@ -243,7 +243,6 @@ class Board {
 		}
 		//		return draw;
 	}
-
 
 	/**
 	 * Selon la position du pion joué, vérifie s'il y a un pion adverse aux alentours
@@ -834,6 +833,11 @@ class Board {
 		return false;
 	}
 
+	public boolean moveIsOnSides(Move nextMove) {
+		int row = nextMove.getRowTarget();
+		int col = nextMove.getColTarget();
+		return row==12 || row==0 || col==12 || col==0;
+	}
 
 	// ************************ MÉTHODES PAS ENCORE UTILISÉES *********************************************
 
@@ -964,7 +968,7 @@ class Board {
 		return numberOfKilledPawns;
 	}
 
-	void printBoard() {
+	public void printBoard() {
 		String board = Arrays.deepToString(this.board).replace("], ", "]\n").replace("[[", "[").replace("]]", "]");
 		board = board.replace('2', 'N').replace('4', 'R').replace('1', 'C').replace('5', 'K').replace('6', 'T');
 		System.out.println("\n"+board);
