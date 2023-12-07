@@ -1,10 +1,10 @@
 import java.util.*;
-import java.util.stream.Collectors;
 
 class Board {
 	private final int EMPTY = 0, CORNER = 1, BLACK = 2, RED = 4, KING = 5, THRONE = 6;
 	private int[][] board;
 	private int rowKing, colKing;
+	private int numberOfRedPawns, numberOfBlackPawns;
 
 	public Board(String s) {
 		board = new int[13][13];
@@ -27,6 +27,9 @@ class Board {
 		this.board[0][12] = CORNER;
 		this.board[12][0] = CORNER;
 		this.board[12][12] = CORNER;
+
+		numberOfRedPawns = 24;
+		numberOfBlackPawns = 12;
 	}
 
 	public ArrayList<Move> findPossibleMoves(int player) {
@@ -166,9 +169,7 @@ class Board {
 		int score = 0;
 
 		if(player == RED) {
-			int nbRouge = getNumberOfPawnsOnBoardFor(RED);
-			int nbNoir = getNumberOfPawnsOnBoardFor(BLACK);
-			score = nbRouge - nbNoir;
+			score = numberOfRedPawns - numberOfBlackPawns;
 
 			int topLeftDist = Math.abs(0 - this.rowKing) + Math.abs(0 - this.colKing);
 			int topRightDist = Math.abs(12 - this.rowKing) + Math.abs(0 - this.colKing);
@@ -219,10 +220,7 @@ class Board {
 			//			if(depth == 2 && isKingTrapped()) return defeat2;
 			//			if(depth == 1 && isKingTrapped()) return defeat3;
 			//			if(depth == 0 && isKingTrapped()) return defeat4;
-
-			int nbRouge = getNumberOfPawnsOnBoardFor(RED);
-			int nbNoir = getNumberOfPawnsOnBoardFor(BLACK);
-			score = nbNoir - nbRouge;
+			score = numberOfBlackPawns - numberOfRedPawns;
 
 			int topLeftDist = Math.abs(0 - this.rowKing) + Math.abs(0 - this.colKing);
 			int topRightDist = Math.abs(12 - this.rowKing) + Math.abs(0 - this.colKing);
@@ -246,20 +244,6 @@ class Board {
 		//		return draw;
 	}
 
-	/**
-	 * Trouve le nombre de pions vivants du joueur recu
-	 * @param player
-	 * @return le nombre de pions sur le board
-	 */
-	public int getNumberOfPawnsOnBoardFor(int player) {
-		int numberOfPawnsOnBoard = 0;
-		for(int i=0; i < board.length; i++){
-			for(int j=0; j < board[i].length; j++){
-				if(board[i][j] == player) numberOfPawnsOnBoard++;
-			}
-		}
-		return numberOfPawnsOnBoard;
-	}
 
 	/**
 	 * Selon la position du pion joué, vérifie s'il y a un pion adverse aux alentours
@@ -307,25 +291,29 @@ class Board {
 	 * @param player
 	 */
 	private void checkRowAndColumn(boolean up, boolean down, boolean right, boolean left, int newRow, int newColumn, int player) {	
-		if(player == RED) {	
+		if(player == RED) {
 			if(up) {
 				if(board[newRow-1][newColumn] == BLACK && (board[newRow-2][newColumn] == player || board[newRow-2][newColumn] == CORNER || (newRow-2 == THRONE && newColumn == THRONE) )) {
 					board[newRow-1][newColumn] = EMPTY;
+					numberOfBlackPawns--;
 				}
 			}
 			if(down) {
 				if(board[newRow+1][newColumn] == BLACK && (board[newRow+2][newColumn] == player || board[newRow+2][newColumn] == CORNER || (newRow+2 == THRONE && newColumn == THRONE) )) {
 					board[newRow+1][newColumn] = EMPTY;
+					numberOfBlackPawns--;
 				}
 			}
 			if(right) {
 				if(board[newRow][newColumn+1] == BLACK && (board[newRow][newColumn+2] == player || board[newRow][newColumn+2] == CORNER || (newRow == THRONE && newColumn+2 == THRONE) )) {
 					board[newRow][newColumn+1] = EMPTY;
+					numberOfBlackPawns--;
 				}
 			}
 			if(left) {
 				if(board[newRow][newColumn-1] == BLACK && (board[newRow][newColumn-2] == player || board[newRow][newColumn-2] == CORNER || (newRow == THRONE && newColumn-2 == THRONE) )) {
 					board[newRow][newColumn-1] = EMPTY;
+					numberOfBlackPawns--;
 				}
 			}
 		}
@@ -333,21 +321,25 @@ class Board {
 			if(up) {
 				if(board[newRow-1][newColumn] == RED && (board[newRow-2][newColumn] == player || board[newRow-2][newColumn] == KING || board[newRow-2][newColumn] == CORNER || (newRow-2==THRONE && newColumn==THRONE) )) {
 					board[newRow-1][newColumn] = EMPTY;
+					numberOfRedPawns--;
 				}
 			}
 			if(down) {
 				if(board[newRow+1][newColumn] == RED && (board[newRow+2][newColumn] == player || board[newRow+2][newColumn] == KING || board[newRow+2][newColumn] == CORNER || (newRow+2==THRONE && newColumn==THRONE) )) {
 					board[newRow+1][newColumn] = EMPTY;
+					numberOfRedPawns--;
 				}
 			}
 			if(right) {
 				if(board[newRow][newColumn+1] == RED && (board[newRow][newColumn+2] == player || board[newRow][newColumn+2] == KING || board[newRow][newColumn+2] == CORNER || (newRow==THRONE && newColumn+2==THRONE) )) {
 					board[newRow][newColumn+1] = EMPTY;
+					numberOfRedPawns--;
 				}
 			}
 			if(left) {
 				if(board[newRow][newColumn-1] == RED && (board[newRow][newColumn-2] == player || board[newRow][newColumn-2] == KING || board[newRow][newColumn-2] == CORNER || (newRow==THRONE && newColumn-2==THRONE) )) {
 					board[newRow][newColumn-1] = EMPTY;
+					numberOfRedPawns--;
 				}
 			}
 		}
@@ -365,8 +357,17 @@ class Board {
 		return colKing;
 	}
 
+	public int getNumberOfRedPawns() {
+		return numberOfRedPawns;
+	}
+
+	public int getNumberOfBlackPawns() {
+		return numberOfBlackPawns;
+	}
+
 
 	// ************************ MÉTHODES POUR LES NOIRS *********************************************
+
 
 	/**
 	 * Vérifie si le roi est encerclé par 4 pions rouges, un mur, un coin ou le throne
@@ -890,92 +891,6 @@ class Board {
 		return false;
 	}
 
-	/**
-	 * verifie si les coins sont bloquer
-	 */
-	public ArrayList<Move> isCornerTrap(ArrayList<Move> possibleMoves) {
-		// Bloquer la case en diagonale des coins en priorité
-		ArrayList<Move> bestCloseOut;
-
-		if(this.board[1][11] == EMPTY || this.board[11][1] == EMPTY || this.board[1][1] == EMPTY || this.board[11][11] == EMPTY) {
-
-			// Chercher tous les moves vers une case en diagonale des coins
-			bestCloseOut = (ArrayList<Move>) possibleMoves.stream().filter(
-					m -> 
-					((m.getRowTarget() == 1 && m.getColTarget() == 1) ||
-							(m.getRowTarget() == 1 && m.getColTarget() == 11) ||
-							(m.getRowTarget() == 11 && m.getColTarget() == 1) ||
-							(m.getRowTarget() == 11 && m.getColTarget() == 11)) && ((m.getRowStart() != 1 && m.getColStart() != 1) ||
-									(m.getRowStart() != 1 && m.getColStart() != 11) ||
-									(m.getRowStart() != 11 && m.getColStart() != 1) ||
-									(m.getRowStart() != 11 && m.getColStart() != 11))
-					).collect(Collectors.toList());
-
-			// Vérifier qu'on ne part pas d'une case en diagonale des coins vers une autre
-			//			bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
-			//					m -> 
-			//					(m.getRowStart() == 1 && m.getColStart() == 1) ||
-			//					(m.getRowStart() == 1 && m.getColStart() == 11) ||
-			//					(m.getRowStart() == 11 && m.getColStart() == 1) ||
-			//					(m.getRowStart() == 11 && m.getColStart() == 11)
-			//					).collect(Collectors.toList());
-
-		}
-		// Ensuite former une diagonale pour fermer les coins
-		else if (board[0][2] == EMPTY || board[2][0] == EMPTY || board[0][10] == EMPTY || board[2][12] == EMPTY 
-				|| board[10][12] == EMPTY || board[12][10] == EMPTY || board[10][0] == EMPTY || board[12][2] == EMPTY){
-			// Chercher tous les moves vers une case en diagonale des coins
-			bestCloseOut = (ArrayList<Move>) possibleMoves.stream().filter(
-					m -> 
-					((m.getRowTarget() == 0 && m.getColTarget() == 2) ||
-							(m.getRowTarget() == 2 && m.getColTarget() == 0) ||
-							(m.getRowTarget() == 0 && m.getColTarget() == 10) ||
-							(m.getRowTarget() == 2 && m.getColTarget() == 12) ||
-							(m.getRowTarget() == 10 && m.getColTarget() == 12) ||
-							(m.getRowTarget() == 12 && m.getColTarget() == 10) ||
-							(m.getRowTarget() == 10 && m.getColTarget() == 0) ||
-							(m.getRowTarget() == 12 && m.getColTarget() == 2)) 
-					&&
-					(m.getRowStart() != 1 && m.getColStart() != 1) ||
-					(m.getRowStart() != 1 && m.getColStart() != 11) ||
-					(m.getRowStart() != 11 && m.getColStart() != 1) ||
-					(m.getRowStart() != 11 && m.getColStart() != 11) ||
-					(m.getRowStart() != 0 && m.getColStart() != 2) ||
-					(m.getRowStart() != 2 && m.getColStart() != 0) ||
-					(m.getRowStart() != 0 && m.getColStart() != 10) ||
-					(m.getRowStart() != 2 && m.getColStart() != 12) ||
-					(m.getRowStart() != 10 && m.getColStart() != 12) ||
-					(m.getRowStart() != 12 && m.getColStart() != 10) ||
-					(m.getRowStart() != 10 && m.getColStart() != 0) ||
-					(m.getRowStart() != 12 && m.getColStart() != 2)
-					).collect(Collectors.toList());;
-
-					// Vérifier qu'on ne part pas d'une case à bloquer vers une autre
-					//					bestCloseOut = (ArrayList<Move>) bestCloseOut.stream().filter(
-					//							m -> 
-					//							(m.getRowStart() == 1 && m.getColStart() == 1) ||
-					//							(m.getRowStart() == 1 && m.getColStart() == 11) ||
-					//							(m.getRowStart() == 11 && m.getColStart() == 1) ||
-					//							(m.getRowStart() == 11 && m.getColStart() == 11) ||
-					//							(m.getRowStart() == 0 && m.getColStart() == 2) ||
-					//							(m.getRowStart() == 2 && m.getColStart() == 0) ||
-					//							(m.getRowStart() == 0 && m.getColStart() == 10) ||
-					//							(m.getRowStart() == 2 && m.getColStart() == 12) ||
-					//							(m.getRowStart() == 10 && m.getColStart() == 12) ||
-					//							(m.getRowStart() == 12 && m.getColStart() == 10) ||
-					//							(m.getRowStart() == 10 && m.getColStart() == 0) ||
-					//							(m.getRowStart() == 12 && m.getColStart() == 2)
-					//							).collect(Collectors.toList());;
-					return bestCloseOut;
-		}
-		// Toutes les cases des coins sont déjà occupées (par un rouge ou par un noir)
-		else {
-			return null;
-		}
-
-		return null;
-	}
-
 	//TODO revoir la methode
 	public boolean moveKillPawns(Move nextMove) {
 		int col = nextMove.getColTarget();
@@ -1002,7 +917,6 @@ class Board {
 		return false;
 
 	}
-
 
 	// TODO METHODE pour les noirs MARCHE PAS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	public boolean moveIsGoingOnEmptyRowOrColumn(Move nextMove) {
@@ -1045,7 +959,8 @@ class Board {
 	 */
 	private int getNumberOfKilledPawns(int player) {
 		int numberOfPawnsInitially = (player == BLACK) ? 12: 24;
-		int numberOfKilledPawns = numberOfPawnsInitially - getNumberOfPawnsOnBoardFor(player);
+		int nbPawns = (player == BLACK) ? numberOfBlackPawns : numberOfRedPawns;
+		int numberOfKilledPawns = numberOfPawnsInitially - nbPawns;
 		return numberOfKilledPawns;
 	}
 

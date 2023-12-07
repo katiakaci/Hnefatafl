@@ -101,22 +101,25 @@ public class CPUPlayer {
 				//					return bestMoves;
 				//				}
 
-				// Ne pas deplacer un pion qui est dans une des cases en diagonale
-				int rowInit = nextMove.getRowStart();
-				int colInit = nextMove.getColStart();
-				if(rowInit == 1 && (colInit == 1 || colInit == 11)) continue;
-				if(rowInit == 11 && (colInit == 1 || colInit == 11)) continue;
-				if(colInit == 0 && (rowInit == 2 || rowInit == 10)) continue;
-				if(colInit == 12 && (rowInit == 2 || rowInit == 10)) continue;
-				if(rowInit == 0 && (colInit == 2 || colInit == 10)) continue;
-				if(rowInit == 12 && (colInit == 2 || colInit == 10)) continue;
+				if(board.getNumberOfRedPawns() > 12) {
+					// Ne pas deplacer un pion qui est dans une des cases en diagonale
+					int rowInit = nextMove.getRowStart();
+					int colInit = nextMove.getColStart();
+					if(rowInit == 1 && (colInit == 1 || colInit == 11)) continue;
+					if(rowInit == 11 && (colInit == 1 || colInit == 11)) continue;
+					if(colInit == 0 && (rowInit == 2 || rowInit == 10)) continue;
+					if(colInit == 12 && (rowInit == 2 || rowInit == 10)) continue;
+					if(rowInit == 0 && (colInit == 2 || colInit == 10)) continue;
+					if(rowInit == 12 && (colInit == 2 || colInit == 10)) continue;
 
-				// Bloquer la case en diagonale des coins en priorité
-				if(board.blockExit(nextMove)) {
-					bestMoves.clear();
-					bestMoves.add(nextMove);
-					return bestMoves;
+					// Bloquer la case en diagonale des coins en priorité
+					if(board.blockExit(nextMove)) {
+						bestMoves.clear();
+						bestMoves.add(nextMove);
+						return bestMoves;
+					}
 				}
+				
 
 				// Si le move fait en sorte qu'il pourra se faire tuer apres, on le skip
 				// marche pas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
@@ -189,7 +192,7 @@ public class CPUPlayer {
 
 		// Si positionActuelle est finale (victoire, défaite ou plus de move possible pour un des deux joueurs)
 		int evaluation =  board.evaluate(cpu, depth);
-		if (evaluation >= 70 || evaluation <= -70 || board.getNumberOfPawnsOnBoardFor(RED) == 0 || board.getNumberOfPawnsOnBoardFor(BLACK) == 0) return evaluation;
+		if (evaluation >= 70 || evaluation <= -70 || board.getNumberOfRedPawns() == 0 || board.getNumberOfBlackPawns() == 0) return evaluation;
 
 		ArrayList<Move> moves = board.findPossibleMoves(player);
 		if (player == max) {
@@ -238,7 +241,8 @@ public class CPUPlayer {
 		Move bestMove = possibleMoves.get(0);
 
 		// S'il reste d'autres pions noirs autre que le roi
-		if(board.getNumberOfPawnsOnBoardFor(cpu) > 1) {
+		int nbPawns = (cpu == BLACK) ? board.getNumberOfBlackPawns() : board.getNumberOfRedPawns();
+		if(nbPawns > 1) {
 			for (Move nextMove : possibleMoves) {
 				if(board.moveIsKing(nextMove)) continue; // skip les moves du king
 				if(nextMove.getColTarget() == board.getColKing()+1 || nextMove.getColTarget() == board.getColKing()-1
