@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 class Client {
 
@@ -16,7 +17,16 @@ class Client {
 	static ArrayList<String> moveAI;
 
 	public static void main(String[] args) {
+
+
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Entrez l'addresse IP (localhost si local) du serveur auquel on veut se connecter");
+		String addIP = sc.nextLine();
+		System.out.println("Adresse de connection : " + addIP);
+
 		try {
+
+			MyClient = new Socket(addIP, 8888);
 			MyClient = new Socket("localhost", 8888);
 			input    = new BufferedInputStream(MyClient.getInputStream());
 			output   = new BufferedOutputStream(MyClient.getOutputStream());
