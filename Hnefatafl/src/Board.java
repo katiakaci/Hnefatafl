@@ -36,29 +36,29 @@ class Board {
 			for(int j = 0; j < board[i].length; j++) {
 				// Si on a un player rouge, on cherche pour tous les pions rouges du board s'ils ont des cases vides aux alentours
 				if(player == RED && board[i][j] == RED) {
-					
+
 					// vérifier en haut du pion
 					for(int row = i - 1; row >= 0; row--) {
 						if(board[row][j] == EMPTY) possibleMoves.add(new Move(i,j,row,j));
 						else if(board[row][j] == THRONE) continue;
 						else break;
 					}
-					
+
 					// vérifier à droite du pion
 					for(int column = j + 1; column < 13; column++) {
 						if(board[i][column] == EMPTY) possibleMoves.add(new Move(i,j,i,column));
 						else if(board[i][column] == THRONE) continue;
 						else break;
 					}
-					
+
 					// vérifier en bas du pion
 					for(int row = i + 1; row < 13; row++) {
 						if(board[row][j] == EMPTY) possibleMoves.add(new Move(i,j,row,j));
 						else if(board[row][j] == THRONE) continue; // un pion peut sauter par desssus le throne
 						else break; // on quitte la boucle si un pion nous bloque le chemin
 					}
-					
-					
+
+
 					// vérifier à gauche du pion
 					for(int column=j-1; column>=0;column--) {
 						if(board[i][column] == EMPTY) possibleMoves.add(new Move(i,j,i,column));
@@ -638,10 +638,9 @@ class Board {
 	}
 
 	public boolean canMoveKillBlackPawns(Move nextMove) {
-		return verifyBlackPawnsElimination(nextMove.getRowTarget(), nextMove.getColTarget());
-	}
+		int newRow = nextMove.getRowTarget();
+		int newColumn = nextMove.getColTarget();
 
-	private boolean verifyBlackPawnsElimination(int newRow, int newColumn) {
 		// CENTRE
 		if(newRow < 11 && newColumn < 11 && newRow > 1 && newColumn > 1) return checkRowAndColumnForBlack(true, true, true, true, newRow, newColumn);	
 
@@ -764,52 +763,40 @@ class Board {
 	}
 
 	public boolean isMoveDangerousForRedPawn(Move nextMove) {
-		int row = nextMove.getRowTarget();
-		int col = nextMove.getColTarget();
+		int newRow = nextMove.getRowTarget();
+		int newColumn = nextMove.getColTarget();
 		int rowStart = nextMove.getRowStart();
 		int colStart = nextMove.getColStart();
 
 		// Jouer provisoirement
-		this.board[row][col] = RED;
+		this.board[newRow][newColumn] = RED;
 		this.board[rowStart][colStart] = EMPTY;
 
-		boolean result = verifyRedPawnsElimination(row, col);
+		boolean result = false;
+		// CENTRE
+		if(newRow < 11 && newColumn < 11 && newRow > 1 && newColumn > 1) result = checkRowAndColumnForRed(true, true, true, true, newRow, newColumn);	
+		// RANGÉE 0 et 1
+		else if(newRow < 2 && newColumn < 11 && newColumn > 1) result = checkRowAndColumnForRed(false, true, true, true, newRow, newColumn);	
+		// RANGÉE 11 et 12
+		else if(newRow > 10 && newColumn < 11 && newColumn > 1) result = checkRowAndColumnForRed(true, false, true, true, newRow, newColumn);
+		// COLONNE 0 et 1
+		else if(newRow < 11 && newRow > 1 && newColumn < 2) result = checkRowAndColumnForRed(true, true, true, false, newRow, newColumn);	
+		// COLONNE 11 et 12
+		else if(newRow < 11 && newRow > 1 && newColumn > 10) result = checkRowAndColumnForRed(true, true, false, true, newRow, newColumn);
+		// TROIS CASES DANS LE COIN EN HAUT À GAUCHE
+		else if(newRow < 2 && newColumn < 2) result = checkRowAndColumnForRed(false, true, true, false, newRow, newColumn);	
+		// TROIS CASES DANS LE COIN EN HAUT À DROITE
+		else if(newRow < 2 && newColumn > 10) result = checkRowAndColumnForRed(false, true, false, true, newRow, newColumn);
+		// TROIS CASES DANS LE COIN EN BAS À GAUCHE
+		else if(newRow > 10 && newColumn < 2) result = checkRowAndColumnForRed(true, false, true, false, newRow, newColumn);	
+		// TROIS CASES DANS LE COIN EN BAS À DROITE
+		else if(newRow > 10 && newColumn > 10) result = checkRowAndColumnForRed(true, false, false, true, newRow, newColumn);
+
 
 		// Annuler le déplacement
 		this.board[rowStart][colStart] = RED;
-		this.board[row][col] = EMPTY;
+		this.board[newRow][newColumn] = EMPTY;
 		return result;
-	}
-
-	private boolean verifyRedPawnsElimination(int newRow, int newColumn) {
-		// CENTRE
-		if(newRow < 11 && newColumn < 11 && newRow > 1 && newColumn > 1) return checkRowAndColumnForRed(true, true, true, true, newRow, newColumn);	
-
-		// RANGÉE 0 et 1
-		else if(newRow < 2 && newColumn < 11 && newColumn > 1) return checkRowAndColumnForRed(false, true, true, true, newRow, newColumn);	
-
-		// RANGÉE 11 et 12
-		else if(newRow > 10 && newColumn < 11 && newColumn > 1) return checkRowAndColumnForRed(true, false, true, true, newRow, newColumn);
-
-		// COLONNE 0 et 1
-		else if(newRow < 11 && newRow > 1 && newColumn < 2) return checkRowAndColumnForRed(true, true, true, false, newRow, newColumn);	
-
-		// COLONNE 11 et 12
-		else if(newRow < 11 && newRow > 1 && newColumn > 10) return checkRowAndColumnForRed(true, true, false, true, newRow, newColumn);
-
-		// TROIS CASES DANS LE COIN EN HAUT À GAUCHE
-		else if(newRow < 2 && newColumn < 2) return checkRowAndColumnForRed(false, true, true, false, newRow, newColumn);	
-
-		// TROIS CASES DANS LE COIN EN HAUT À DROITE
-		else if(newRow < 2 && newColumn > 10) return checkRowAndColumnForRed(false, true, false, true, newRow, newColumn);
-
-		// TROIS CASES DANS LE COIN EN BAS À GAUCHE
-		else if(newRow > 10 && newColumn < 2) return checkRowAndColumnForRed(true, false, true, false, newRow, newColumn);	
-
-		// TROIS CASES DANS LE COIN EN BAS À DROITE
-		else if(newRow > 10 && newColumn > 10) return checkRowAndColumnForRed(true, false, false, true, newRow, newColumn);
-
-		return false;
 	}
 
 	private boolean checkRowAndColumnForRed(boolean up, boolean down, boolean right, boolean left, int newRow, int newColumn) {	
@@ -827,6 +814,27 @@ class Board {
 		}
 		return false;
 	}
+
+	/*
+	 * Stratégie qui bloque les cases en diagonales en face des coins empechant le roi d'y accéder
+	 * @param nextMove
+	 * @return
+	 */
+	public boolean blockExit(Move nextMove) {
+		// Bloquer la case en diagonale des coins en priorité
+		int row = nextMove.getRowTarget();
+		int col = nextMove.getColTarget();
+		if(row == 1 && (col == 1 || col == 11)) return true;
+		if(row == 11 && (col == 1 || col == 11)) return true;
+		if(col == 0 && (row == 2 || row == 10)) return true;
+		if(col == 12 && (row == 2 || row == 10)) return true;
+		if(row == 0 && (col == 2 || col == 10)) return true;
+		if(row == 12 && (col == 2 || col == 10)) return true;
+		return false;
+	}
+
+
+	// ************************ MÉTHODES PAS ENCORE UTILISÉES *********************************************
 
 	public boolean canMoveBlockAccessToKingWhoCanGoToThrone(Move nextMove) {
 		boolean isSideEmptyAndKingThere = false;
@@ -882,11 +890,6 @@ class Board {
 		return false;
 	}
 
-
-
-
-
-	// ************************ MÉTHODES PAS ENCORE UTILISÉES *********************************************
 	/**
 	 * verifie si les coins sont bloquer
 	 */
@@ -973,42 +976,6 @@ class Board {
 		return null;
 	}
 
-	/**
-	 * Vérifie si le move mange un pion
-	 * @param nextMove
-	 * @return
-	 */
-	public boolean isMoveBesideKing(Move nextMove) {
-		int col = nextMove.getColTarget();
-		int row = nextMove.getRowTarget();
-
-		if((row-1 >= 0 && row-1 <= 12) && (this.board[row-1][col] == KING)) return true;
-		if((row+1 >= 0 && row+1 <= 12) && (this.board[row+1][col] == KING))	return true;
-		if((col-1 >= 0 && col-1 <= 12) && (this.board[row][col-1] == KING))	return true;
-		if((col+1 >= 0 && col+1 <= 12) && (this.board[row][col+1] == KING)) return true;
-
-		//les dernieres lignes et colonnes
-		if((row==0 && (col>=2 || col<=10)) && (this.board[row+1][col]==KING || this.board[row][col+1]==KING || this.board[row][col-1]==KING  )) return true;
-		if((row==12 && (col>=2 || col<=10)) && (this.board[row-1][col]==KING || this.board[row][col+1]==KING || this.board[row][col-1]==KING  )) return true;
-		if((col==0 && (row>=2 || row<=10)) && (this.board[row][col+1]==KING || this.board[row+1][col]==KING || this.board[row-1][col]==KING  )) return true;
-		if((col==12 && (row>=2 || row<=10)) && (this.board[row][col-1]==KING || this.board[row+1][col]==KING || this.board[row-1][col]==KING  )) return true;
-
-		if((row==0 && col==1) && (this.board[row+1][col]==KING || this.board[row][col+1]==KING ))return true;
-		if((row==0 && col==11) && (this.board[row+1][col]==KING || this.board[row][col-1]==KING ))return true;
-
-		if((row==12 && col==1) && (this.board[row-1][col]==KING || this.board[row][col+1]==KING ))return true;
-		if((row==12 && col==11) && (this.board[row-1][col]==KING || this.board[row][col-1]==KING ))return true;
-
-		if((row==1 && col==0) && (this.board[row+1][col]==KING || this.board[row][col+1]==KING ))return true;
-		if((row==11 && col==0) && (this.board[row-1][col]==KING || this.board[row][col+1]==KING ))return true;
-
-		if((row==1 && col==12) && (this.board[row+1][col]==KING || this.board[row][col-1]==KING ))return true;
-		if((row==11 && col==12) && (this.board[row-1][col]==KING || this.board[row][col-1]==KING ))return true;
-
-
-		return false;
-	}
-
 	//TODO revoir la methode
 	public boolean moveKillPawns(Move nextMove) {
 		int col = nextMove.getColTarget();
@@ -1036,49 +1003,6 @@ class Board {
 
 	}
 
-	public boolean blockExit(Move nextMove) {
-
-		// Bloquer la case en diagonale des coins en priorité
-		int row = nextMove.getRowTarget();
-		int col = nextMove.getColTarget();
-
-		if(row == 1 && (col == 1 || col == 11)) return true;
-		if(row == 11 && (col == 1 || col == 11)) return true;
-		if(col == 0 && (row == 2 || row == 10)) return true;
-		if(col == 12 && (row == 2 || row == 10)) return true;
-		if(row == 0 && (col == 2 || col == 10)) return true;
-		if(row == 12 && (col == 2 || col == 10)) return true;
-
-		return false;
-	}
-
-
-	// ************************ MÉTHODES DÉCHETS *********************************************
-	// TODO
-	private int distanceManhattanForKing(int col, int row) {
-		return Math.abs(col-this.colKing)+Math.abs(row-this.rowKing);
-	}
-
-	/**
-	 * Trouve le nombre de pions morts du joueur recu
-	 * @param player
-	 * @return le nombre de pions tués
-	 */
-	private int getNumberOfKilledPawns(int player) {
-		int numberOfPawnsInitially = (player == BLACK) ? 12: 24;
-		int numberOfKilledPawns = numberOfPawnsInitially - getNumberOfPawnsOnBoardFor(player);
-		return numberOfKilledPawns;
-	}
-
-	/**
-	 * Vérifier si un move peut bloquer l'accès à un coin
-	 * @param row
-	 * @param col
-	 * @return
-	 */
-	public boolean isPawnNearCorner(int row, int col) {
-		return((row == 1 && col == 0)||(row == 0 && col == 1)||(row == 1 && col == 12)||(row == 0 && col == 11)||(row == 11 && col == 0)||(row == 12 && col == 1)||(row == 11 && col == 12)||(row == 12 && col == 11));
-	}
 
 	// TODO METHODE pour les noirs MARCHE PAS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	public boolean moveIsGoingOnEmptyRowOrColumn(Move nextMove) {
@@ -1105,6 +1029,24 @@ class Board {
 			if(i==0) return true;
 		}
 		return false;
+	}
+
+
+	// ************************ MÉTHODES DÉCHETS *********************************************
+	// TODO
+	private int distanceManhattanForKing(int col, int row) {
+		return Math.abs(col-this.colKing)+Math.abs(row-this.rowKing);
+	}
+
+	/**
+	 * Trouve le nombre de pions morts du joueur recu
+	 * @param player
+	 * @return le nombre de pions tués
+	 */
+	private int getNumberOfKilledPawns(int player) {
+		int numberOfPawnsInitially = (player == BLACK) ? 12: 24;
+		int numberOfKilledPawns = numberOfPawnsInitially - getNumberOfPawnsOnBoardFor(player);
+		return numberOfKilledPawns;
 	}
 
 	void printBoard() {

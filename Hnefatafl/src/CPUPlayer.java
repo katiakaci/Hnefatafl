@@ -77,13 +77,13 @@ public class CPUPlayer {
 						continue;
 					}
 					//TODO
-//					// King va dans une ligne qui lui donnerea acces a une ligne de coin
-//					if(board.moveIsKing(nextMove) && board.kingIsGoingToEmptyLine) {
-//						bestMoves.clear();
-//						bestMoves.add(nextMove);
-//						bestMoveFound = true;
-//						continue;
-//					}
+					//					// King va dans une ligne qui lui donnerea acces a une ligne de coin
+					//					if(board.moveIsKing(nextMove) && board.kingIsGoingToEmptyLine) {
+					//						bestMoves.clear();
+					//						bestMoves.add(nextMove);
+					//						bestMoveFound = true;
+					//						continue;
+					//					}
 				}
 			}
 
@@ -95,12 +95,12 @@ public class CPUPlayer {
 					return bestMoves;
 				}
 
-//				if(board.canMoveBlockAccessToKingWhoCanGoToThrone(nextMove)) {
-//					bestMoves.clear();
-//					bestMoves.add(nextMove);
-//					return bestMoves;
-//				}
-				
+				//				if(board.canMoveBlockAccessToKingWhoCanGoToThrone(nextMove)) {
+				//					bestMoves.clear();
+				//					bestMoves.add(nextMove);
+				//					return bestMoves;
+				//				}
+
 				// Ne pas deplacer un pion qui est dans une des cases en diagonale
 				int rowInit = nextMove.getRowStart();
 				int colInit = nextMove.getColStart();
@@ -117,15 +117,6 @@ public class CPUPlayer {
 					bestMoves.add(nextMove);
 					return bestMoves;
 				}
-
-
-//				// Un pion va bloquer un coin
-//				if(!board.isPawnNearCorner(nextMove.getRowStart(), nextMove.getColStart()) && board.isPawnNearCorner(nextMove.getRowTarget(), nextMove.getColTarget())) {
-//					bestMoves.clear();
-//					bestMoves.add(nextMove);
-//					bestMoveFound = true;
-//					continue;
-//				}
 
 				// Si le move fait en sorte qu'il pourra se faire tuer apres, on le skip
 				// marche pas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
