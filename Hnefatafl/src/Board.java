@@ -36,24 +36,29 @@ class Board {
 			for(int j = 0; j < board[i].length; j++) {
 				// Si on a un player rouge, on cherche pour tous les pions rouges du board s'ils ont des cases vides aux alentours
 				if(player == RED && board[i][j] == RED) {
-					// vérifier en bas du pion
-					for(int row = i + 1; row < 13; row++) {
-						if(board[row][j] == EMPTY) possibleMoves.add(new Move(i,j,row,j));
-						else if(board[row][j] == THRONE) continue; // un pion peut sauter par desssus le throne
-						else break; // on quitte la boucle si un pion nous bloque le chemin
-					}
+					
 					// vérifier en haut du pion
 					for(int row = i - 1; row >= 0; row--) {
 						if(board[row][j] == EMPTY) possibleMoves.add(new Move(i,j,row,j));
 						else if(board[row][j] == THRONE) continue;
 						else break;
 					}
+					
 					// vérifier à droite du pion
 					for(int column = j + 1; column < 13; column++) {
 						if(board[i][column] == EMPTY) possibleMoves.add(new Move(i,j,i,column));
 						else if(board[i][column] == THRONE) continue;
 						else break;
 					}
+					
+					// vérifier en bas du pion
+					for(int row = i + 1; row < 13; row++) {
+						if(board[row][j] == EMPTY) possibleMoves.add(new Move(i,j,row,j));
+						else if(board[row][j] == THRONE) continue; // un pion peut sauter par desssus le throne
+						else break; // on quitte la boucle si un pion nous bloque le chemin
+					}
+					
+					
 					// vérifier à gauche du pion
 					for(int column=j-1; column>=0;column--) {
 						if(board[i][column] == EMPTY) possibleMoves.add(new Move(i,j,i,column));
@@ -1034,11 +1039,8 @@ class Board {
 	public boolean blockExit(Move nextMove) {
 
 		// Bloquer la case en diagonale des coins en priorité
-		int rowInit = nextMove.getRowStart();
-		int colInit = nextMove.getColStart();
 		int row = nextMove.getRowTarget();
 		int col = nextMove.getColTarget();
-
 
 		if(row == 1 && (col == 1 || col == 11)) return true;
 		if(row == 11 && (col == 1 || col == 11)) return true;

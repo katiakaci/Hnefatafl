@@ -128,6 +128,7 @@ public class CPUPlayer {
 //				}
 
 				// Si le move fait en sorte qu'il pourra se faire tuer apres, on le skip
+				// marche pas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 				if(board.isMoveDangerousForRedPawn(nextMove)) continue;
 
 				// Un pion va tuer un noir
