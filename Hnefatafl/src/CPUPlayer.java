@@ -59,15 +59,6 @@ public class CPUPlayer {
 					bestMoveFound = true;
 					continue;
 				}
-
-				// King va dans une ligne vide au centre
-				//				if(board.moveIsKing(nextMove) && board.moveIsGoingOnEmptyRowOrColumn(nextMove)) {
-				//					bestMoves.clear();
-				//					bestMoves.add(nextMove);
-				//					bestMoveFound = true;
-				//					continue;
-				//				}
-
 				if(!bestMoveFound) {
 					// King sort du trone
 					if(board.moveIsKing(nextMove) && board.kingIsStillInThrone()) {
@@ -76,14 +67,6 @@ public class CPUPlayer {
 						bestMoveFound = true;
 						continue;
 					}
-					//TODO
-					//					// King va dans une ligne qui lui donnerea acces a une ligne de coin
-					//					if(board.moveIsKing(nextMove) && board.kingIsGoingToEmptyLine) {
-					//						bestMoves.clear();
-					//						bestMoves.add(nextMove);
-					//						bestMoveFound = true;
-					//						continue;
-					//					}
 				}
 			}
 
@@ -94,13 +77,6 @@ public class CPUPlayer {
 					bestMoves.add(nextMove);
 					return bestMoves;
 				}
-
-				//				if(board.canMoveBlockAccessToKingWhoCanGoToThrone(nextMove)) {
-				//					bestMoves.clear();
-				//					bestMoves.add(nextMove);
-				//					return bestMoves;
-				//				}
-
 				if(board.getNumberOfRedPawns() > 12) {
 					// Ne pas deplacer un pion qui est dans une des cases en diagonale
 					int rowInit = nextMove.getRowStart();
@@ -119,9 +95,8 @@ public class CPUPlayer {
 						return bestMoves;
 					}
 				}
-				
+
 				// Si le move fait en sorte qu'il pourra se faire tuer apres, on le skip
-				// marche pas!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 				if(board.isMoveDangerousForRedPawn(nextMove)) continue;
 
 				// Un pion va tuer un noir
@@ -132,7 +107,7 @@ public class CPUPlayer {
 					goodMoveFound = true;
 					continue;
 				}
-				
+
 				// Un pion va encadré le roi et il ne lui restera qu'une case libre
 				if(board.canMoveAlmostTrapKing(nextMove)) {
 					bestMoves.clear();
@@ -141,8 +116,6 @@ public class CPUPlayer {
 					goodMoveFound = true;
 					continue;
 				}
-				
-				
 
 				if(!goodMoveFound) {
 
@@ -152,7 +125,7 @@ public class CPUPlayer {
 						bestMoveFound = true;
 						continue;
 					}
-					
+
 					// Un pion va se placer à coté du roi
 					else if(board.isMoveNextToKing(nextMove)) {
 						bestMoves.clear();
@@ -160,13 +133,8 @@ public class CPUPlayer {
 						bestMoveFound = true;
 						continue;
 					}
-
-					// Avec ces deux là on a match nul :
-					// Si un pion bloque un coin, on ne le bouge pas
-					//				if(board.isPawnNearCorner(nextMove.getRowStart(), nextMove.getColStart())) continue;			
 				}
 			}
-
 			if(!bestMoveFound) {
 				Board boardCopy = cloneBoard(board);
 				boardCopy.play(nextMove.toString(), cpu);

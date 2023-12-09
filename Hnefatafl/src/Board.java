@@ -839,8 +839,6 @@ class Board {
 		return row==12 || row==0 || col==12 || col==0;
 	}
 
-	// ************************ MÉTHODES PAS ENCORE UTILISÉES *********************************************
-
 	public boolean canMoveBlockAccessToKingWhoCanGoToThrone(Move nextMove) {
 		boolean isSideEmptyAndKingThere = false;
 		int column = this.colKing;
@@ -895,34 +893,19 @@ class Board {
 		return false;
 	}
 
-	//TODO revoir la methode
 	public boolean moveKillPawns(Move nextMove) {
 		int col = nextMove.getColTarget();
 		int row = nextMove.getRowTarget();
 
-		if(row>=2 && col<=10 && col>=2 && row<=10) 
-		{
+		if(row>=2 && col<=10 && col>=2 && row<=10) {
 			if((board[row-2][col] == RED && board[row-1][col] == BLACK) || (board[row+2][col] == RED || board[row+1][col] == BLACK)
-					|| (board[row][col-2] == RED && board[row][col-1] == BLACK) || (board[row][col+2] == RED || board[row][col+1] == BLACK))
-			{
+					|| (board[row][col-2] == RED && board[row][col-1] == BLACK) || (board[row][col+2] == RED || board[row][col+1] == BLACK)) {
 				return true;
 			}
 		}
-
-		//		if((row==12 || row==0) && col>=2 && row<=10) 
-		//		{
-		//			if(board[row][col+2] == RED || board[row+2][col] == RED || board[row][col-2] == RED || board[row][col+2] == RED)
-		//			{
-		//				return true;
-		//			}
-		//		}
-		//		
-
 		return false;
-
 	}
 
-	// TODO METHODE pour les noirs MARCHE PAS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	public boolean moveIsGoingOnEmptyRowOrColumn(Move nextMove) {
 		int column = nextMove.getColTarget();
 		int row = nextMove.getRowTarget();
@@ -949,9 +932,6 @@ class Board {
 		return false;
 	}
 
-
-	// ************************ MÉTHODES DÉCHETS *********************************************
-	// TODO
 	private int distanceManhattanForKing(int col, int row) {
 		return Math.abs(col-this.colKing)+Math.abs(row-this.rowKing);
 	}
