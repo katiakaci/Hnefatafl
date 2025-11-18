@@ -79,12 +79,12 @@ Comme pour les pièces ordinaires, le roi peut aussi être capturé en utilisant
 ### Conditions de victoire
 - **Victoire de l’attaquant** : le roi est **capturé**.
 - **Victoire du défenseur** : le roi atteint l’une des **quatre cases de sortie** (coins).
-<div align="center">
-  <img src="assets/noir gagne.png" alt="noir gagne" width="300" style="border-radius: 10px; margin-bottom: 20px;">
-</div>
 - **Match nul** :
   - lorsqu’un joueur, à son tour, n’a **aucun coup** à jouer
   - ou lorsqu’il y a **répétition de la même séquence de coups trois fois**
+
+Pour un résumé visuel des règles et de la stratégie du jeu, voici une courte vidéo récapitulative :
+[![How to play Viking Chess (Hnefatafl)](https://img.youtube.com/vi/fZ9cMj2Qn5Y/0.jpg)](https://www.youtube.com/watch?v=fZ9cMj2Qn5Y)
 
 ## Interaction avec le serveur
 
