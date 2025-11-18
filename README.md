@@ -84,7 +84,11 @@ Comme pour les pièces ordinaires, le roi peut aussi être capturé en utilisant
   - ou lorsqu’il y a **répétition de la même séquence de coups trois fois**
 
 Pour un résumé visuel des règles et de la stratégie du jeu, voici une courte vidéo récapitulative :
-[![How to play Viking Chess (Hnefatafl)](https://img.youtube.com/vi/fZ9cMj2Qn5Y/0.jpg)](https://www.youtube.com/watch?v=fZ9cMj2Qn5Y)
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=fZ9cMj2Qn5Y">
+    <img src="https://img.youtube.com/vi/fZ9cMj2Qn5Y/0.jpg" alt="How to play Viking Chess (Hnefatafl)" style="width: 60%; max-width: 400px;">
+  </a>
+</div>
 
 ## Interaction avec le serveur
 
