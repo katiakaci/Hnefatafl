@@ -1,26 +1,33 @@
-# Hnefatafl
+<h1 align="center" style="font-size: 42px; margin-bottom: 10px;">
+﹏𓊝﹏ Hnefatafl ﹏𓊝﹏
+</h1>
+
+<div align="center">
+  <img width="246" height="122" alt="image" src="https://github.com/user-attachments/assets/36a1c06b-f87b-46bf-8cad-ff6570a8b641" />
+</div>
+
+Ce projet a été réalisé dans le cadre du cours *Structures de données et algorithmes* (ÉTS).
+
+Le but est d’implémenter une intelligence artificielle capable de jouer au jeu de plateau viking *Hnefatafl*.
+L’IA utilise notamment les algorithmes **Minimax** et **Alpha-Beta**, ainsi qu’une fonction d’évaluation heuristique pour choisir le meilleur coup dans un temps maximal de 5 secondes par tour.
 
 ## Présentation du jeu
 
-Ce projet a été réalisé dans le cadre du cours **Structures de données et algorithmes** (ÉTS).
-
-Le but est d’implémenter une intelligence artificielle capable de jouer au jeu de plateau viking *Hnefatafl* sur un plateau de 13×13 :
-
+### Objectif
 - Les **attaquants (rouges)** doivent capturer le roi.
-- Les **défenseurs (noirs)** doivent faire s’échapper le roi en l’amenant sur une des cases de sorti.e (coins du plateau).
-- Les **attaquants jouent en premier**.
-
-L’IA utilise notamment les algorithmes **Minimax** et **Alpha-Beta**, ainsi qu’une fonction d’évaluation heuristique pour choisir le meilleur coup dans un temps maximal de 5 secondes par tour.
-
-
-## Règles du jeu
+- Les **défenseurs (noirs)** doivent conduire le roi jusqu’à l’une des cases de sortie situées aux quatre coins du plateau.
 
 ### Configuration initiale
 
 - Le plateau est de taille **13×13**.
-- Le **roi** est placé au centre sur la case appelée *trône*.
-- Les **défenseurs (noirs)** sont disposés autour du roi.
-- Les **assaillants (rouges)** entourent la zone centrale, plus éloignés.
+- Le **roi** (pion avec la couronne dorée) est placé au centre sur le trône.
+- Les **défenseurs (noirs)** sont disposés autour du roi, formant une croix centrée.
+- Les **attaquants (rouges)** sont positionnés sur les bords du plateau, en quatre groupes : un groupe en haut, un en bas, un à gauche, un à droite.
+- Les attaquants jouent en premier.
+
+<div align="center">
+   <img src="assets/début partie.png" alt="début partie" width="300" style="border-radius: 10px; margin-bottom: 20px;">
+</div>
 
 ### Déplacement des pièces
 
@@ -32,34 +39,52 @@ L’IA utilise notamment les algorithmes **Minimax** et **Alpha-Beta**, ainsi qu
   - sur les **cases de sortie** (coins).
 - Il est toutefois possible de **passer par-dessus le trône** si celui-ci est vide.
 
+<div align="center">
+  <img src="assets/partie en cours.png" alt="partie en cours" width="300" style="border-radius: 10px; margin-bottom: 20px;">
+</div>
+
 ### Captures
 
-Une pièce adverse est capturée lorsqu’elle se retrouve **encerclée activement** :
+Une pièce de l’adversaire peut être capturée si le joueur parvient à l’encadrer. Noter que le roi peut participer aux
+captures.
+<div align="center">
+  <img width="350" height="367" alt="image" src="https://github.com/user-attachments/assets/bb43f64b-9f3c-4c71-879e-55dbd2ca2549" />
+</div>
 
-- entre **deux pièces adverses** sur une même ligne ou colonne ;
-- ou entre **une pièce adverse** et :
-  - le **trône** ;
-  - une **case de sortie** ;
-  - la **bordure du plateau**.
+Une pièce peut aussi être capturée si elle est encadrée par une pièce adversaire et une case de sortie ou le trône :
+<div align="center">
+  <img width="350" height="147" alt="image" src="https://github.com/user-attachments/assets/e0273e43-21e5-4e9a-b440-603f016ad0bb" />
+</div>
 
-Il est possible de capturer **plusieurs pièces en un seul coup** si elles se retrouvent toutes encerclées après le déplacement.
+Il est aussi possible de capturer plus d’une pièce à la fois :
+<div align="center">
+  <img width="350" height="292" alt="image" src="https://github.com/user-attachments/assets/77913cf9-da39-41c6-bedd-234b708c603b" />
+</div>
 
-Une capture doit être **active** : si une pièce se place volontairement entre deux pièces adverses, elle **n’est pas capturée**.
+Par contre, seules les captures actives sont possibles. Donc, si une pièce se place elle-même entre deux pièces
+adverses, il n’y a pas de capture.
 
 ### Capture du roi
 
-Le roi est capturé lorsqu’il est entièrement encerclé :
+Le roi est capturé lorsqu’il est entièrement encerclé.
+<div align="center">
+  <img width="350" height="235" alt="image" src="https://github.com/user-attachments/assets/10190ccd-efde-4c78-935c-95ba9ab44ad3" />
+</div>
 
-- soit par **quatre pièces adverses** ;
-- soit par **deux pièces adverses** et un ou plusieurs éléments particuliers (trône, case de sortie, bordure du plateau), selon la configuration.
+Comme pour les pièces ordinaires, le roi peut aussi être capturé en utilisant le trône, la bordure ou une case de sortie :
+<div align="center">
+  <img width="412" height="207" alt="image" src="https://github.com/user-attachments/assets/fe7cc3b1-8242-4e14-9270-0c4156bb45c9" />
+</div>
 
 ### Conditions de victoire
-
-- **Victoire du défenseur** : le roi atteint l’une des **quatre cases de sortie** (coins).
 - **Victoire de l’attaquant** : le roi est **capturé**.
+- **Victoire du défenseur** : le roi atteint l’une des **quatre cases de sortie** (coins).
+<div align="center">
+  <img src="assets/noir gagne.png" alt="noir gagne" width="300" style="border-radius: 10px; margin-bottom: 20px;">
+</div>
 - **Match nul** :
-  - lorsqu’un joueur, à son tour, n’a **aucun coup légal** à jouer ;
-  - ou lorsqu’il y a **répétition de la même séquence de coups trois fois** (non détecté automatiquement par le serveur).
+  - lorsqu’un joueur, à son tour, n’a **aucun coup** à jouer
+  - ou lorsqu’il y a **répétition de la même séquence de coups trois fois**
 
 ## Interaction avec le serveur
 
